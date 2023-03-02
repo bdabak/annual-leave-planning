@@ -1,0 +1,6 @@
+<mvc:View controllerName="com.thy.ux.annualleaveplanning.controller.PlanView"
+    xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
+    xmlns="sap.m"
+    xmlns:smod="com.thy.ux.annualleaveplanning.ui">
+    <smod:PlanningPage id="AnnualLeavePlanningPage"/>
+</mvc:View>
