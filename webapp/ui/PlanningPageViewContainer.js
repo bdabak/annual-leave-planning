@@ -37,7 +37,8 @@ sap.ui.define(
           this.setActiveView(
             o.tabIndex,
             o.fnCallback,
-            o.transitionEffect
+            o.transitionEffect,
+            o.direction
           );
         },
         renderer: function (oRM, oControl) {
@@ -67,23 +68,24 @@ sap.ui.define(
           oRM.close("div");
         },
 
-        setActiveView: function (tabIndex, finishCallback, withTransition) {
+        setActiveView: function (tabIndex, finishCallback, withTransition, d) {
           var that = this;
           var fnActivate = function () {
-            that.setActiveWithPromise(tabIndex).then(function () {
-              if (finishCallback && typeof finishCallback === "function") finishCallback();
+            that.setActiveWithPromise(tabIndex, d).then(function () {
+              if (finishCallback && typeof finishCallback === "function")
+                finishCallback();
             });
           };
 
           if (!withTransition) {
             fnActivate();
           } else {
-            this.transitionEffect();
-            setTimeout(fnActivate, 100);
+            this.transitionEffect(d);
+            setTimeout(fnActivate, 50);
           }
         },
 
-        setActiveWithPromise: function (tabIndex) {
+        setActiveWithPromise: function (tabIndex, d) {
           var that = this;
           var ok = false;
           return new Promise(function (resolve, reject) {
@@ -94,13 +96,20 @@ sap.ui.define(
                   oView
                     .$()
                     .removeClass("spp-hidden")
-                    .addClass("spp-active-view");
+                    .removeClass("spp-slide-right")
+                    .removeClass("spp-slide-left")
+                    .removeClass("spp-hidden")
+                    .addClass("spp-active-view")
+                    .addClass(d === "L" ? "spp-slide-left" : "spp-slide-right");
+
                   ok = true;
                 }
               } else {
                 if (!oView.$().hasClass("spp-hidden")) {
                   oView
                     .$()
+                    .removeClass("spp-slide-right")
+                    .removeClass("spp-slide-left")
                     .removeClass("spp-active-view")
                     .addClass("spp-hidden");
                 }
@@ -110,13 +119,22 @@ sap.ui.define(
           });
         },
 
-        transitionEffect: function () {
+        transitionEffect: function (d) {
           var aViews = this.getAggregation("views");
           $.each(aViews, function (i, oView) {
             if (oView.getTabIndex() === "-1") {
-              oView.$().removeClass("spp-hidden").addClass("spp-active-view");
+              oView
+                .$()
+                .removeClass("spp-hidden")
+                .addClass("spp-active-view")
+                .addClass(d === "L" ? "spp-slide-left" : "spp-slide-right");
             } else {
-              oView.$().removeClass("spp-active-view").addClass("spp-hidden");
+              oView
+                .$()
+                .removeClass("spp-active-view")
+                .removeClass("spp-slide-right")
+                .removeClass("spp-slide-left")
+                .addClass("spp-hidden");
             }
           });
         },

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap'); 
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap");
 /* @font-face {
   font-family: Poppins;
   font-style: normal;
@@ -9139,6 +9139,11 @@ body {
   align-items: center;
 }
 
+.sap-float-overlay {
+  pointer-events: auto !important;
+  background: rgba(0, 0, 0, 0.2);
+}
+
 .spp-float-root.spp-safari {
   -webkit-user-select: none;
   user-select: none;
@@ -9473,16 +9478,21 @@ body {
   display: none !important;
 }
 
-
 .spp-widget.spp-active-view {
   position: relative;
-  animation: animationRight 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
-@keyframes animationRight {
+.spp-widget.spp-active-view.spp-slide-right {
+  animation: slideFromRight 0.2s ease-out;
+}
+.spp-widget.spp-active-view.spp-slide-left {
+  animation: slideFromLeft 0.2s ease-out;
+}
+
+@keyframes slideFromRight {
   from {
-    right: calc(100% * -1);
-    opacity: 0.5;
+    right: -100%;
+    opacity: 0.7;
     display: block !important;
   }
 
@@ -9493,15 +9503,15 @@ body {
   }
 }
 
-@keyframes animationLeft {
+@keyframes slideFromLeft {
   from {
-    top: -100px;
-    opacity: 0.5;
+    right: 100%;
+    opacity: 0.7;
     display: block !important;
   }
 
   to {
-    top:0;
+    right: 0;
     opacity: 1;
     display: block !important;
   }
@@ -38686,26 +38696,29 @@ button.spp-button.spp-recurrencelegendbutton {
   position: relative !important;
 }
 
+
 .spp-sidebar:not(.spp-collapsed) {
-  min-width: 16em;
+  width: 18em;
+ 
 }
 .spp-sidebar.spp-collapsed {
-  visibility: hidden;
+  width: 0px;
+  display:none !important;
 }
 
 .spp-sidebar.spp-expanded {
-   animation: animateLeft 0.5s ease; 
+  animation: animateFromLeft 0.3s ease-in-out;
+  background-color: yellow;
 }
 
-@keyframes animateLeft {
-  from {
+@keyframes animateFromLeft {
+  0% {
     width:0;
-    opacity:0.5;
+    opacity: 0.9;
   }
 
-  to {
-    width: min-content;
-    opacity:1;
+  100% {
+    opacity: 1;
   }
 }
 
@@ -38726,7 +38739,7 @@ button.spp-button.spp-recurrencelegendbutton {
 
 .spp-calendar .spp-sidebar {
   max-width: 30%;
-  background-color: #a2a3ac;
+  background-color: #f8f9fa;
 }
 
 .spp-calendar
@@ -38858,7 +38871,6 @@ button.spp-button.spp-recurrencelegendbutton {
   background-color: transparent;
 }
 
-
 .spp-yearview .spp-nonworking-day {
   color: #e53f2c !important;
 }
@@ -38875,6 +38887,10 @@ button.spp-button.spp-recurrencelegendbutton {
   column-gap: 1em;
   row-gap: 3em;
   padding-inline-start: max((25% - 23em) - 2em, 1em);
+}
+
+.spp-responsive-small .spp-yearview-content {
+  row-gap: 4.25em;
 }
 
 .spp-yearview-body-wrap .spp-yearview-content {
@@ -39879,4 +39895,36 @@ button.spp-button.spp-recurrencelegendbutton {
   .spp-cal-event
   .spp-cal-event-icon {
   color: #8ee997;
+}
+
+.spp-overlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(3px);
+}
+
+.spp-animate-top {
+  animation: flyAnimate 0.5s ease;
+}
+
+@keyframes flyAnimate {
+  0% {
+    top: -30%;
+  }
+  50% {
+    top: 3%;
+  }
+  100% {
+    top: 0;
+  }
+}
+
+.spp-hidden-view {
+  display: block;
 }

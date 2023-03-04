@@ -13,6 +13,11 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
           type: "string",
           bindable: true,
         },
+        navigationActive: {
+          type: "boolean",
+          bindable: true,
+          defaultValue: false,
+        },
       },
       aggregations: {
         content: {
@@ -20,7 +25,15 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
           multiple: false,
         },
       },
-      events: {},
+      events: {
+        swiped: {
+          parameters: {
+            direction: {
+              type: "string",
+            },
+          },
+        },
+      },
     },
     renderer: function (oRM, oControl) {
       oRM.openStart("div");
@@ -40,9 +53,16 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
         .class("spp-ltr")
         .class("spp-card-item")
         .class("spp-legacy-inset")
-        .class("spp-responsive-large")
         .class("spp-first-visible-child")
         .class("spp-last-visible-child");
+
+      if (sap.ui.Device.system.phone) {
+        oRM.class("spp-responsive-small");
+      } else if (sap.ui.Device.system.tablet) {
+        oRM.class("spp-responsive-medium");
+      } else if (sap.ui.Device.system.desktop) {
+        oRM.class("spp-responsive-large");
+      }
       if (oControl.getHidden()) {
         oRM.class("spp-hidden");
       }
@@ -57,6 +77,22 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
       oRM.renderControl(oControl.getContent());
       oRM.close("div"); //Sub div
       oRM.close("div");
+    },
+    onswipeleft: function () {
+      if (!this.getNavigationActive()) {
+        return;
+      }
+      this.fireSwiped({
+        direction: "L",
+      });
+    },
+    onswiperight: function () {
+      if (!this.getNavigationActive()) {
+        return;
+      }
+      this.fireSwiped({
+        direction: "R",
+      });
     },
   });
 });

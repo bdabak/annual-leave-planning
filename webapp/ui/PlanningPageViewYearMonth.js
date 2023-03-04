@@ -73,49 +73,6 @@ sap.ui.define(
             oControl.addAggregation("weeks", y);
             oRM.renderControl(y);
 
-            // oRM.openStart("div");
-            // oRM.class("spp-calendar-week");
-            // oRM.attr("data-week", w);
-            // oRM.openEnd();
-
-            // //--Week Number
-            // oRM.openStart("button");
-            // oRM.class("spp-week-number-cell");
-            // oRM.openEnd();
-            // oRM.text(w);
-            // oRM.close("button");
-            // //--Week Number
-
-            // $.each(d, function (i, e) {
-            //   oRM.openStart("div");
-            //   oRM
-            //     .class("spp-day-name")
-            //     .class("spp-calendar-cell")
-            //     .class("spp-cal-empty-cell")
-            //     .class(e.dayOfWeek > 4 ? "spp-weekend" : "spp-weekday")
-            //     .class(
-            //       e.dayOfWeek > 4 ? "spp-nonworking-day" : "spp-working-day"
-            //     )
-            //     .class("spp-day-of-week-" + e.dayOfWeek);
-            //   if(!e.sameMonth){
-            //     oRM.class("spp-other-month");
-            //   }
-            //   if(e.sameMonth && e.isToday){
-            //     oRM.class("spp-today");
-            //   }
-
-            //   oRM.attr("data-date", e.date);
-            //   oRM.openEnd();
-            //   oRM.openStart("div");
-            //   oRM.class("spp-calendar-cell-inner");
-            //   oRM.openEnd();
-            //   oRM.text(e.day);
-
-            //   oRM.close("div");
-            //   oRM.close("div");
-            // });
-
-            // oRM.close("div");
           });
         },
         renderDayNames: function (oRM) {

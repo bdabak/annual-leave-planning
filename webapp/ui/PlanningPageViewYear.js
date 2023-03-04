@@ -68,6 +68,9 @@ sap.ui.define(
             .class("spp-resize-monitored")
             .class("spp-draggable")
             .class("spp-droppable");
+            if (sap.ui.Device.system.phone || sap.ui.Device.system.tablet){
+              oRM.style("overflow-y","auto");
+            }
           oRM.openEnd();
 
           var aMonths = [];

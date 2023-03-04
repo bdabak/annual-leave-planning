@@ -110,5 +110,11 @@ sap.ui.define(["./moment"], function (momentJS) {
         },
       });
     },
+
+    decidePeriodChangeDirection: function(o,n){
+      var oP = moment(o.year + "-" + o.month + "-" + o.day, "YYYY-MM-DD");
+      var nP = moment(n.year + "-" + n.month + "-" + n.day, "YYYY-MM-DD");
+      return oP.isAfter(nP) ? "L" :  oP.isBefore(nP) ? "R" : "";
+    }
   };
 });
