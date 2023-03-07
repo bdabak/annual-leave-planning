@@ -36,8 +36,7 @@ sap.ui.define([
             var w = oControl.getWeek();
             var y = oControl.getYear();
 
-            oRM.openStart("div");
-            oRM.writeControlData(oControl);
+            oRM.openStart("div", oControl); //Main
             oRM.class("spp-calendar-row");
             oRM.class("spp-calendar-week");
             oRM.attr("data-week", y + "," + w);

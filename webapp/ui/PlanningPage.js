@@ -10,6 +10,8 @@ sap.ui.define(
     "com/thy/ux/annualleaveplanning/ui/PlanningPagePeriod",
     "com/thy/ux/annualleaveplanning/ui/PlanningPageContent",
     "com/thy/ux/annualleaveplanning/ui/PlanningPageSidebar",
+    "com/thy/ux/annualleaveplanning/ui/PlanningPageLegend",
+    "com/thy/ux/annualleaveplanning/ui/PlanningPageLegendItem",
     "com/thy/ux/annualleaveplanning/ui/PlanningPageViewContainer",
     "com/thy/ux/annualleaveplanning/ui/PlanningPageView",
     "com/thy/ux/annualleaveplanning/ui/PlanningPageViewYear",
@@ -17,6 +19,15 @@ sap.ui.define(
     "com/thy/ux/annualleaveplanning/ui/PlanningPageModal",
     "com/thy/ux/annualleaveplanning/ui/PlanningPageMenu",
     "com/thy/ux/annualleaveplanning/ui/PlanningPageMenuItem",
+    "com/thy/ux/annualleaveplanning/ui/PlanningPageDialog",
+    "com/thy/ux/annualleaveplanning/ui/PlanningPageDialogHeader",
+    "com/thy/ux/annualleaveplanning/ui/PlanningPageEventEditor",
+    "com/thy/ux/annualleaveplanning/ui/PlanningPageEventContainer",
+    "com/thy/ux/annualleaveplanning/ui/PlanningPageEvent",
+    "com/thy/ux/annualleaveplanning/ui/PlanningPageFormField",
+    "com/thy/ux/annualleaveplanning/ui/PlanningPageFormLabel",
+    "com/thy/ux/annualleaveplanning/ui/PlanningPageFormInput",
+    "com/thy/ux/annualleaveplanning/ui/PlanningPageFormFieldTrigger",
     "com/thy/ux/annualleaveplanning/utils/date-utilities",
     "com/thy/ux/annualleaveplanning/utils/event-utilities",
   ],
@@ -31,6 +42,8 @@ sap.ui.define(
     Period,
     PageContent,
     Sidebar,
+    Legend,
+    LegendItem,
     ViewContainer,
     View,
     ViewYear,
@@ -38,6 +51,15 @@ sap.ui.define(
     Modal,
     Menu,
     MenuItem,
+    Dialog,
+    DialogHeader,
+    EventEditor,
+    EventContainer,
+    CalEvent,
+    Field,
+    Label,
+    Input,
+    FieldTrigger,
     dateUtilities,
     eventUtilities
   ) {
@@ -46,6 +68,12 @@ sap.ui.define(
     return Control.extend("com.thy.ux.annualleaveplanning.ui.PlanningPage", {
       metadata: {
         properties: {
+
+          holidayCalendar:{
+            type: "object",
+            bindable: true,
+            defaultValue: []
+          },
           mode: {
             type: "string",
             bindable: true,
@@ -60,6 +88,7 @@ sap.ui.define(
             type: "object",
             bindable: true,
           },
+         
         },
         aggregations: {
           _header: {
@@ -88,11 +117,11 @@ sap.ui.define(
         var sLibraryPath = jQuery.sap.getModulePath(
           "com.thy.ux.annualleaveplanning"
         ); //get the server location of the ui library
-        jQuery.sap.includeStyleSheet(sLibraryPath + "/ui/PlanningPage.css");
+        jQuery.sap.includeStyleSheet(sLibraryPath + "/ui/css/PlanningPageIstanbul.css");
 
         //--Create header
         var h = new Header({
-          toolbar: this._renderToolbar(),
+          toolbar: this._renderHeaderToolbar(),
         });
         this.setAggregation("_header", h);
 
@@ -103,11 +132,28 @@ sap.ui.define(
         //--Create model
         var m = new Modal();
         this.setAggregation("_modal", m);
+
+        //--Subscribe to event method
+        eventUtilities.subscribeEvent(
+          "PlanningCalendar",
+          "CreateEvent",
+          this._handleCreateEvent,
+          this
+        );
+
+        //--Subscribe to event 
+        eventUtilities.subscribeEvent(
+          "PlanningCalendar",
+          "DisplayEventWidget",
+          this._handleDisplayEventWidget,
+          this
+        );
+ 
       },
 
       renderer: function (oRM, oControl) {
-        oRM.openStart("div"); //Control
-        oRM.writeControlData(oControl);
+
+        oRM.openStart("div", oControl); //Control
         oRM.class("spp"); //smod-planning-page
         oRM.openEnd();
 
@@ -127,10 +173,8 @@ sap.ui.define(
           .class("spp-vbox")
           .class("spp-calendar-nav-toolbar")
           .class("spp-outer")
-          .class("spp-mac")
           .class("spp-touch-events")
           .class("spp-overlay-scrollbar")
-          .class("spp-safari")
           .class("spp-cal-day")
           .class("spp-cal-week")
           .class("spp-cal-month")
@@ -148,6 +192,14 @@ sap.ui.define(
           oRM.class("spp-responsive-medium");
         } else if (sap.ui.Device.system.desktop) {
           oRM.class("spp-responsive-large");
+        }
+
+        if (sap.ui.Device.browser.safari) {
+          oRM.class("spp-safari");
+        } else if (sap.ui.Device.browser.chrome) {
+          oRM.class("spp-chrome");
+        } else if (sap.ui.Device.browser.firefox) {
+          oRM.class("spp-firefox");
         }
 
         oRM.openEnd();
@@ -186,7 +238,26 @@ sap.ui.define(
         });
       },
       _renderSidebar: function () {
-        return new Sidebar();
+        return new Sidebar({
+          items:[
+            new Legend({
+              items: [
+                new LegendItem({
+                  text: "Resmi tatiller",
+                  color: "spp-sch-foreground-orange"
+                }),
+                new LegendItem({
+                  text: "Planlanan izin",
+                  color: "spp-sch-foreground-blue"
+                }),
+                new LegendItem({
+                  text: "Yıllık izin",
+                  color: "spp-sch-foreground-green"
+                })
+              ]
+            })
+          ] 
+        });
       },
       _renderViews: function () {
         return new ViewContainer({
@@ -198,7 +269,7 @@ sap.ui.define(
               tabIndex: "0",
               hidden: false,
               navigationActive: true,
-              swiped: this._handlePeriodSwipe.bind(this)
+              swiped: this._handlePeriodSwipe.bind(this),
             }),
             new View({
               content: new ViewMonth({
@@ -208,7 +279,7 @@ sap.ui.define(
               tabIndex: "1",
               hidden: true,
               navigationActive: true,
-              swiped: this._handlePeriodSwipe.bind(this)
+              swiped: this._handlePeriodSwipe.bind(this),
             }),
             new View({
               content: new sap.m.Text({ text: "Ajanda" }),
@@ -217,8 +288,8 @@ sap.ui.define(
             }),
             new View({
               content: new sap.m.VBox({
-                height:"100%",
-                width: "100%"
+                height: "100%",
+                width: "100%",
               }),
               tabIndex: "-1",
               hidden: false,
@@ -226,12 +297,21 @@ sap.ui.define(
           ],
         });
       },
-      _handlePeriodSwipe: function(e){
+      _handlePeriodSwipe: function (e) {
         var d = e.getParameter("direction") || null;
-        if(!d){
-          return
+        if (!d) {
+          return;
         }
-        d === "L" ? this._handleNavigateNextPeriod() : d === "R" ? this._handleNavigatePrevPeriod() : null; 
+        switch (d) {
+          case "L":
+            this._handleNavigateNextPeriod();
+            break;
+          case "R":
+            this._handleNavigatePrevPeriod();
+            break;
+          default:
+            return;
+        }
       },
       _renderButtonGroup: function () {
         var that = this;
@@ -295,7 +375,8 @@ sap.ui.define(
                   value: "2",
                   writeToDom: true,
                 })
-              ).addCustomData(
+              )
+              .addCustomData(
                 new CustomData({
                   key: "view-mode",
                   value: "A",
@@ -306,7 +387,7 @@ sap.ui.define(
         });
         return this._oButtonGroup;
       },
-      _renderToolbar: function () {
+      _renderHeaderToolbar: function () {
         var that = this;
         return new Toolbar({
           items: [
@@ -354,7 +435,7 @@ sap.ui.define(
               icon: "spp-icon-next",
               classList: ["spp-cal-nav-item"],
               tooltip: "Sonraki dönem",
-              press: this._handleNavigateNextPeriod.bind(this)
+              press: this._handleNavigateNextPeriod.bind(this),
             }).addCustomData(
               new CustomData({
                 key: "ref",
@@ -369,22 +450,23 @@ sap.ui.define(
             new Spacer(),
             new Button({
               icon: "spp-icon-calendar-days",
-              classList: ["spp-cal-nav-item"],
+              classList: ["spp-cal-nav-item", "spp-has-menu"],
               tooltip: "Görünüm",
               press: function (e) {
                 that._openModelViewMenu(e, this);
               },
-              visible: "{device>/system/phone}"
+              visible: "{device>/system/phone}",
+              solid: true,
             }),
             this._renderButtonGroup(),
           ],
         });
       },
 
-      _handleNavigateNextPeriod: function(){
+      _handleNavigateNextPeriod: function () {
         this._handlePeriodChange("N");
       },
-      _handleNavigatePrevPeriod: function(){
+      _handleNavigatePrevPeriod: function () {
         this._handlePeriodChange("P");
       },
 
@@ -392,20 +474,21 @@ sap.ui.define(
         var that = this;
         var i = this.getTabIndex();
         var o = $(r.getDomRef());
-        if(!o){
+        if (!o) {
           return;
         }
         var cO = o.offset();
         var cH = o.outerHeight();
-        var wW = $(window).width();
 
         var w = 120;
-        var x = cO.left - ( w - o.outerWidth());
-        var y = cO.top + cH ;
+        var x = cO.left - (w - o.outerWidth());
+        var y = cO.top + cH;
         var aStyles = new Map([
           ["width", `${w}px`],
           ["transform", `matrix(1, 0, 0, 1, ${x}, ${y})`],
         ]);
+
+        o.addClass("spp-contains-focus").addClass("spp-pressed");
         var oContent = new Menu({
           items: [
             new MenuItem({
@@ -413,89 +496,268 @@ sap.ui.define(
               value: "Yıl",
               selected: i === "0",
               firstChild: true,
-            }).addCustomData(
-              new CustomData({
-                key: "tab-index",
-                value: "0",
-                writeToDom: true,
-              })
-            ).addCustomData(
-              new CustomData({
-                key: "view-mode",
-                value: "Y",
-                writeToDom: true,
-              })
-            ),
+            })
+              .addCustomData(
+                new CustomData({
+                  key: "tab-index",
+                  value: "0",
+                  writeToDom: true,
+                })
+              )
+              .addCustomData(
+                new CustomData({
+                  key: "view-mode",
+                  value: "Y",
+                  writeToDom: true,
+                })
+              ),
             new MenuItem({
               key: "M",
               value: "Ay",
               selected: i === "1",
-            }).addCustomData(
-              new CustomData({
-                key: "tab-index",
-                value: "1",
-                writeToDom: true,
-              })
-            ).addCustomData(
-              new CustomData({
-                key: "view-mode",
-                value: "M",
-                writeToDom: true,
-              })
-            ),
+            })
+              .addCustomData(
+                new CustomData({
+                  key: "tab-index",
+                  value: "1",
+                  writeToDom: true,
+                })
+              )
+              .addCustomData(
+                new CustomData({
+                  key: "view-mode",
+                  value: "M",
+                  writeToDom: true,
+                })
+              ),
             new MenuItem({
               key: "A",
               value: "Ajanda",
               selected: i === "2",
               lastChild: true,
-            }).addCustomData(
-              new CustomData({
-                key: "tab-index",
-                value: "2",
-                writeToDom: true,
-              })
-            ).addCustomData(
-              new CustomData({
-                key: "view-mode",
-                value: "A",
-                writeToDom: true,
-              })
-            ),
+            })
+              .addCustomData(
+                new CustomData({
+                  key: "tab-index",
+                  value: "2",
+                  writeToDom: true,
+                })
+              )
+              .addCustomData(
+                new CustomData({
+                  key: "view-mode",
+                  value: "A",
+                  writeToDom: true,
+                })
+              ),
           ],
           styles: aStyles,
-          itemSelected: function(e){
+          itemSelected: function (e) {
             var i = e.getParameter("selectedItem");
             that._getModal().close();
             that._handleViewChange(null, i);
-          }
+            o.removeClass("spp-contains-focus").removeClass("spp-pressed");
+          },
         });
         this._getModal().openBy(oContent);
+      },
+
+      _handleCreateEvent: function (c, e, o) {
+        if (o && o.element) {
+          this._openCreateEventDialog(o.element, o.period);
+        }
+      },
+      _handleDisplayEventWidget: function(c,e,o){
+        if (o && o.element) {
+          //this._openDisplayEventDialog(o.element, o.day);
+        }
+      },
+
+      _openDisplayEventDialog: function (r, d) {
+        var that = this;
+        var o = $(r);
+        if (!o) {
+          return;
+        }
+        var eO = o.offset(); //Element position
+        var eH = o.outerHeight(); //Element height
+        var eW = o.outerWidth();
+
+        var aStyles = new Map([
+          ["transform", `matrix(1, 0, 0, 1, ${eO.left}, -100%)`],
+        ]);
+
+        var oDialog = new Dialog({
+          header: new DialogHeader({
+            title: d.title,
+            closed: function () {
+              that._getModal().close();
+            },
+          }),
+          styles: aStyles,
+          elementPosition: {
+            offset: {...eO},
+            outerHeight: eH,
+            outerWidth: eW,
+          },
+          headerDockTop: true,
+          content: this._createDisplayEventWidget(d),
+          closed: function(){
+            
+          }
+        });
+
+        this._getModal().openBy(oDialog);
+      },
+
+      _createDisplayEventWidget: function(d){
+        // console.log(d);
+        // return new EventContainer({
+        //   widget: true,
+        //   events: [
+        //     new CalEvent({
+        //       color: "spp-holiday-all-day",
+        //       text: d.holiday.text
+        //     })
+        //   ]
+        // })
+      },
+
+      _openCreateEventDialog: function (r, p) {
+        var that = this;
+        var o = $(r);
+        if (!o) {
+          return;
+        }
+        var eO = o.offset(); //Element position
+        var eH = o.outerHeight(); //Element height
+        var eW = o.outerWidth();
+
+        var aStyles = new Map([
+          ["transform", `matrix(1, 0, 0, 1, ${eO.left}, -100%)`],
+          ["--date-time-length", "14em"],
+          ["--date-width-difference", "1em"],
+        ]);
+
+        var oDialog = new Dialog({
+          header: new DialogHeader({
+            title: "Yeni Plan",
+            closed: function () {
+              that._createEventCancelled();
+            },
+          }),
+          styles: aStyles,
+          elementPosition: {
+            offset: {...eO},
+            outerHeight: eH,
+            outerWidth: eW,
+          },
+          classList: ["spp-eventeditor"],
+          content: this._createEventEditor(),
+          closed: function(){
+            eventUtilities.publishEvent(
+              "PlanningCalendar",
+              "CreateEventCancelled",
+              null
+            );
+          }
+        });
+
+        this._getModal().openBy(oDialog);
+      },
+
+      _createEventCancelled: function () {
+        this._getModal().close();
+        eventUtilities.publishEvent(
+          "PlanningCalendar",
+          "CreateEventCancelled",
+          null
+        );
+      },
+
+      _createEventEditorToolbar() {
+        var that = this;
+        return new Toolbar({
+          items: [
+            new Button({
+              raised: true,
+              label: "Kaydet",
+              firstChild: true,
+              classList: ["spp-blue"],
+              press: function () {
+                //TODO
+              },
+            }),
+            new Button({
+              lastChild: true,
+              label: "İptal",
+              press: function () {
+                that._createEventCancelled();
+              },
+            }),
+          ],
+        });
+      },
+      _createEventEditor: function () {
+        return new EventEditor({
+          toolbar: this._createEventEditorToolbar(),
+          items: [
+            new Field({
+              firstChild: true,
+              containsFocus: true,
+              empty: true,
+              noHint: true,
+              label: new Label({
+                text: "Neden",
+              }),
+              field: new Input({
+                placeHolder: "Etkinlik nedeni",
+                name: "Reason",
+              }),
+            }),
+            new Field({
+              label: new Label({
+                text: "Başlangıç",
+              }),
+              field: new Input({
+                name: "BeginDate",
+              }),
+            }),
+            new Field({
+              lastChild: true,
+              label: new Label({
+                text: "Bitiş",
+              }),
+              field: new Input({
+                name: "EndDate",
+              }),
+            }),
+          ],
+        });
       },
 
       _getModal: function () {
         return this.getAggregation("_modal");
       },
-      
+
       _handleViewChange: function (e, c = null) {
         var that = this;
         var s = e ? e.getSource() : c;
-        if(!s){
+        if (!s) {
           return;
         }
         var i = s.data("tab-index");
         var m = s.data("view-mode");
-        var d = "right"; //by default animate from right direction 
+        var d = "right"; //by default animate from right direction
 
-        if(this.getTabIndex() < i){
+        if (this.getTabIndex() < i) {
           d = "R";
-        }else{  
+        } else {
           d = "L";
         }
 
         this.setProperty("tabIndex", i, true);
         this.setProperty("mode", m, true);
-
-
 
         this._publishViewChanged(
           jQuery.proxy(that._handleViewChangeCompleted, that),
@@ -515,7 +777,7 @@ sap.ui.define(
       },
       _handlePeriodChange: function (b) {
         var p = this.getPeriod();
-        var x = {...p};
+        var x = { ...p };
         var m = this.getMode();
         var that = this;
         switch (b) {
@@ -530,7 +792,7 @@ sap.ui.define(
             break;
         }
 
-        var d = dateUtilities.decidePeriodChangeDirection(x,p);
+        var d = dateUtilities.decidePeriodChangeDirection(x, p);
 
         this.setProperty("period", p, true);
 

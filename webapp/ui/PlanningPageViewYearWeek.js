@@ -31,18 +31,17 @@ sap.ui.define([
             var days = oControl.getDays();
             var w = oControl.getWeek();
 
-            oRM.openStart("div");
-            oRM.writeControlData(oControl);
+            oRM.openStart("div", oControl); //Main
             oRM.class("spp-calendar-week");
             oRM.attr("data-week", w);
             oRM.openEnd();
 
             //--Week Number
-            oRM.openStart("button");
-            oRM.class("spp-week-number-cell");
-            oRM.openEnd();
-            oRM.text(w);
-            oRM.close("button");
+            // oRM.openStart("button");
+            // oRM.class("spp-week-number-cell");
+            // oRM.openEnd();
+            // oRM.text(w);
+            // oRM.close("button");
             //--Week Number
 
             $.each(days, function(i, d){

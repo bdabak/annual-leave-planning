@@ -13,16 +13,16 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
           },
         },
         aggregations: {
-          content: {
+          items: {
             type: "sap.ui.core.Control",
-            multiple: false,
+            multiple: true,
+            singularName: "item",
           },
         },
         events: {},
       },
       renderer: function (oRM, oControl) {
-        oRM.openStart("div"); //Side Bar
-        oRM.writeControlData(oControl);
+        oRM.openStart("div", oControl); //Sidebar
         oRM
           .class("spp-widget")
           .class("spp-container")
@@ -33,7 +33,6 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
           .class("spp-vbox")
           .class("spp-panel-collapsible")
           .class("spp-panel-has-tools")
-          // .class("spp-has-datepicker")
           .class("spp-sidebar-left")
           .class("spp-panel-collapse-left")
           .class("spp-first-visible-child");
@@ -52,7 +51,6 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
             .class("spp-panel-collapsible-overlay")
             .class("spp-collapsed")
             .class("spp-responsive-small");
-
           oRM.style("clip-path", "inset(0px -244.5px 0px 0px)");
         }
 
@@ -63,9 +61,36 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
         }
         oRM.openEnd();
 
-        oRM.openStart("div").class("spp-vbox").class("spp-box-center").class("spp-panel-body-wrap").class("spp-sidebar-body-wrap").openEnd(); 
-        oRM.text("Sidebar...");
-        oRM.close("div"); //Side Bar Content
+        //--Side bar body wrap--//
+        oRM
+          .openStart("div")
+          .class("spp-vbox")
+          .class("spp-box-center")
+          .class("spp-panel-body-wrap")
+          .class("spp-sidebar-body-wrap")
+          .openEnd(); // Side bar body wrap
+
+        //--Side bar content--//
+        oRM
+          .openStart("div")
+          .class("spp-panel-content")
+          .class("spp-responsive-content")
+          .class("spp-sidebar-content")
+          .class("spp-box-center")
+          .class("spp-content-element")
+          .class("spp-auto-container")
+          .class("spp-widget-scroller")
+          .class("spp-resize-monitored")
+          .class("spp-flex-column")
+          .openEnd();
+        $.each(oControl.getItems(), function (i, l) {
+          oRM.renderControl(l);
+        });
+        oRM.close("div");
+        //--Side bar content--//
+
+        oRM.close("div"); //Side bar body wrap
+        //--Side bar body wrap--//
 
         oRM.close("div"); //Side Bar
       },
@@ -73,15 +98,16 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
         if (this.$().hasClass("spp-collapsed")) {
           this.$().removeClass("spp-collapsed").addClass("spp-expanded");
           this.setProperty("hidden", false, false);
-          if(this.$().hasClass("spp-panel-collapsible-overlay")){
+          if (this.$().hasClass("spp-panel-collapsible-overlay")) {
             this.$().addClass("spp-overlay-revealed");
           }
         } else {
-          this.$().removeClass("spp-expanded").removeClass("spp-overlay-revealed").addClass("spp-collapsed");
+          this.$()
+            .removeClass("spp-expanded")
+            .removeClass("spp-overlay-revealed")
+            .addClass("spp-collapsed");
           this.setProperty("hidden", true, false);
         }
-
-        
       },
     }
   );

@@ -25,8 +25,7 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
         events: {},
       },
       renderer: function (oRM, oControl) {
-        oRM.openStart("div"); //Main
-        oRM.writeControlData(oControl);
+        oRM.openStart("div", oControl); //Main
         oRM
           .class("spp-panel-content")
           .class("spp-responsive-content")

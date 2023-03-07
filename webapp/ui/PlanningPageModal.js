@@ -1,4 +1,4 @@
-sap.ui.define(["sap/ui/core/Control"], function (Control) {
+sap.ui.define(["sap/ui/core/Control","com/thy/ux/annualleaveplanning/utils/event-utilities",], function (Control,eventUtilities) {
   "use strict";
 
   return Control.extend("com.thy.ux.annualleaveplanning.ui.PlanningPageModal", {
@@ -10,14 +10,14 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
           multiple: false,
         },
       },
-      events: {},
+      events: {
+      },
     },
     init: function(){
 
     },
     renderer: function (oRM, oControl) {
-      oRM.openStart("div");
-      oRM.writeControlData(oControl);
+      oRM.openStart("div", oControl); //Main
       oRM
         .class("spp-float-root")
         .class("spp-outer")
@@ -47,6 +47,10 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
         this.getContent() ? this.destroyAggregation("content") : null;
     },
     close: function(){
+        if(typeof this.getContent()?.close === "function"){
+          this.getContent()?.close();
+        }
+
         this.destroyContent();
     },
     ontap: function(oEvent){

@@ -1,6 +1,6 @@
-sap.ui.define(["./moment"], function (momentJS) {
+sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
   "use strict";
-
+  var _holidayCalendar = {};
   return {
     getMonthData: function (y, m) {
       //--Init momentJS
@@ -111,10 +111,127 @@ sap.ui.define(["./moment"], function (momentJS) {
       });
     },
 
-    decidePeriodChangeDirection: function(o,n){
+    decidePeriodChangeDirection: function (o, n) {
       var oP = moment(o.year + "-" + o.month + "-" + o.day, "YYYY-MM-DD");
       var nP = moment(n.year + "-" + n.month + "-" + n.day, "YYYY-MM-DD");
-      return oP.isAfter(nP) ? "L" :  oP.isBefore(nP) ? "R" : "";
-    }
+      return oP.isAfter(nP) ? "L" : oP.isBefore(nP) ? "R" : "";
+    },
+
+    findDatesBetweenTwoDates: function (b, e) {
+      var startDate = moment(b, "YYYY-MM-DD").clone(),
+        dates = [],
+        endDate = moment(e, "YYYY-MM-DD").clone();
+
+      while (startDate.isSameOrBefore(endDate)) {
+        dates.push(startDate.format("YYYY-MM-DD"));
+        startDate.add(1, "d");
+      }
+      return dates;
+    },
+
+    setHolidayCalendar: function (h) {
+      this._holidayCalendar = _.cloneDeep(h);
+    },
+    checkDateHoliday: function (d) {
+      var m = moment(d, "YYYY-MM-DD");
+      var y = m.format("YYYY");
+
+      //--Search in variable holidays
+      var v = _.find(this._holidayCalendar.holidayList[y], {
+        
+        month: m.format("MM"),
+        day: m.format("DD"),
+      });
+      if (!v) {
+        return null;
+      }
+      return {
+        text: v.text,
+        type: v.type,
+      };
+    },
+    getDayAttributes: function (d) {
+      var m = moment(d, "YYYY-MM-DD");
+      var y = m.format("YYYY");
+      var l = [];
+      var e = {};
+      var that = this;
+      var o = parseInt(m.format("E"),10);
+
+      var calcSpan = function(i, s, sT){
+        if(i !== 0 && s !== 1){
+          return 1;
+        }else{
+           if(s === 7 || i === sT.length -1){
+            return 1;
+           }
+           var r = sT.length - i + s - 1;
+           if(r>=7){
+              var r = 7;
+           }
+           return r - s + 1;
+        }
+      };
+
+      var calcOverflow = function(i, s, sT){
+        if(i===0 || s === 1){
+          return false;
+        }else{
+          if(s===1){
+            return false;
+          }else{
+            return true;
+          }
+        }
+      };
+
+      //--Search in holidays
+      var hL =
+        _.filter(this._holidayCalendar.holidayList[y], {
+          month: m.format("MM"),
+          day: m.format("DD"),
+        }) || [];
+      if (hL.length > 0) {
+        $.each(hL, function (i, h) {
+          var s = _.find(that._holidayCalendar.holidayInfo, [
+            "id",
+            h.belongsTo,
+          ]);
+          if (s) {
+            var sT = _.filter(that._holidayCalendar.holidayList[y], [
+              "belongsTo",
+              h.belongsTo,
+            ]);
+            var sI = _.findIndex(sT, {
+              month: m.format("MM"),
+              day: m.format("DD"),
+              belongsTo: h.belongsTo,
+            });
+
+            var aT = _.filter(that._holidayCalendar.holidayList[y], {
+              month: m.format("MM"),
+              day: m.format("DD"),
+            });
+            var aI = _.findIndex(aT, {
+              id:h.id
+            });
+
+            e = {
+              title: m.format("MMMM, ddd DD"),
+              holiday: { ...s },
+              hasPast: sI > 0,
+              hasFuture: sI < sT.length - 1,
+              hasOverflow: calcOverflow(sI, o, sT),
+              rowIndex: aI,
+              rowSpan: calcSpan(sI, o, sT)
+            };
+
+            l.push(e);
+          }
+        });
+      }
+
+      return l;
+    },
   };
 });

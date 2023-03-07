@@ -38,8 +38,7 @@ sap.ui.define(
             oControl.getMonth()
           );
 
-          oRM.openStart("div");
-          oRM.writeControlData(oControl);
+          oRM.openStart("div", oControl); //Main
           oRM.class("spp-yearview-month");
           oRM.openEnd();
 
@@ -79,9 +78,9 @@ sap.ui.define(
           oRM.openStart("div");
           oRM.class("spp-calendar-week").class("spp-calendar-weekdays");
           oRM.openEnd();
-          for (var i = 0; i < 8; i++) {
+          for (var i = 1; i < 8; i++) {
             oRM.openStart("div");
-            if (i === 0) {
+            if (i === -1) {
               oRM.class("spp-week-number-cell");
             } else {
               oRM.class("spp-yearview-weekday-cell");
@@ -90,17 +89,14 @@ sap.ui.define(
               }
             }
             oRM.openEnd();
-            if (i > 0) {
+            // if (i > 0) {
               oRM.text(moment().day(i).format("dd"));
-            }
+            // }
             oRM.close("div");
           }
           oRM.close("div");
         },
 
-        onmousedown: function(){
-
-        }
       }
     );
   }

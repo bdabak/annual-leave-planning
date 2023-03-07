@@ -36,8 +36,7 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
       },
     },
     renderer: function (oRM, oControl) {
-      oRM.openStart("div");
-      oRM.writeControlData(oControl);
+      oRM.openStart("div", oControl); //Main
       oRM
         .class("spp-widget")
         .class("spp-container")
@@ -78,16 +77,26 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
       oRM.close("div"); //Sub div
       oRM.close("div");
     },
-    onswipeleft: function () {
+    onswipeleft: function (e) {
+      return;
       if (!this.getNavigationActive()) {
+        return;
+      }
+      var t = $(e.target);
+      if(t.hasClass("spp-calendar-cell") || t.hasClass("spp-calendar-cell-inner")){
         return;
       }
       this.fireSwiped({
         direction: "L",
       });
     },
-    onswiperight: function () {
+    onswiperight: function (e) {
+      return;
       if (!this.getNavigationActive()) {
+        return;
+      }
+      var t = $(e.target);
+      if(t.hasClass("spp-calendar-cell") || t.hasClass("spp-calendar-cell-inner") ){
         return;
       }
       this.fireSwiped({

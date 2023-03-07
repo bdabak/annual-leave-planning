@@ -30,8 +30,7 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
     renderer: function (oRM, oControl) {
       var aStyles = oControl.getStyles() || new Map();
 
-      oRM.openStart("div");
-      oRM.writeControlData(oControl);
+      oRM.openStart("div", oControl); //Main
       oRM
         .class("spp-widget")
         .class("spp-container")

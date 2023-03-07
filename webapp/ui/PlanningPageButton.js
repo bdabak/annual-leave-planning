@@ -14,6 +14,11 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
             type: "string",
             bindable: true,
           },
+          raised:{
+            type: "boolean",
+            bindable: true,
+            defaultValue: false
+          },
           firstChild: {
             type: "boolean",
             bindable: true,
@@ -48,6 +53,16 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
             bindable: true,
             defaultValue: false,
           },
+          solid:{
+            type: "boolean",
+            bindable: true,
+            defaultValue: false,
+          },
+          tool: {
+            type: "boolean",
+            bindable: true,
+            defaultValue: false
+          },
         },
         aggregations: {},
         events: {
@@ -60,22 +75,27 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
         var sIcon = oControl.getIcon() || null;
         var sLabel = oControl.getLabel() || null;
         var sTooltip = oControl.getTooltip() || null;
+        var bTool = oControl.getTool() || false;
         var bHasIcon = sIcon ? true : false;
         var bHasLabel = sLabel ? true : false;
         var bHasTooltip = sTooltip ? true : false;
         var bSelected = oControl.getSelected() || false;
         var bGroupButton = oControl.getGroupButton() || false;
+        var bSolid = oControl.getSolid() || false;
+        var bRaised = oControl.getRaised() || false;
         var sTooltipAriaId = "spp-button-" + oControl.getId() + "-aria-desc-el";
         var bFirstChild = oControl.getFirstChild() || false;
         var bLastChild = oControl.getLastChild() || false;
         var aClassList = oControl.getClassList() || [];
         var aAttributes = oControl.getAttributes() || [];
 
-        oRM.openStart("button"); //Button
-        oRM.writeControlData(oControl);
-        oRM.class("spp-widget").class("spp-button");
-
+        oRM.openStart("button", oControl); //Control
+        oRM.class("spp-widget");
+        
+        
         //--Conditional classes
+        oRM.class(!bTool ? "spp-button" : "spp-tool");
+
         if (!bGroupButton) {
           oRM.class("spp-box-item");
         }
@@ -83,8 +103,16 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
         if (bHasLabel) {
           oRM.class("spp-text");
         } else {
-          oRM.class("spp-borderless").class("spp-transparent");
+          oRM.class("spp-borderless");
+          if(!bSolid){
+            oRM.class("spp-transparent");
+          }
         }
+
+        if(bRaised){
+          oRM.class("spp-raised");
+        }
+
         if (bHasIcon) {
           oRM.class("spp-icon-align-start");
         }

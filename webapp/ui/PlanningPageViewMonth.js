@@ -61,8 +61,7 @@ sap.ui.define(
         },
 
         renderer: function (oRM, oControl) {
-          oRM.openStart("div"); //Month View
-          oRM.writeControlData(oControl);
+          oRM.openStart("div", oControl); //Month
           oRM
             .class("spp-widget")
             .class("spp-container")
@@ -88,6 +87,13 @@ sap.ui.define(
           } else if (sap.ui.Device.system.desktop) {
             oRM.class("spp-responsive-large");
           }
+
+          oRM.style("--event-height", "20px");
+          oRM.style("--arrow-width", "calc(var(--event-height) / 3)");
+          oRM.style("--arrow-margin", "calc(var(--event-height) / -3)");
+          oRM.style("--week-length", "7");
+          oRM.style("min-height", "485px)");
+
           oRM.openEnd();
           oRM.openStart("div"); //Month View Body Wrapper
           oRM
@@ -190,6 +196,185 @@ sap.ui.define(
           //--Scroll sizer
 
           oRM.close("div"); // Row
+        },
+        ontouchstart: function (e) {
+          this._refreshCellStates();
+          e.preventDefault();
+          var t = $(e.target);
+          if (
+            t &&
+            t.hasClass("spp-cal-event-bar-container") &&
+            !t.hasClass("spp-other-month")
+          ) {
+            if (!this._touchEndProxy) {
+              this._touchEndProxy = $.proxy(this._ontouchend, this);
+            }
+            if (!this._touchMoveProxy) {
+              this._touchMoveProxy = $.proxy(this._ontouchmove, this);
+            }
+
+            var s = t.parents(".spp-weeks-container");
+
+            if (s.length === 0) {
+              this._refreshCellStates();
+              return;
+            }
+
+            // The if (Device.support.touch) is removed and both mouse and touch events are supported always
+            if (!this._dragStarted) {
+              this._dragStarted = true;
+              $(document).on(
+                "touchend.spp-cal-event-bar-container touchcancel.spp-cal-event-bar-container mouseup.spp-cal-event-bar-container",
+                this._touchEndProxy
+              );
+              $(document).on(
+                "touchmove.spp-cal-event-bar-container mousemove.spp-cal-event-bar-container",
+                this._touchMoveProxy
+              );
+            }
+
+            s.addClass("spp-draggable-active").addClass(
+              "spp-draggable-started"
+            );
+
+            var c = t.parents(".spp-calendar-cell");
+
+            c.addClass("spp-editing").addClass("spp-editing-start");
+          }
+        },
+        _ontouchmove: function (e) {
+          if (e.isMarked("delayedMouseEvent")) {
+            return;
+          }
+
+          e.preventDefault();
+          var t = $(e.target);
+
+          if (t && t.hasClass("spp-cal-event-bar-container")) {
+            if (!this._dragStarted) {
+              this._refreshCellStates();
+              return;
+            }
+
+            if (this._currentElementId === t.attr("id")) {
+              return;
+            }
+
+            this._currentElementId = _.clone(t.attr("id"));
+
+            var b = $(".spp-editing-start");
+            $(".spp-editing-end")
+              .removeClass("spp-editing")
+              .removeClass("spp-editing-end");
+
+            var s = t.parents(".spp-calendar-cell");
+            s.addClass(".spp-editing").addClass("spp-editing-end");
+
+            // console.log(this._currentElementId);
+            // console.log(t.attr("id"));
+
+            var dates =
+              dateUtilities.findDatesBetweenTwoDates(
+                b.data("date"),
+                s.data("date")
+              ) || [];
+
+            if (dates.length === 0) {
+              this._refreshCellStates();
+              return;
+            }
+
+            this._createCalendarEvent(dates);
+          } else {
+            return;
+          }
+        },
+
+        _createCalendarEvent: function (dates) {
+          var t = this.$();
+          $.each(dates, function (i, d) {
+            var c = t.find(`.spp-calendar-cell[data-date="${d}"]`).first().control();
+            if(c[0]){
+              c[0].createEvent(d,dates);
+            }
+            // console.log(c[0]);
+          });
+        },
+
+        _ontouchend: function (e) {
+          if (e.isMarked("delayedMouseEvent")) {
+            return;
+          }
+          e.preventDefault();
+          var b = $(".spp-editing-start");
+          var s = $(".spp-editing-end");
+
+          var dates =
+            dateUtilities.findDatesBetweenTwoDates(
+              b.data("date"),
+              s.data("date")
+            ) || [];
+
+          if (dates.length === 0) {
+            this._refreshCellStates();
+            return;
+          }
+
+          //Unbind events
+          this._unbindTouchEvents();
+
+          if (!this._dragStarted) {
+            this._refreshCellStates();
+            return;
+          }
+
+          $(".spp-draggable-active, .spp-draggable-started").removeClass(
+            "spp-draggable-active spp-draggable-started"
+          );
+        },
+        _handleYearChanged: function (c, e, o) {
+          var p = o.period;
+          if (this.getYear() === p.year) {
+            return;
+          }
+          var y = parseInt(p.year, 10);
+          if (y) {
+            this.setYear(y);
+          }
+        },
+        _refreshCellStates: function () {
+          this._currentElementId = null;
+          this._dragStarted = false;
+          $(".spp-calendar-cell")
+            .removeClass("spp-editing")
+            .removeClass("spp-editing-start")
+            .removeClass("spp-editing-end");
+          $(".spp-draggable-active, .spp-draggable-started").removeClass(
+            "spp-draggable-active spp-draggable-started"
+          );
+          this._unbindTouchEvents();
+        },
+        _unbindTouchEvents: function () {
+          $(document).off(
+            "touchend.spp-cal-event-bar-container touchcancel.spp-cal-event-bar-container mouseup.spp-cal-event-bar-container",
+            this._touchEndProxy
+          );
+          $(document).off(
+            "touchmove.spp-cal-event-bar-container mousemove.spp-cal-event-bar-container",
+            this._touchMoveProxy
+          );
+        },
+
+        _handleCreateEventCancelled: function () {
+          this._refreshCellStates();
+          Swal.fire({
+            position: "bottom",
+            icon: "info",
+            title: "Yeni plan iptal edildi",
+            showConfirmButton: false,
+            toast: true,
+            timer: 2000,
+          });
         },
       }
     );

@@ -42,8 +42,7 @@ sap.ui.define(
           );
         },
         renderer: function (oRM, oControl) {
-          oRM.openStart("div");
-          oRM.writeControlData(oControl);
+          oRM.openStart("div", oControl); //Main
           oRM
             .class("spp-widget")
             .class("spp-container")

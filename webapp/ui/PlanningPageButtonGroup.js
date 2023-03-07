@@ -33,8 +33,7 @@ sap.ui.define(["sap/ui/core/Control",
       },
 
       renderer: function (oRM, oControl) {
-        oRM.openStart("div"); //Button Group
-        oRM.writeControlData(oControl);
+        oRM.openStart("div", oControl); //Button Group
         oRM
           .class("spp-widget")
           .class("spp-container")

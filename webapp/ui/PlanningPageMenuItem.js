@@ -34,8 +34,7 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
       },
       renderer: function (oRM, oControl) {
         var bSelected = oControl.getSelected();
-        oRM.openStart("div"); // Menu Item
-        oRM.writeControlData(oControl);
+        oRM.openStart("div", oControl); //Menu Item
         oRM
           .class("spp-widget")
           .class("spp-menuitem");

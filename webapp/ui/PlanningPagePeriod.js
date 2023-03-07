@@ -91,8 +91,7 @@ sap.ui.define(
         },
 
         renderer: function (oRM, oControl) {
-          oRM.openStart("div"); //Period
-          oRM.writeControlData(oControl);
+          oRM.openStart("div", oControl); //Period
           oRM
             .class("spp-html")
             .class("spp-widget")

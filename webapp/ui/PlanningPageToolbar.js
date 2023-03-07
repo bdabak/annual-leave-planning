@@ -16,8 +16,7 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
         events: {},
       },
       renderer: function (oRM, oControl) {
-        oRM.openStart("div"); //Toolbar
-        oRM.writeControlData(oControl);
+        oRM.openStart("div", oControl); //Toolbar
         oRM
           .class("spp-box-center")
           .class("spp-toolbar-content")

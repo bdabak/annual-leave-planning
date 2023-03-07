@@ -169,7 +169,15 @@
 :root,
 :host {
   --b-fa-font-solid: normal 900 1em/1 "Font Awesome 6 Free";
+  --color-blue:#3183fe;
+  --color-green:#27ca37;
+  --color-orange:#feac31;
+  --color-orange-hover:#e49e34;
+  --color-deep-orange:#ff7043;
+  --color-deep-orange-hover:#df572e;
 }
+
+
 
 @font-face {
   font-family: "Font Awesome 6 Free";
@@ -21913,11 +21921,40 @@ button.spp-button.spp-recurrencelegendbutton {
 }
 
 .spp-sch-blue {
-  background-color: #3183fe;
+  background-color: var(--color-blue);
 }
 
+
 .spp-sch-foreground-blue {
-  color: #3183fe;
+  color: var(--color-blue);
+}
+
+.spp-sch-green{
+  background-color: var(--color-green);
+}
+
+.spp-sch-foreground-green {
+  color: var(--color-green);
+}
+
+
+.spp-sch-orange{
+  background-color: var(--color-orange);
+  color: #333 !important;
+}
+
+.spp-sch-foreground-orange {
+  color: var(--color-orange);
+}
+
+.spp-sch-deep-orange {
+  background-color: var(--color-deep-orange);
+  color: #333 !important;
+}
+
+
+.spp-sch-foreground-deep-orange {
+  color: var(--color-deep-orange)
 }
 
 .spp-sch-cyan {
@@ -21944,13 +21981,6 @@ button.spp-button.spp-recurrencelegendbutton {
   color: #31feac;
 }
 
-.spp-sch-green {
-  background-color: #27ca37;
-}
-
-.spp-sch-foreground-green {
-  color: #27ca37;
-}
 
 .spp-sch-lime {
   background-color: #76e62c;
@@ -21968,21 +21998,6 @@ button.spp-button.spp-recurrencelegendbutton {
   color: #ffeb3b;
 }
 
-.spp-sch-orange {
-  background-color: #feac31;
-}
-
-.spp-sch-foreground-orange {
-  color: #feac31;
-}
-
-.spp-sch-deep-orange {
-  background-color: #ff7043;
-}
-
-.spp-sch-foreground-deep-orange {
-  color: #ff7043;
-}
 
 .spp-sch-gray {
   background-color: #a0a0a0;
@@ -38341,7 +38356,7 @@ button.spp-button.spp-recurrencelegendbutton {
 }
 
 .spp-solid-bar .spp-cal-event {
-  background-color: #59b53b;
+  background-color: var(--cal-event-color);
 }
 
 .spp-cal-event-desc-complex {
@@ -38697,30 +38712,6 @@ button.spp-button.spp-recurrencelegendbutton {
 }
 
 
-.spp-sidebar:not(.spp-collapsed) {
-  width: 18em;
- 
-}
-.spp-sidebar.spp-collapsed {
-  width: 0px;
-  display:none !important;
-}
-
-.spp-sidebar.spp-expanded {
-  animation: animateFromLeft 0.3s ease-in-out;
-  background-color: yellow;
-}
-
-@keyframes animateFromLeft {
-  0% {
-    width:0;
-    opacity: 0.9;
-  }
-
-  100% {
-    opacity: 1;
-  }
-}
 
 .spp-sidebar .spp-sidebar-content {
   align-items: stretch;
@@ -38903,8 +38894,7 @@ button.spp-button.spp-recurrencelegendbutton {
 }
 
 .spp-yearview-content .spp-yearview-month {
-  flex-basis: calc(25% - 0.5em);
-  /* flex-basis: calc(25% - 1em); */
+  flex-basis: calc(25% - 1em);
   min-width: 16em;
   display: flex;
   flex-flow: column nowrap;
@@ -38918,7 +38908,7 @@ button.spp-button.spp-recurrencelegendbutton {
   color: #777;
   max-width: 15.3846153846em;
   border: 0 none;
-  text-align: start;
+  text-align: center;
   background-color: transparent;
   font-family: inherit;
   font-weight: inherit;
@@ -39897,6 +39887,29 @@ button.spp-button.spp-recurrencelegendbutton {
   color: #8ee997;
 }
 
+
+.spp-sidebar:not(.spp-collapsed) {
+  width: 18em;
+ 
+}
+.spp-sidebar.spp-collapsed {
+  display:none !important;
+}
+
+.spp-sidebar.spp-expanded {
+  animation: animateFromLeft 0.2s ease-in-out;
+  background-color: yellow;
+}
+
+@keyframes animateFromLeft {
+  0% {
+    width:0;
+  }
+
+  100% {
+  }
+}
+
 .spp-overlay {
   position: absolute;
   top: 0;
@@ -39928,3 +39941,41 @@ button.spp-button.spp-recurrencelegendbutton {
 .spp-hidden-view {
   display: block;
 }
+
+
+.spp-planned-leave:not(.spp-other-month)  {
+  background-color: var(--color-blue);
+  color: #1a1a1a !important;
+}
+
+.spp-annual-leave:not(.spp-other-month) {
+  background-color: var(--color-green);
+  color: #1a1a1a !important;
+}
+
+.spp-holiday-half-day:not(.spp-other-month) {
+  background-color: var(--color-orange);
+  color: #1a1a1a !important;
+}
+
+.spp-holiday-all-day:not(.spp-other-month) {
+  background-color: var(--color-orange);
+  color: #1a1a1a !important;
+}
+
+.spp-holiday-half-day:not(.spp-other-month):hover .spp-calendar-cell-inner {
+  background-color: var(--color-orange-hover) !important;
+}
+.spp-holiday-all-day:not(.spp-other-month):hover .spp-calendar-cell-inner {
+  background-color: var(--color-orange-hover) !important;
+}
+
+
+.spp-holiday-half-day.spp-other-month {
+  background-color: rgb(219, 219, 219);
+}
+
+.spp-holiday-all-day.spp-other-month  {
+  background-color: rgb(219, 219, 219);
+}
+
