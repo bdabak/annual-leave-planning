@@ -2,6 +2,30 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
   "use strict";
   var _holidayCalendar = {};
   return {
+    formatDate: function(d){
+      //--Init momentJS
+      this.initializeMoment();
+      
+      var m = moment(d, "YYYYMMDD"); 
+
+      return m.format("DD.MM.YYYY");
+    },
+    convertDateToPeriod: function(d){
+      //--Init momentJS
+      this.initializeMoment();
+      
+      var m = moment(d, "YYYY-MM-DD"); 
+
+      return this.getPeriod(m);
+    },
+    convertPeriodToDate: function(p){
+      //--Init momentJS
+      this.initializeMoment();
+      
+      var m = moment(p.year + "-" + p.month + "-" + p.day, "YYYY-MM-DD");
+
+      return m.format("YYYY-MM-DD");
+    },
     getMonthData: function (y, m) {
       //--Init momentJS
       this.initializeMoment();
@@ -92,12 +116,16 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
       };
     },
     formatPeriodText: function (p, a) {
+      //--Init momentJS
+      this.initializeMoment();
       var m = moment(p.year + "-" + p.month + "-" + p.day, "YYYY-MM-DD");
       switch (a) {
         case "Y":
           return m.format("YYYY");
         case "M":
           return m.format("MMMM YYYY");
+        case "m":
+          return m.format("MMMM");
       }
     },
 
@@ -138,7 +166,6 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
 
       //--Search in variable holidays
       var v = _.find(this._holidayCalendar.holidayList[y], {
-        
         month: m.format("MM"),
         day: m.format("DD"),
       });
@@ -156,30 +183,30 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
       var l = [];
       var e = {};
       var that = this;
-      var o = parseInt(m.format("E"),10);
+      var o = parseInt(m.format("E"), 10);
 
-      var calcSpan = function(i, s, sT){
-        if(i !== 0 && s !== 1){
+      var calcSpan = function (i, s, sT) {
+        if (i !== 0 && s !== 1) {
           return 1;
-        }else{
-           if(s === 7 || i === sT.length -1){
+        } else {
+          if (s === 7 || i === sT.length - 1) {
             return 1;
-           }
-           var r = sT.length - i + s - 1;
-           if(r>=7){
-              var r = 7;
-           }
-           return r - s + 1;
+          }
+          var r = sT.length - i + s - 1;
+          if (r >= 7) {
+            var r = 7;
+          }
+          return r - s + 1;
         }
       };
 
-      var calcOverflow = function(i, s, sT){
-        if(i===0 || s === 1){
+      var calcOverflow = function (i, s, sT) {
+        if (i === 0 || s === 1) {
           return false;
-        }else{
-          if(s===1){
+        } else {
+          if (s === 1) {
             return false;
-          }else{
+          } else {
             return true;
           }
         }
@@ -213,7 +240,7 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
               day: m.format("DD"),
             });
             var aI = _.findIndex(aT, {
-              id:h.id
+              id: h.id,
             });
 
             e = {
@@ -223,9 +250,8 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
               hasFuture: sI < sT.length - 1,
               hasOverflow: calcOverflow(sI, o, sT),
               rowIndex: aI,
-              rowSpan: calcSpan(sI, o, sT)
+              rowSpan: calcSpan(sI, o, sT),
             };
-
             l.push(e);
           }
         });
