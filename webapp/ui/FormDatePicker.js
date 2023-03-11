@@ -83,7 +83,7 @@ sap.ui.define(
       },
 
       handleValueSelection: function(v){
-        this.setValue(v);
+        this.setValue(dateUtilities.formatDate(v));
         this.closeDatePicker();
       },  
 
@@ -93,6 +93,7 @@ sap.ui.define(
           var c = $("#"+a).control();
           if(c && c.length > 0){
             c[0].destroy();
+            this._dateSelectionActive = false;
             this.removeAssociation("datePickerWidget", a, true);
           }
         }

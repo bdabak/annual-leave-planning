@@ -1,0 +1,11 @@
+<core:FragmentDefinition xmlns="com.thy.ux.annualleaveplanning.ui"
+    xmlns:core="sap.ui.core">
+    <PageContent id="LeaveManagementPageContent" planningMode="{mode}">
+        <sidebar>
+            <core:Fragment fragmentName="com.thy.ux.annualleaveplanning.view.fragment.PageSidebar" type="XML" />
+        </sidebar>
+        <viewContainer>
+            <core:Fragment fragmentName="com.thy.ux.annualleaveplanning.view.fragment.PageViews" type="XML" />
+        </viewContainer>
+    </PageContent>
+</core:FragmentDefinition>

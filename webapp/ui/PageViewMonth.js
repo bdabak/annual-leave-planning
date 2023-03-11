@@ -44,13 +44,7 @@ sap.ui.define(
         },
 
         init: function () {
-          eventUtilities.subscribeEvent(
-            "PlanningCalendar",
-            "PeriodChanged",
-            this.onPeriodChanged,
-            this
-          );
-
+        
           //--Register event
           eventUtilities.subscribeEvent(
             "PlanningCalendar",
@@ -69,24 +63,6 @@ sap.ui.define(
             mode: "M"
           });
           this.setAggregation("_weeks", wL);
-        },
-
-        onPeriodChanged: function (c, e, o) {
-          var p = o.period;
-          if (
-            this.getYear() === parseInt(p.year, 10) &&
-            this.getMonth() === parseInt(p.month, 10)
-          ) {
-            return;
-          }
-          var y = parseInt(p.year, 10);
-          var m = parseInt(p.month, 10);
-          if (y) {
-            this.setProperty("year", y, true);
-          }
-          if (m) {
-            this.setProperty("month", m, false);
-          }
         },
 
         renderer: function (oRM, oControl) {
@@ -245,6 +221,11 @@ sap.ui.define(
           oRM.close("div");
         },
         ontouchstart: function (e) {
+          if (e.which == 2 || e.which == 3) {
+            this._refreshCellStates();
+            return;
+          }
+
           this._refreshCellStates();
           e.preventDefault();
           var t = $(e.target);
@@ -267,6 +248,8 @@ sap.ui.define(
               return;
             }
 
+            e.setMarked();
+            
             // The if (Device.support.touch) is removed and both mouse and touch events are supported always
             if (!this._dragStarted) {
               this._dragStarted = true;
@@ -394,11 +377,11 @@ sap.ui.define(
         _refreshCellStates: function () {
           $(".spp-is-creating").each(function (i, e) {
             var c = $(e).control();
-            if (c) {
+            if (c && c.length > 0) {
               try{
                 c[0].destroy();
               }catch(x){
-                debugger;
+                
               }
             }
           });

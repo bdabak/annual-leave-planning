@@ -2,19 +2,70 @@ sap.ui.define(
   [
     "sap/ui/core/mvc/Controller",
     "sap/ui/model/json/JSONModel",
+    "sap/ui/core/Fragment",
+    "com/thy/ux/annualleaveplanning/ui/Dialog",
+    "com/thy/ux/annualleaveplanning/ui/DialogHeader",
+    "com/thy/ux/annualleaveplanning/ui/Toolbar",
+    "com/thy/ux/annualleaveplanning/ui/Button",
+    "com/thy/ux/annualleaveplanning/ui/EventEditor",
+    "com/thy/ux/annualleaveplanning/ui/FormField",
+    "com/thy/ux/annualleaveplanning/ui/FormLabel",
+    "com/thy/ux/annualleaveplanning/ui/FormInput",
+    "com/thy/ux/annualleaveplanning/ui/FormDatePicker",
     "com/thy/ux/annualleaveplanning/utils/date-utilities",
+    "com/thy/ux/annualleaveplanning/utils/event-utilities",
   ],
   /**
    * @param {typeof sap.ui.core.mvc.Controller} Controller
    */
-  function (Controller, JSONModel, dateUtilities) {
+  function (
+    Controller,
+    JSONModel,
+    Fragment,
+    Dialog,
+    DialogHeader,
+    Toolbar,
+    Button,
+    EventEditor,
+    Field,
+    Label,
+    Input,
+    DatePicker,
+    dateUtilities,
+    eventUtilities
+  ) {
     "use strict";
 
     return Controller.extend(
       "com.thy.ux.annualleaveplanning.controller.PlanView",
       {
         onInit: function () {
-          var oViewModel = new JSONModel({});
+          var oViewModel = new JSONModel({
+            page: {
+              mode: "Y",
+              period: dateUtilities.getToday(),
+              tabIndex: "0",
+              legend: [
+                {
+                  type: "holiday",
+                  text: "Resmi tatiller",
+                  color: "spp-sch-foreground-orange",
+                },
+                {
+                  type: "plan",
+                  text: "Planlanan izin",
+                  color: "spp-sch-foreground-blue",
+                },
+                {
+                  type: "leave",
+                  text: "Yıllık izin",
+                  color: "spp-sch-foreground-green",
+                },
+              ],
+            },
+          });
+
+          this.getView().setModel(oViewModel, "planModel");
 
           var holidayCalendar = {
             holidayList: {
@@ -79,6 +130,7 @@ sap.ui.define(
                   id: 61,
                   month: "05",
                   day: "01",
+                  type: "1",
                   text: "Emek ve Dayanışma Günü",
                   belongsTo: "MAY01",
                 },
@@ -189,6 +241,398 @@ sap.ui.define(
           };
 
           dateUtilities.setHolidayCalendar(_.cloneDeep(holidayCalendar));
+
+          /* Subscribe Event Handlers */
+          eventUtilities.subscribeEvent(
+            "PlanningCalendar",
+            "CreateEvent",
+            this._handleCreateEvent,
+            this
+          );
+
+          //--Subscribe to event
+          eventUtilities.subscribeEvent(
+            "PlanningCalendar",
+            "DisplayEventWidget",
+            this._handleDisplayEventWidget,
+            this
+          );
+        },
+
+        /* Event handlers*/
+        onToggleSidebar: function (e) {
+          this.getById("LeaveManagementPageSidebar").toggleState();
+        },
+
+        onPeriodChange: function (e) {
+          var s = e.getSource();
+          var b = s.data("period");
+          this._handlePeriodChange(b);
+        },
+
+        onViewChange: function (e) {
+          var s = e.getSource();
+          this._handleViewChange(s);
+        },
+        onViewChangeMobile: function (e) {
+          var s = e.getParameter("selectedItem");
+          this._handleViewChange(s);
+        },
+
+        onMobileViewMenu: function (e) {
+          var r = e.getSource();
+          var that = this;
+          var o = $(r.getDomRef());
+          if (!o) {
+            return;
+          }
+
+          var doOpen = function () {
+            var cO = o.offset();
+            var cH = o.outerHeight();
+            var w = 120;
+            var x = cO.left - (w - o.outerWidth());
+            var y = cO.top + cH;
+            var aStyles = new Map([
+              ["width", `${w}px`],
+              ["transform", `matrix(1, 0, 0, 1, ${x}, ${y})`],
+            ]);
+
+            r.setSelected(true);
+            this._oMobileViewMenu.setStyles(aStyles);
+            // this.getView().addDependent(this._oMobileViewMenu, this);
+            this.getModal().openBy(this._oMobileViewMenu);
+          }.bind(this);
+
+          this._oMobileViewMenu = Fragment.load({
+            id: this.getView().getId(),
+            name: "com.thy.ux.annualleaveplanning.view.fragment.MobileViewMenu",
+            controller: this,
+          }).then(
+            function (oMenu) {
+              this._oMobileViewMenu = oMenu;
+              doOpen();
+              return this._oMobileViewMenu;
+            }.bind(this)
+          );
+        },
+
+        onViewMenuItemSelected: function (e) {
+          var s = e.getParameter("selectedItem");
+
+          //--Mobile View Menu
+          this.getById("MobileViewMenuButton")?.setSelected(false);
+
+          //--Close modal--//
+          this.getModal().close();
+
+          //--View Change Handler
+          this._handleViewChange(s);
+        },
+
+        /* Helper methods */
+        getModal: function () {
+          return this.getById("LeaveManagementPageModal");
+        },
+        getById: function (id) {
+          return this.getView().byId(id);
+        },
+
+        getModel: function (m) {
+          return this.getView().getModel(m);
+        },
+
+        getPageProperty: function (p) {
+          return this.getModel("planModel").getProperty("/page/" + p);
+        },
+        setPageProperty: function (p, v) {
+          return this.getModel("planModel").setProperty("/page/" + p, v);
+        },
+        getPageProps: function () {
+          return this.getModel("planModel").getProperty("/page");
+        },
+        setPageProps: function (o) {
+          return this.getModel("planModel").setProperty("/page", { ...o });
+        },
+        getPeriod: function () {
+          return this.getPageProperty("period");
+        },
+        setPeriod: function (p) {
+          return this.setPageProperty("period", p);
+        },
+        getMode: function () {
+          return this.getPageProperty("mode");
+        },
+        setMode: function (m) {
+          return this.setPageProperty("mode", m);
+        },
+
+        getTabIndex: function () {
+          return this.getPageProperty("tabIndex");
+        },
+        setTabIndex: function (i) {
+          return this.setPageProperty("tabIndex", i);
+        },
+
+        /* Private methods */
+        _handlePeriodChange: function (b) {
+          var p = this.getPeriod();
+          var x = { ...p };
+          var m = this.getMode();
+          var that = this;
+          switch (b) {
+            case "T": //Today
+              p = dateUtilities.getToday();
+              break;
+            case "N": //Next period
+              p = dateUtilities.getNextPeriod(p, m);
+              break;
+            case "P": //Previous period
+              p = dateUtilities.getPrevPeriod(p, m);
+              break;
+          }
+
+          var d = dateUtilities.decidePeriodChangeDirection(x, p);
+
+          this.setPeriod(p);
+
+          this._publishPeriodChanged(
+            jQuery.proxy(that._publishViewChanged, that, null, true, d),
+            d
+          );
+        },
+
+        _publishPeriodChanged: function (fnCb, d) {
+          var p = this.getPeriod();
+          var m = this.getMode();
+          var i = this.getTabIndex();
+          eventUtilities.publishEvent("PlanningCalendar", "PeriodChanged", {
+            period: { ...p },
+            mode: m,
+            direction: d,
+            tabIndex: i,
+            fnCallback: fnCb,
+          });
+        },
+
+        _publishViewChanged: function (fnCb, e, d) {
+          var i = this.getTabIndex();
+          eventUtilities.publishEvent("PlanningCalendar", "ViewChanged", {
+            tabIndex: i,
+            transitionEffect: e,
+            direction: d,
+            fnCallback: fnCb ? fnCb : null,
+          });
+        },
+
+        _handleViewChange: function (s) {
+          var that = this;
+          if (!s) {
+            return;
+          }
+          var i = s.data("tab-index");
+          var m = s.data("view-mode");
+          var d = "right"; //by default animate from right direction
+
+          if (this.getTabIndex() < i) {
+            d = "R";
+          } else {
+            d = "L";
+          }
+
+          var oPage = this.getPageProps();
+
+          oPage.tabIndex = i;
+          oPage.mode = m;
+
+          this.setPageProps(oPage);
+
+          this._publishViewChanged(
+            jQuery.proxy(that._handleViewChangeCompleted, that),
+            false,
+            d
+          );
+        },
+
+        _handleViewChangeCompleted: function () {
+          var i = this.getTabIndex();
+          var p = this.getPeriod();
+          var m = this.getMode();
+          eventUtilities.publishEvent(
+            "PlanningCalendar",
+            "ViewChangeCompleted",
+            {
+              period: { ...p },
+              mode: m,
+              tabIndex: i,
+            }
+          );
+        },
+        _handleCreateEvent: function (c, e, o) {
+          if (o && o.element) {
+            this._openCreateEventDialog(o.element, o.period);
+          }
+        },
+
+        _openCreateEventDialog: function (r, p) {
+          var that = this;
+          var o = $(r);
+          if (!o) {
+            return;
+          }
+          var eO = o.offset(); //Element position
+          var eH = o.outerHeight(); //Element height
+          var eW = o.outerWidth();
+
+          var aStyles = new Map([
+            ["transform", `matrix(1, 0, 0, 1, ${eO.left}, -100%)`],
+            ["--date-time-length", "14em"],
+            ["--date-width-difference", "1em"],
+          ]);
+
+          var oDialog = new Dialog({
+            header: new DialogHeader({
+              title: "Yeni Plan",
+              closed: function () {
+                oDialog.close();
+              },
+            }),
+            styles: aStyles,
+            elementPosition: {
+              offset: { ...eO },
+              outerHeight: eH,
+              outerWidth: eW,
+            },
+            classList: ["spp-eventeditor"],
+            content: this._createEventEditor(p),
+            closed: function () {
+              //--Codes that perform operations after dialog close
+              that._createEventCancelled();
+            },
+            cancelled: function () {
+              //--Modal closed cancel event
+              that._cancelCreateEvent();
+            },
+          });
+
+          this.getModal().openBy(oDialog);
+        },
+        _createEventCancelled: function () {
+          this._cancelCreateEvent();
+          this.getModal().close();
+        },
+        _cancelCreateEvent: function () {
+          eventUtilities.publishEvent(
+            "PlanningCalendar",
+            "CreateEventCancelled",
+            null
+          );
+        },
+        _createEventEditorToolbar() {
+          var that = this;
+          return new Toolbar({
+            items: [
+              new Button({
+                raised: true,
+                label: "Kaydet",
+                firstChild: true,
+                classList: ["spp-blue"],
+                press: function () {
+                  //TODO
+                },
+              }),
+              new Button({
+                lastChild: true,
+                label: "İptal",
+                press: function () {
+                  that._createEventCancelled();
+                },
+              }),
+            ],
+          });
+        },
+        _callDatePicker: function (e) {
+          var s = e.getParameter("sourceField");
+          var t = e.getParameter("targetField");
+          var p = e.getParameter("period");
+          var o = t.$();
+          if (o && o?.length > 0) {
+            var eO = o.offset(); //Element position
+            var eH = o.outerHeight(); //Element height
+            var eW = o.outerWidth();
+
+            var oDPW = new DatePickerWidget({
+              floating: true,
+              period: p,
+              select: function (e) {
+                var d = e.getParameter("selectedDate");
+                if (s && typeof s.handleValueSelection === "function") {
+                  s.handleValueSelection(d);
+                }
+              },
+              selectedDate: dateUtilities.convertPeriodToDate(p),
+              elementPosition: {
+                offset: { ...eO },
+                outerHeight: eH,
+                outerWidth: eW,
+              },
+            });
+
+            s.registerDatePickerWidget(oDPW);
+
+            this.getModal().openBy(oDPW);
+          }
+        },
+        _createEventEditor: function (p) {
+          return new EventEditor({
+            toolbar: this._createEventEditorToolbar(),
+            items: [
+              new Field({
+                firstChild: true,
+                containsFocus: true,
+                empty: true,
+                // noHint: true,
+                label: new Label({
+                  text: "Tür",
+                  for: this.getView().getId() + "_input_event_type",
+                }),
+                field: new Input({
+                  id: this.getView().getId() + "_input_event_type",
+                  placeHolder: "Türü seçiniz",
+                  name: "İzin türü seçiniz",
+                }),
+              }),
+              new Field({
+                containsFocus: true,
+                empty: p?.startDate ? false : true,
+                label: new Label({
+                  text: "Başlangıç",
+                  for: this.getView().getId() + "_datepicker_start_date",
+                }),
+                field: new DatePicker({
+                  id: this.getView().getId() + "_datepicker_start_date",
+                  name: "BeginDate",
+                  value: dateUtilities.formatDate(p.startDate),
+                  selectDate: this._callDatePicker.bind(this),
+                }),
+              }),
+              new Field({
+                lastChild: true,
+                containsFocus: true,
+                empty: p?.endDate ? false : true,
+                label: new Label({
+                  text: "Bitiş",
+                  for: this.getView().getId() + "_datepicker_end_date",
+                }),
+                field: new DatePicker({
+                  id: this.getView().getId() + "_datepicker_end_date",
+                  name: "EndDate",
+                  value: dateUtilities.formatDate(p.endDate),
+                  selectDate: this._callDatePicker.bind(this),
+                }),
+              }),
+            ],
+          });
         },
       }
     );

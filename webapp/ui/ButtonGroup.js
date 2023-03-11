@@ -15,6 +15,7 @@ sap.ui.define(["sap/ui/core/Control",
           },
         },
         events: {},
+        defaultAggregation: "buttons"
       },
 
       init: function () {

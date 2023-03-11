@@ -18,18 +18,18 @@ sap.ui.define(
               bindable: true,
               defaultValue: false,
             },
-            period:{
-              type:"object",
-              bindable: true
+            period: {
+              type: "object",
+              bindable: true,
             },
-            elementPosition:{
-              type:"object",
-              bindable: true
+            elementPosition: {
+              type: "object",
+              bindable: true,
             },
-            selectedDate:{
-              type:"string",
-              bindable: true
-            }
+            selectedDate: {
+              type: "string",
+              bindable: true,
+            },
           },
           aggregations: {
             _widgetHeader: {
@@ -52,50 +52,48 @@ sap.ui.define(
           },
         },
 
-         /**
-       * @override
-       */
-      onAfterRendering: function () {
-        Control.prototype.onAfterRendering.apply(this, arguments);
-        if(!this.getFloating()){
-          return;
-        }
-        var oEP = this.getElementPosition() || null;
+        /**
+         * @override
+         */
+        onAfterRendering: function () {
+          Control.prototype.onAfterRendering.apply(this, arguments);
+          if (!this.getFloating()) {
+            return;
+          }
+          var oEP = this.getElementPosition() || null;
 
-        if (!oEP) {
-          return;
-        }
+          if (!oEP) {
+            return;
+          }
 
-        var t = this.$();
-        var eO = t.offset();
-        var eOH = t.outerHeight();
-        var eOW = t.outerWidth();
-        var cW = $(window);
-        var x,y;
+          var t = this.$();
+          var eO = t.offset();
+          var eOH = t.outerHeight();
+          var eOW = t.outerWidth();
+          var cW = $(window);
+          var x, y;
 
-        var tH = oEP.offset.top;
-        var bH = cW.height() - ( oEP.offset.top + oEP.outerHeight);
+          var tH = oEP.offset.top;
+          var bH = cW.height() - (oEP.offset.top + oEP.outerHeight);
 
-        if(tH > bH){
-          y = oEP.offset.top - eOH - 3 ;
-        }else{
-          y = oEP.offset.top + oEP.outerHeight + 5 ;
-        }
+          if (tH > bH) {
+            y = oEP.offset.top - eOH - 10;
+          } else {
+            y = oEP.offset.top + oEP.outerHeight + 5;
+          }
 
-        var fX =  oEP.offset.left + eOW ;
+          var fX = oEP.offset.left + eOW;
 
-        if(fX > cW.width()){
-          x = oEP.offset.left - (fX - cW.width());
-        }else{
-          x = oEP.offset.left;
+          if (fX > cW.width()) {
+            x = oEP.offset.left - (fX - cW.width());
+          } else {
+            x = oEP.offset.left;
+          }
 
-        }
+          var s = `transform: translate(${x}px, ${y}px);`;
 
-        var s = `transform: translate(${x}px, ${y}px);`;
-    
-        t.removeAttr("style").attr("style",s);
-
-      },
+          t.removeAttr("style").attr("style", s);
+        },
 
         init: function () {
           var wH = new WidgetHeader({
@@ -110,11 +108,7 @@ sap.ui.define(
           var d = e.getParameter("direction");
           var t = e.getParameter("term");
           var p = this.getPeriod();
-          // var p = {
-          //   year: this.getYear().toString(),
-          //   month: this.getMonth().toString().padStart(2, "0"),
-          //   day: this.getDay() ? this.getDay().toString().padStart(2, "0") : "01"
-          // };
+         
           switch (d) {
             case "+": //Next period
               p = dateUtilities.getNextPeriod(p, t);
@@ -188,20 +182,27 @@ sap.ui.define(
           oRM.close("div"); //Main date picker
         },
 
-        ontap: function(e){
+        ontap: function (e) {
           e.preventDefault();
           var t = $(e.target);
-          
-          if(t.hasClass("spp-calendar-cell") || t.hasClass("spp-datepicker-cell-inner")){
-            var c = t.hasClass("spp-datepicker-cell-inner") ? t.parent(".spp-calendar-cell") : t;
-            if(c && c.length === 1){
-              this.setSelectedDate(c.data("date"));
-              this.fireSelect({
-                selectedDate: c.data("date")
-              });
+
+          if (
+            t.hasClass("spp-calendar-cell") ||
+            t.hasClass("spp-datepicker-cell-inner")
+          ) {
+            var c = t.hasClass("spp-datepicker-cell-inner")
+              ? t.parent(".spp-calendar-cell")
+              : t;
+            if (c && c.length === 1) {
+              this.setSelectedDate(dateUtilities.formatDate(c.data("date")));
+              if (this.getFloating()) {
+                this.fireSelect({
+                  selectedDate: c.data("date"),
+                });
+              }
             }
           }
-        }
+        },
       }
     );
   }

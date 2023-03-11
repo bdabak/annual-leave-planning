@@ -1,0 +1,14 @@
+<core:FragmentDefinition xmlns="com.thy.ux.annualleaveplanning.ui"
+    xmlns:core="sap.ui.core">
+    <PageSidebar id="LeaveManagementPageSidebar" hidden="false">
+        <items>
+            <Legend id="LeaveManagementPageLegend" items="{planModel>legend}">
+                <items>
+                    <LegendItem
+                        color="{planModel>color}"
+                        text="{planModel>text}" />
+                </items>
+            </Legend>
+        </items>
+    </PageSidebar>
+</core:FragmentDefinition>

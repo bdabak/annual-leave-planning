@@ -1,0 +1,76 @@
+<core:FragmentDefinition xmlns="com.thy.ux.annualleaveplanning.ui"
+    xmlns:core="sap.ui.core">
+    <PageHeader id="LeaveManagementPageHeader">
+        <toolbar>
+            <Toolbar id="LeaveManagementPageHeaderToolbar">
+                <items>
+                    <Button id="ToggleSidebarButton" icon="spp-icon-menu" firstChild="true"
+                    press=".onToggleSidebar"
+                        >
+                        <customData>
+                            <core:CustomData key="ref" value="toggleSideBar" writeToDom="true" />
+                        </customData>
+                    </Button>
+                    <Button id="TodayButton" icon="spp-icon-calendar-day" label="{i18n>today}" class="spp-calendar-today-button spp-cal-nav-item"
+                        press=".onPeriodChange"
+                    >
+                        <customData>
+                            <core:CustomData key="ref" value="todayButton" writeToDom="true" />
+                            <core:CustomData key="period" value="T" writeToDom="true" />
+                        </customData>
+                    </Button>
+                    <Button id="PrevPeriodButton" icon="spp-icon-previous" tooltip="{i18n>previousPeriod}" class="spp-cal-nav-item"
+                        press=".onPeriodChange"
+                    >
+                        <customData>
+                            <core:CustomData key="ref" value="prevButton" writeToDom="true" />
+                            <core:CustomData key="period" value="P" writeToDom="true" />
+                        </customData>
+                    </Button>
+                    <Button id="NextPeriodButton" icon="spp-icon-next" tooltip="{i18n>nextPeriod}" class="spp-cal-nav-item"
+                        press=".onPeriodChange"
+                    >
+                        <customData>
+                            <core:CustomData key="ref" value="nextButton" writeToDom="true" />
+                            <core:CustomData key="period" value="N" writeToDom="true" />
+                        </customData>
+                    </Button>
+                    <Period id="PlanningPeriod" mode="{planModel>mode}" period="{planModel>period}" />
+
+                    <ToolbarSpacer id="PageHeaderToolbarSpacer"/>
+
+                    <Button id="MobileViewMenuButton" icon="spp-icon-calendar-days" tooltip="{i18n>viewSelection}" solid="true" visible= "{= ${device>/system/phone} }" class="spp-cal-nav-item"
+                        press=".onMobileViewMenu"
+                     />
+                    <ButtonGroup id="DesktopViewViewGroup" visible="{= !${device>/system/phone} }"
+
+                    >
+                        <Button id="YearViewButton" firstChild="true" selected="{= ${planModel>mode} === 'Y' }" label="{i18n>viewYear}" groupButton="true"
+                            press=".onViewChange"
+                        >
+                            <customData>
+                                <core:CustomData key="tab-index" value="0" writeToDom="true" />
+                                <core:CustomData key="view-mode" value="Y" writeToDom="true" />
+                            </customData>
+                        </Button>
+                        <Button id="MonthViewButton" selected="{= ${planModel>mode} === 'M' }" label="{i18n>viewMonth}" groupButton="true"
+                         press=".onViewChange">
+                            <customData>
+                                <core:CustomData key="tab-index" value="1" writeToDom="true" />
+                                <core:CustomData key="view-mode" value="M" writeToDom="true" />
+                            </customData>
+                        </Button>
+                        <Button id="AgendaViewButton" lastChild="true" selected="{= ${planModel>mode} === 'A' }" label="{i18n>viewAgenda}" groupButton="true"
+                         press=".onViewChange">
+                            <customData>
+                                <core:CustomData key="tab-index" value="2" writeToDom="true" />
+                                <core:CustomData key="view-mode" value="A" writeToDom="true" />
+                            </customData>
+                        </Button>
+                    </ButtonGroup>
+                </items>
+            </Toolbar>
+        </toolbar>
+    </PageHeader>
+</core:FragmentDefinition>
+

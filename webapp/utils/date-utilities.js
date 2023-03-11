@@ -6,7 +6,7 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
       //--Init momentJS
       this.initializeMoment();
       
-      var m = moment(d, "YYYYMMDD"); 
+      var m = moment(d, "DD.MM.YYYY"); 
 
       return m.format("DD.MM.YYYY");
     },
@@ -14,7 +14,7 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
       //--Init momentJS
       this.initializeMoment();
       
-      var m = moment(d, "YYYY-MM-DD"); 
+      var m = moment(d, "DD.MM.YYYY"); 
 
       return this.getPeriod(m);
     },
@@ -22,16 +22,16 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
       //--Init momentJS
       this.initializeMoment();
       
-      var m = moment(p.year + "-" + p.month + "-" + p.day, "YYYY-MM-DD");
+      var m = moment(p.day + "." + p.month + "." + p.year , "DD.MM.YYYY");
 
-      return m.format("YYYY-MM-DD");
+      return m.format("DD.MM.YYYY");
     },
     getMonthData: function (y, m) {
       //--Init momentJS
       this.initializeMoment();
 
-      var m = y.toString() + "-" + m.toString().padStart(2, "0");
-      var o = moment(m, "YYYY-MM"); // Get moment object of month
+      var m = m.toString().padStart(2, "0") + "." + y.toString();
+      var o = moment(m, "MM.YYYY"); // Get moment object of month
       var s = moment(o).startOf("month").weekday(0);
       var e = moment(o).endOf("month").weekday(6);
 
@@ -52,7 +52,7 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
         }
         oMonth.days.push({
           week: s.week(),
-          date: s.format("YYYY-MM-DD"),
+          date: s.format("DD.MM.YYYY"),
           dayOfWeek: s.format("e"),
           sameMonth: s.format("YYYY-MM") === o.format("YYYY-MM"),
           isToday: moment().isSame(s, "day"),
@@ -79,7 +79,7 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
     },
 
     getNextPeriod: function (p, a) {
-      var m = moment(p.year + "-" + p.month + "-" + p.day, "YYYY-MM-DD");
+      var m = moment(p.day + "." + p.month + "." + p.year, "DD.MM.YYYY");
 
       switch (a) {
         case "Y":
@@ -94,7 +94,7 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
     },
 
     getPrevPeriod: function (p, a) {
-      var m = moment(p.year + "-" + p.month + "-" + p.day, "YYYY-MM-DD");
+      var m = moment(p.day + "." + p.month + "." + p.year, "DD.MM.YYYY");
 
       switch (a) {
         case "Y":
@@ -118,7 +118,7 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
     formatPeriodText: function (p, a) {
       //--Init momentJS
       this.initializeMoment();
-      var m = moment(p.year + "-" + p.month + "-" + p.day, "YYYY-MM-DD");
+      var m = moment(p.day + "." + p.month + "." + p.year, "DD.MM.YYYY");
       switch (a) {
         case "Y":
           return m.format("YYYY");
@@ -140,18 +140,18 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
     },
 
     decidePeriodChangeDirection: function (o, n) {
-      var oP = moment(o.year + "-" + o.month + "-" + o.day, "YYYY-MM-DD");
-      var nP = moment(n.year + "-" + n.month + "-" + n.day, "YYYY-MM-DD");
+      var oP = moment(o.day + "." + o.month + "." + o.year, "DD.MM.YYYY");
+      var nP = moment(n.day + "." + n.month + "." + n.year, "DD.MM.YYYY");
       return oP.isAfter(nP) ? "L" : oP.isBefore(nP) ? "R" : "";
     },
 
     findDatesBetweenTwoDates: function (b, e) {
-      var startDate = moment(b, "YYYY-MM-DD").clone(),
+      var startDate = moment(b, "DD.MM.YYYY").clone(),
         dates = [],
-        endDate = moment(e, "YYYY-MM-DD").clone();
+        endDate = moment(e, "DD.MM.YYYY").clone();
 
       while (startDate.isSameOrBefore(endDate)) {
-        dates.push(startDate.format("YYYY-MM-DD"));
+        dates.push(startDate.format("DD.MM.YYYY"));
         startDate.add(1, "d");
       }
       return dates;
@@ -161,7 +161,7 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
       this._holidayCalendar = _.cloneDeep(h);
     },
     checkDateHoliday: function (d) {
-      var m = moment(d, "YYYY-MM-DD");
+      var m = moment(d, "DD.MM.YYYY");
       var y = m.format("YYYY");
 
       //--Search in variable holidays
@@ -178,7 +178,7 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
       };
     },
     getDayAttributes: function (d) {
-      var m = moment(d, "YYYY-MM-DD");
+      var m = moment(d, "DD.MM.YYYY");
       var y = m.format("YYYY");
       var l = [];
       var e = {};

@@ -12,7 +12,7 @@ sap.ui.define(
         metadata: {
           properties: {
             tabIndex: {
-              type: "int",
+              type: "string",
               bindable: true,
             },
           },
@@ -31,6 +31,13 @@ sap.ui.define(
             this.onViewChanged,
             this
           );
+
+          eventUtilities.subscribeEvent(
+            "PlanningCalendar",
+            "PeriodChanged",
+            this.onPeriodChanged,
+            this
+          );
         },
 
         onViewChanged: function (c, e, o) {
@@ -40,6 +47,12 @@ sap.ui.define(
             o.transitionEffect,
             o.direction
           );
+        },
+
+        onPeriodChanged: function (c, e, o) {
+          
+          this.setActiveView(o.tabIndex, null, true, o.direction);
+
         },
         renderer: function (oRM, oControl) {
           oRM.openStart("div", oControl); //Main
@@ -120,6 +133,7 @@ sap.ui.define(
 
         transitionEffect: function (d) {
           var aViews = this.getAggregation("views");
+          
           $.each(aViews, function (i, oView) {
             if (oView.getTabIndex() === "-1") {
               oView

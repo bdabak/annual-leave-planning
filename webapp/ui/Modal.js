@@ -51,11 +51,15 @@ sap.ui.define(["sap/ui/core/Control","com/thy/ux/annualleaveplanning/utils/event
         this.getContent() ? this.destroyAggregation("content") : null;
     },
     close: function(){
-        if(typeof this.getContent()?.close === "function"){
-          this.getContent()?.close();
+        var aC =  this.getContent() || [];
+        if(aC.length > 0){
+          $.each(aC, function(i,c){
+            if(typeof c?.cancel === "function"){
+              c?.cancel();
+            }
+          });
         }
-
-        this.destroyContent();
+        this.destroyAggregation("content");
     },
     ontap: function(oEvent){
         if($(oEvent.target).hasClass("spp-float-overlay")){

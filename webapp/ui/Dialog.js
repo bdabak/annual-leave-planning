@@ -45,6 +45,9 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
         events: {
           closed:{
 
+          },
+          cancelled:{
+
           }
         },
       },
@@ -91,6 +94,9 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
           x = oEP.offset.left + oEP.outerWidth / 2 - eOW / 2 - (fX - cW.width());
         }else{
           x = oEP.offset.left + oEP.outerWidth / 2 - eOW / 2;
+          if(x<0){
+            x = 5;
+          }
         }
 
         aStyles.set("transform", `matrix(1, 0, 0, 1, ${x}, ${y})`);
@@ -253,6 +259,9 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
       },
       close: function(){
         this.fireClosed();
+      },
+      cancel: function(){
+        this.fireCancelled();
       }
     }
   );

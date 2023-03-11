@@ -20935,7 +20935,7 @@ button.spp-button.spp-recurrencelegendbutton {
 }
 
 .spp-yearview-content:not(.spp-draggable-active) .spp-calendar-cell.spp-datepicker-1-to-3-events:hover .spp-calendar-cell-inner {
-  background-color: #f9f69e
+  background-color: #f9f6ae
 }
 
 .spp-yearview-content:not(.spp-draggable-active) .spp-calendar-cell.spp-datepicker-4-to-6-events:hover .spp-calendar-cell-inner {
@@ -20968,11 +20968,11 @@ button.spp-button.spp-recurrencelegendbutton {
 }
 
 .spp-yearview-content .spp-calendar-cell.spp-cal-tentative-event {
-  background-color: #19fd09
+  background-color: #d0aae6
 }
 
 .spp-yearview-content .spp-calendar-cell.spp-cal-tentative-event.spp-other-month {
-  background-color: #79d59f
+  background-color: #a697af
 }
 
 .spp-yearview-content .spp-calendar-cell .spp-cal-minimal-event-container {

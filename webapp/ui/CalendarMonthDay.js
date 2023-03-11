@@ -113,7 +113,7 @@ sap.ui.define(
           var l = a.length;
           if (this.getEventDuration() !== l) {
             var i = a.indexOf(d);
-            var m = moment(d, "YYYY-MM-DD");
+            var m = moment(d, "DD.MM.YYYY");
             var o = parseInt(m.format("E"), 10);
 
             var calcOverflow = function (i, s) {
@@ -145,8 +145,8 @@ sap.ui.define(
 
             var calcFuture = function(i,s,a){
               
-              var mB = moment(a[i], "YYYY-MM-DD");
-              var mE = moment(a[a.length - 1], "YYYY-MM-DD");
+              var mB = moment(a[i], "DD.MM.YYYY");
+              var mE = moment(a[a.length - 1], "DD.MM.YYYY");
 
               if(i===0 || s === 1){
                 return mB.week() !== mE.week()

@@ -1,0 +1,45 @@
+<core:FragmentDefinition
+	xmlns="com.thy.ux.annualleaveplanning.ui"
+	xmlns:core="sap.ui.core"
+>
+    <Menu id="MobileViewMenu"
+        itemSelected=".onViewMenuItemSelected"
+        binding="{planModel>/page}"
+    >
+        <MenuItem id="MobileViewMenuYear"
+            key="Y"
+            value="{i18n>viewYear}"
+            selected="{= ${planModel>tabIndex} === '0' }"
+            firstChild="true"
+        >
+            <customData>
+                  <core:CustomData key="tab-index" value="0" writeToDom="true" />
+                  <core:CustomData key="view-mode" value="Y" writeToDom="true" />         
+            </customData>
+        </MenuItem>
+
+         <MenuItem id="MobileViewMenuMonth"
+            key="M"
+            value="{i18n>viewMonth}"
+            selected="{= ${planModel>tabIndex} === '1' }"
+            firstChild="false"
+        >
+            <customData>
+                  <core:CustomData key="tab-index" value="1" writeToDom="true" />
+                  <core:CustomData key="view-mode" value="M" writeToDom="true" />         
+            </customData>
+        </MenuItem>
+
+        <MenuItem id="MobileViewMenuAgenda"
+            key="A"
+            value="{i18n>viewAgenda}"
+            selected="{= ${planModel>tabIndex} === '2' }"
+            lastChild="true"
+        >
+            <customData>
+                  <core:CustomData key="tab-index" value="2" writeToDom="true" />
+                  <core:CustomData key="view-mode" value="A" writeToDom="true" />         
+            </customData>
+        </MenuItem>
+    </Menu>
+</core:FragmentDefinition>

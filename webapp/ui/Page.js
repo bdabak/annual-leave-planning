@@ -74,17 +74,12 @@ sap.ui.define(
     return Control.extend("com.thy.ux.annualleaveplanning.ui.Page", {
       metadata: {
         properties: {
-          holidayCalendar: {
-            type: "object",
-            bindable: true,
-            defaultValue: [],
-          },
           mode: {
             type: "string",
             bindable: true,
             defaultValue: "Y",
           },
-          tabIndex: {
+          tabIndex:{
             type: "string",
             bindable: true,
             defaultValue: "0",
@@ -95,15 +90,15 @@ sap.ui.define(
           },
         },
         aggregations: {
-          _header: {
+          header: {
             type: "com.thy.ux.annualleaveplanning.ui.PageHeader",
             multiple: false,
           },
-          _content: {
+          content: {
             type: "com.thy.ux.annualleaveplanning.ui.PageContent",
             multiple: false,
           },
-          _modal: {
+          modal: {
             type: "com.thy.ux.annualleaveplanning.ui.Modal",
             multiple: false,
           },
@@ -115,8 +110,8 @@ sap.ui.define(
        */
       init: function () {
         //--Set periods and default view mode
-        this.setMode("Y");
-        this.setPeriod(dateUtilities.getCurrentYear());
+        // this.setMode("Y");
+        // this.setPeriod(dateUtilities.getCurrentYear());
 
         var sLibraryPath = jQuery.sap.getModulePath(
           "com.thy.ux.annualleaveplanning"
@@ -126,34 +121,34 @@ sap.ui.define(
         );
 
         //--Create header
-        var h = new Header({
-          toolbar: this._renderHeaderToolbar(),
-        });
-        this.setAggregation("_header", h);
+        // var h = new Header({
+        //   toolbar: this._renderHeaderToolbar(),
+        // });
+        // this.setAggregation("header", h);
 
         //--Create content
-        var c = this._renderContent();
-        this.setAggregation("_content", c);
+        // var c = this._renderContent();
+        // this.setAggregation("content", c);
 
         //--Create model
-        var m = new Modal();
-        this.setAggregation("_modal", m);
+        // var m = new Modal();
+        // this.setAggregation("modal", m);
 
         //--Subscribe to event method
-        eventUtilities.subscribeEvent(
-          "PlanningCalendar",
-          "CreateEvent",
-          this._handleCreateEvent,
-          this
-        );
+        // eventUtilities.subscribeEvent(
+        //   "PlanningCalendar",
+        //   "CreateEvent",
+        //   this._handleCreateEvent,
+        //   this
+        // );
 
-        //--Subscribe to event
-        eventUtilities.subscribeEvent(
-          "PlanningCalendar",
-          "DisplayEventWidget",
-          this._handleDisplayEventWidget,
-          this
-        );
+        // //--Subscribe to event
+        // eventUtilities.subscribeEvent(
+        //   "PlanningCalendar",
+        //   "DisplayEventWidget",
+        //   this._handleDisplayEventWidget,
+        //   this
+        // );
       },
 
       renderer: function (oRM, oControl) {
@@ -217,11 +212,11 @@ sap.ui.define(
         oRM.openEnd();
 
         //--RenderHeader
-        oRM.renderControl(oControl.getAggregation("_header"));
+        oRM.renderControl(oControl.getAggregation("header"));
         //--RenderHeader
 
         //--RenderContent
-        oRM.renderControl(oControl.getAggregation("_content"));
+        oRM.renderControl(oControl.getAggregation("content"));
         //--RenderContent
 
         oRM.close("div"); //Panel
@@ -230,345 +225,345 @@ sap.ui.define(
 
         oRM.close("div"); //Main Page
 
-        oRM.renderControl(oControl.getAggregation("_modal"));
+        oRM.renderControl(oControl.getAggregation("modal"));
 
         oRM.close("div"); //Control
       },
 
-      _renderContent: function () {
-        return new PageContent({
-          sidebar: this._renderSidebar(),
-          viewContainer: this._renderViews(),
-        });
-      },
-      _renderSidebar: function () {
-        return new Sidebar({
-          items: [
-            new DatePickerWidget({
-              period: this.getPeriod()
-            }),
-            new Legend({
-              items: [
-                new LegendItem({
-                  text: "Resmi tatiller",
-                  color: "spp-sch-foreground-orange",
-                }),
-                new LegendItem({
-                  text: "Planlanan izin",
-                  color: "spp-sch-foreground-blue",
-                }),
-                new LegendItem({
-                  text: "Yıllık izin",
-                  color: "spp-sch-foreground-green",
-                }),
-              ],
-            }),
+      // _renderContent: function () {
+      //   return new PageContent({
+      //     sidebar: this._renderSidebar(),
+      //     viewContainer: this._renderViews(),
+      //   });
+      // },
+      // _renderSidebar: function () {
+      //   return new Sidebar({
+      //     items: [
+      //       new DatePickerWidget({
+      //         period: this.getPeriod()
+      //       }),
+      //       new Legend({
+      //         items: [
+      //           new LegendItem({
+      //             text: "Resmi tatiller",
+      //             color: "spp-sch-foreground-orange",
+      //           }),
+      //           new LegendItem({
+      //             text: "Planlanan izin",
+      //             color: "spp-sch-foreground-blue",
+      //           }),
+      //           new LegendItem({
+      //             text: "Yıllık izin",
+      //             color: "spp-sch-foreground-green",
+      //           }),
+      //         ],
+      //       }),
             
-          ],
-        });
-      },
-      _renderViews: function () {
-        return new ViewContainer({
-          views: [
-            new View({
-              content: new ViewYear({
-                year: parseInt(this.getPeriod().year),
-              }),
-              tabIndex: "0",
-              hidden: false,
-              navigationActive: true,
-              swiped: this._handlePeriodSwipe.bind(this),
-            }),
-            new View({
-              content: new ViewMonth({
-                year: parseInt(this.getPeriod().year),
-                month: parseInt(this.getPeriod().month),
-              }),
-              tabIndex: "1",
-              hidden: true,
-              navigationActive: true,
-              swiped: this._handlePeriodSwipe.bind(this),
-            }),
-            new View({
-              content: new sap.m.Text({ text: "Ajanda" }),
-              tabIndex: "2",
-              hidden: true,
-            }),
-            new View({
-              content: new sap.m.VBox({
-                height: "100%",
-                width: "100%",
-              }),
-              tabIndex: "-1",
-              hidden: false,
-            }).addStyleClass("spp-hidden-view"),
-          ],
-        });
-      },
-      _handlePeriodSwipe: function (e) {
-        var d = e.getParameter("direction") || null;
-        if (!d) {
-          return;
-        }
-        switch (d) {
-          case "L":
-            this._handleNavigateNextPeriod();
-            break;
-          case "R":
-            this._handleNavigatePrevPeriod();
-            break;
-          default:
-            return;
-        }
-      },
-      _renderButtonGroup: function () {
-        var that = this;
-        this._oButtonGroup = new ButtonGroup({
-          visible: "{= !${device>/system/phone} }",
-          buttons: [
-            new Button({
-              firstChild: true,
-              label: "YIL",
-              selected: true,
-              groupButton: true,
-              press: that._handleViewChange.bind(that),
-            })
-              .addCustomData(
-                new CustomData({
-                  key: "tab-index",
-                  value: "0",
-                  writeToDom: true,
-                })
-              )
-              .addCustomData(
-                new CustomData({
-                  key: "view-mode",
-                  value: "Y",
-                  writeToDom: true,
-                })
-              ),
-            new Button({
-              firstChild: false,
-              lastChild: false,
-              groupButton: true,
-              label: "AY",
-              selected: false,
-              press: that._handleViewChange.bind(that),
-            })
-              .addCustomData(
-                new CustomData({
-                  key: "tab-index",
-                  value: "1",
-                  writeToDom: true,
-                })
-              )
-              .addCustomData(
-                new CustomData({
-                  key: "view-mode",
-                  value: "M",
-                  writeToDom: true,
-                })
-              ),
-            new Button({
-              firstChild: false,
-              lastChild: true,
-              groupButton: true,
-              label: "AJANDA",
-              selected: false,
-              press: that._handleViewChange.bind(that),
-            })
-              .addCustomData(
-                new CustomData({
-                  key: "tab-index",
-                  value: "2",
-                  writeToDom: true,
-                })
-              )
-              .addCustomData(
-                new CustomData({
-                  key: "view-mode",
-                  value: "A",
-                  writeToDom: true,
-                })
-              ),
-          ],
-        });
-        return this._oButtonGroup;
-      },
-      _renderHeaderToolbar: function () {
-        var that = this;
-        return new Toolbar({
-          items: [
-            new Button({
-              icon: "spp-icon-menu",
-              firstChild: true,
-              classList: ["spp-sidebar-toggle"],
-              attributes: [
-                {
-                  name: "data-ref",
-                  value: "toggleSideBar",
-                },
-              ],
-              press: function () {
-                that.getAggregation("_content").getSidebar().toggleState();
-              },
-            }),
-            new Button({
-              icon: "spp-icon-calendar-day",
-              label: "Bugün",
-              classList: ["spp-calendar-today-button", "spp-cal-nav-item"],
-              press: function () {
-                that._handlePeriodChange("T");
-              },
-            }).addCustomData(
-              new CustomData({
-                key: "ref",
-                value: "todayButton",
-                writeToDom: true,
-              })
-            ),
-            new Button({
-              icon: "spp-icon-previous",
-              classList: ["spp-cal-nav-item"],
-              tooltip: "Önceki dönem",
-              press: this._handleNavigatePrevPeriod.bind(this),
-            }).addCustomData(
-              new CustomData({
-                key: "ref",
-                value: "prevButton",
-                writeToDom: true,
-              })
-            ),
-            new Button({
-              icon: "spp-icon-next",
-              classList: ["spp-cal-nav-item"],
-              tooltip: "Sonraki dönem",
-              press: this._handleNavigateNextPeriod.bind(this),
-            }).addCustomData(
-              new CustomData({
-                key: "ref",
-                value: "nextButton",
-                writeToDom: true,
-              })
-            ),
-            new Period({
-              period: that.getPeriod(),
-              mode: that.getMode(),
-            }),
-            new Spacer(),
-            new Button({
-              icon: "spp-icon-calendar-days",
-              classList: ["spp-cal-nav-item", "spp-has-menu"],
-              tooltip: "Görünüm",
-              press: function (e) {
-                that._openModelViewMenu(e, this);
-              },
-              visible: "{device>/system/phone}",
-              solid: true,
-            }),
-            this._renderButtonGroup(),
-          ],
-        });
-      },
+      //     ],
+      //   });
+      // },
+      // _renderViews: function () {
+      //   return new ViewContainer({
+      //     views: [
+      //       new View({
+      //         content: new ViewYear({
+      //           year: parseInt(this.getPeriod().year),
+      //         }),
+      //         tabIndex: "0",
+      //         hidden: false,
+      //         navigationActive: true,
+      //         swiped: this._handlePeriodSwipe.bind(this),
+      //       }),
+      //       new View({
+      //         content: new ViewMonth({
+      //           year: parseInt(this.getPeriod().year),
+      //           month: parseInt(this.getPeriod().month),
+      //         }),
+      //         tabIndex: "1",
+      //         hidden: true,
+      //         navigationActive: true,
+      //         swiped: this._handlePeriodSwipe.bind(this),
+      //       }),
+      //       new View({
+      //         content: new sap.m.Text({ text: "Ajanda" }),
+      //         tabIndex: "2",
+      //         hidden: true,
+      //       }),
+      //       new View({
+      //         content: new sap.m.VBox({
+      //           height: "100%",
+      //           width: "100%",
+      //         }),
+      //         tabIndex: "-1",
+      //         hidden: false,
+      //       }).addStyleClass("spp-hidden-view"),
+      //     ],
+      //   });
+      // },
+      // _handlePeriodSwipe: function (e) {
+      //   var d = e.getParameter("direction") || null;
+      //   if (!d) {
+      //     return;
+      //   }
+      //   switch (d) {
+      //     case "L":
+      //       this._handleNavigateNextPeriod();
+      //       break;
+      //     case "R":
+      //       this._handleNavigatePrevPeriod();
+      //       break;
+      //     default:
+      //       return;
+      //   }
+      // },
+      // _renderButtonGroup: function () {
+      //   var that = this;
+      //   this._oButtonGroup = new ButtonGroup({
+      //     visible: "{= !${device>/system/phone} }",
+      //     buttons: [
+      //       new Button({
+      //         firstChild: true,
+      //         label: "YIL",
+      //         selected: true,
+      //         groupButton: true,
+      //         press: that._handleViewChange.bind(that),
+      //       })
+      //         .addCustomData(
+      //           new CustomData({
+      //             key: "tab-index",
+      //             value: "0",
+      //             writeToDom: true,
+      //           })
+      //         )
+      //         .addCustomData(
+      //           new CustomData({
+      //             key: "view-mode",
+      //             value: "Y",
+      //             writeToDom: true,
+      //           })
+      //         ),
+      //       new Button({
+      //         firstChild: false,
+      //         lastChild: false,
+      //         groupButton: true,
+      //         label: "AY",
+      //         selected: false,
+      //         press: that._handleViewChange.bind(that),
+      //       })
+      //         .addCustomData(
+      //           new CustomData({
+      //             key: "tab-index",
+      //             value: "1",
+      //             writeToDom: true,
+      //           })
+      //         )
+      //         .addCustomData(
+      //           new CustomData({
+      //             key: "view-mode",
+      //             value: "M",
+      //             writeToDom: true,
+      //           })
+      //         ),
+      //       new Button({
+      //         firstChild: false,
+      //         lastChild: true,
+      //         groupButton: true,
+      //         label: "AJANDA",
+      //         selected: false,
+      //         press: that._handleViewChange.bind(that),
+      //       })
+      //         .addCustomData(
+      //           new CustomData({
+      //             key: "tab-index",
+      //             value: "2",
+      //             writeToDom: true,
+      //           })
+      //         )
+      //         .addCustomData(
+      //           new CustomData({
+      //             key: "view-mode",
+      //             value: "A",
+      //             writeToDom: true,
+      //           })
+      //         ),
+      //     ],
+      //   });
+      //   return this._oButtonGroup;
+      // },
+      // _renderHeaderToolbar: function () {
+      //   var that = this;
+      //   return new Toolbar({
+      //     items: [
+      //       new Button({
+      //         icon: "spp-icon-menu",
+      //         firstChild: true,
+      //         classList: ["spp-sidebar-toggle"],
+      //         attributes: [
+      //           {
+      //             name: "data-ref",
+      //             value: "toggleSideBar",
+      //           },
+      //         ],
+      //         press: function () {
+      //           that.getAggregation("content").getSidebar().toggleState();
+      //         },
+      //       }),
+      //       new Button({
+      //         icon: "spp-icon-calendar-day",
+      //         label: "Bugün",
+      //         classList: ["spp-calendar-today-button", "spp-cal-nav-item"],
+      //         press: function () {
+      //           that._handlePeriodChange("T");
+      //         },
+      //       }).addCustomData(
+      //         new CustomData({
+      //           key: "ref",
+      //           value: "todayButton",
+      //           writeToDom: true,
+      //         })
+      //       ),
+      //       new Button({
+      //         icon: "spp-icon-previous",
+      //         classList: ["spp-cal-nav-item"],
+      //         tooltip: "Önceki dönem",
+      //         press: this._handleNavigatePrevPeriod.bind(this),
+      //       }).addCustomData(
+      //         new CustomData({
+      //           key: "ref",
+      //           value: "prevButton",
+      //           writeToDom: true,
+      //         })
+      //       ),
+      //       new Button({
+      //         icon: "spp-icon-next",
+      //         classList: ["spp-cal-nav-item"],
+      //         tooltip: "Sonraki dönem",
+      //         press: this._handleNavigateNextPeriod.bind(this),
+      //       }).addCustomData(
+      //         new CustomData({
+      //           key: "ref",
+      //           value: "nextButton",
+      //           writeToDom: true,
+      //         })
+      //       ),
+      //       new Period({
+      //         period: that.getPeriod(),
+      //         mode: that.getMode(),
+      //       }),
+      //       new Spacer(),
+      //       new Button({
+      //         icon: "spp-icon-calendar-days",
+      //         classList: ["spp-cal-nav-item", "spp-has-menu"],
+      //         tooltip: "Görünüm",
+      //         press: function (e) {
+      //           that._openModelViewMenu(e, this);
+      //         },
+      //         visible: "{device>/system/phone}",
+      //         solid: true,
+      //       }),
+      //       this._renderButtonGroup(),
+      //     ],
+      //   });
+      // },
 
-      _handleNavigateNextPeriod: function () {
-        this._handlePeriodChange("N");
-      },
-      _handleNavigatePrevPeriod: function () {
-        this._handlePeriodChange("P");
-      },
+      // _handleNavigateNextPeriod: function () {
+      //   this._handlePeriodChange("N");
+      // },
+      // _handleNavigatePrevPeriod: function () {
+      //   this._handlePeriodChange("P");
+      // },
 
-      _openModelViewMenu(e, r) {
-        var that = this;
-        var i = this.getTabIndex();
-        var o = $(r.getDomRef());
-        if (!o) {
-          return;
-        }
-        var cO = o.offset();
-        var cH = o.outerHeight();
+      // _openModelViewMenu(e, r) {
+      //   var that = this;
+      //   var i = this.getTabIndex();
+      //   var o = $(r.getDomRef());
+      //   if (!o) {
+      //     return;
+      //   }
+      //   var cO = o.offset();
+      //   var cH = o.outerHeight();
 
-        var w = 120;
-        var x = cO.left - (w - o.outerWidth());
-        var y = cO.top + cH;
-        var aStyles = new Map([
-          ["width", `${w}px`],
-          ["transform", `matrix(1, 0, 0, 1, ${x}, ${y})`],
-        ]);
+      //   var w = 120;
+      //   var x = cO.left - (w - o.outerWidth());
+      //   var y = cO.top + cH;
+      //   var aStyles = new Map([
+      //     ["width", `${w}px`],
+      //     ["transform", `matrix(1, 0, 0, 1, ${x}, ${y})`],
+      //   ]);
 
-        o.addClass("spp-contains-focus").addClass("spp-pressed");
-        var oContent = new Menu({
-          items: [
-            new MenuItem({
-              key: "Y",
-              value: "Yıl",
-              selected: i === "0",
-              firstChild: true,
-            })
-              .addCustomData(
-                new CustomData({
-                  key: "tab-index",
-                  value: "0",
-                  writeToDom: true,
-                })
-              )
-              .addCustomData(
-                new CustomData({
-                  key: "view-mode",
-                  value: "Y",
-                  writeToDom: true,
-                })
-              ),
-            new MenuItem({
-              key: "M",
-              value: "Ay",
-              selected: i === "1",
-            })
-              .addCustomData(
-                new CustomData({
-                  key: "tab-index",
-                  value: "1",
-                  writeToDom: true,
-                })
-              )
-              .addCustomData(
-                new CustomData({
-                  key: "view-mode",
-                  value: "M",
-                  writeToDom: true,
-                })
-              ),
-            new MenuItem({
-              key: "A",
-              value: "Ajanda",
-              selected: i === "2",
-              lastChild: true,
-            })
-              .addCustomData(
-                new CustomData({
-                  key: "tab-index",
-                  value: "2",
-                  writeToDom: true,
-                })
-              )
-              .addCustomData(
-                new CustomData({
-                  key: "view-mode",
-                  value: "A",
-                  writeToDom: true,
-                })
-              ),
-          ],
-          styles: aStyles,
-          itemSelected: function (e) {
-            var i = e.getParameter("selectedItem");
-            that._getModal().close();
-            that._handleViewChange(null, i);
-            o.removeClass("spp-contains-focus").removeClass("spp-pressed");
-          },
-        });
-        this._getModal().openBy(oContent);
-      },
+      //   o.addClass("spp-contains-focus").addClass("spp-pressed");
+      //   var oContent = new Menu({
+      //     items: [
+      //       new MenuItem({
+      //         key: "Y",
+      //         value: "Yıl",
+      //         selected: i === "0",
+      //         firstChild: true,
+      //       })
+      //         .addCustomData(
+      //           new CustomData({
+      //             key: "tab-index",
+      //             value: "0",
+      //             writeToDom: true,
+      //           })
+      //         )
+      //         .addCustomData(
+      //           new CustomData({
+      //             key: "view-mode",
+      //             value: "Y",
+      //             writeToDom: true,
+      //           })
+      //         ),
+      //       new MenuItem({
+      //         key: "M",
+      //         value: "Ay",
+      //         selected: i === "1",
+      //       })
+      //         .addCustomData(
+      //           new CustomData({
+      //             key: "tab-index",
+      //             value: "1",
+      //             writeToDom: true,
+      //           })
+      //         )
+      //         .addCustomData(
+      //           new CustomData({
+      //             key: "view-mode",
+      //             value: "M",
+      //             writeToDom: true,
+      //           })
+      //         ),
+      //       new MenuItem({
+      //         key: "A",
+      //         value: "Ajanda",
+      //         selected: i === "2",
+      //         lastChild: true,
+      //       })
+      //         .addCustomData(
+      //           new CustomData({
+      //             key: "tab-index",
+      //             value: "2",
+      //             writeToDom: true,
+      //           })
+      //         )
+      //         .addCustomData(
+      //           new CustomData({
+      //             key: "view-mode",
+      //             value: "A",
+      //             writeToDom: true,
+      //           })
+      //         ),
+      //     ],
+      //     styles: aStyles,
+      //     itemSelected: function (e) {
+      //       var i = e.getParameter("selectedItem");
+      //       that._getModal().close();
+      //       that._handleViewChange(null, i);
+      //       o.removeClass("spp-contains-focus").removeClass("spp-pressed");
+      //     },
+      //   });
+      //   this._getModal().openBy(oContent);
+      // },
 
       _handleCreateEvent: function (c, e, o) {
         if (o && o.element) {
@@ -649,7 +644,7 @@ sap.ui.define(
           header: new DialogHeader({
             title: "Yeni Plan",
             closed: function () {
-              that._createEventCancelled();
+              oDialog.close();
             },
           }),
           styles: aStyles,
@@ -664,130 +659,137 @@ sap.ui.define(
             //--Codes that perform operations after dialog close
             that._createEventCancelled();
           },
+          cancelled: function(){
+            //--Modal closed cancel event
+            that._cancelCreateEvent();
+          }
         });
 
         this._getModal().openBy(oDialog);
       },
 
-      _createEventCancelled: function () {
+      _cancelCreateEvent: function(){
         eventUtilities.publishEvent(
           "PlanningCalendar",
           "CreateEventCancelled",
           null
         );
+      },
+      _createEventCancelled: function () {
+        this._cancelCreateEvent();
         this._getModal().close();
       },
 
-      _createEventEditorToolbar() {
-        var that = this;
-        return new Toolbar({
-          items: [
-            new Button({
-              raised: true,
-              label: "Kaydet",
-              firstChild: true,
-              classList: ["spp-blue"],
-              press: function () {
-                //TODO
-              },
-            }),
-            new Button({
-              lastChild: true,
-              label: "İptal",
-              press: function () {
-                that._createEventCancelled();
-              },
-            }),
-          ],
-        });
-      },
-      _callDatePicker: function(e){
-        var s = e.getParameter("sourceField");
-        var t = e.getParameter("targetField");
-        var p = e.getParameter("period");
-        var o = t.$();
-        if(o && o?.length > 0){
+      // _createEventEditorToolbar() {
+      //   var that = this;
+      //   return new Toolbar({
+      //     items: [
+      //       new Button({
+      //         raised: true,
+      //         label: "Kaydet",
+      //         firstChild: true,
+      //         classList: ["spp-blue"],
+      //         press: function () {
+      //           //TODO
+      //         },
+      //       }),
+      //       new Button({
+      //         lastChild: true,
+      //         label: "İptal",
+      //         press: function () {
+      //           that._createEventCancelled();
+      //         },
+      //       }),
+      //     ],
+      //   });
+      // },
+      // _callDatePicker: function(e){
+      //   var s = e.getParameter("sourceField");
+      //   var t = e.getParameter("targetField");
+      //   var p = e.getParameter("period");
+      //   var o = t.$();
+      //   if(o && o?.length > 0){
 
-          var eO = o.offset(); //Element position
-          var eH = o.outerHeight(); //Element height
-          var eW = o.outerWidth();
+      //     var eO = o.offset(); //Element position
+      //     var eH = o.outerHeight(); //Element height
+      //     var eW = o.outerWidth();
           
-          var oDPW = new DatePickerWidget({
-            floating: true,
-            period: p,
-            select: function(e){
-              var d = e.getParameter("selectedDate");
-              if(s && typeof s.handleValueSelection  === "function"){
-                s.handleValueSelection(d);
-              }
-            },
-            selectedDate: dateUtilities.convertPeriodToDate(p),
-            elementPosition: {
-              offset: { ...eO },
-              outerHeight: eH,
-              outerWidth: eW,
-            },
-          });
+      //     var oDPW = new DatePickerWidget({
+      //       floating: true,
+      //       period: p,
+      //       select: function(e){
+      //         var d = e.getParameter("selectedDate");
+      //         if(s && typeof s.handleValueSelection  === "function"){
+      //           s.handleValueSelection(d);
+      //         }
+      //       },
+      //       selectedDate: dateUtilities.convertPeriodToDate(p),
+      //       elementPosition: {
+      //         offset: { ...eO },
+      //         outerHeight: eH,
+      //         outerWidth: eW,
+      //       },
+      //     });
 
-          s.registerDatePickerWidget(oDPW);
+      //     s.registerDatePickerWidget(oDPW);
 
-          this._getModal().openBy(oDPW);
-        }
-      },
-      _createEventEditor: function (p) {
-        return new EventEditor({
-          toolbar: this._createEventEditorToolbar(),
-          items: [
-            new Field({
-              firstChild: true,
-              containsFocus: true,
-              empty: true,
-              // noHint: true,
-              label: new Label({
-                text: "Neden",
-                for: this.getId() + "_input_event_type",
-              }),
-              field: new Input({
-                id: this.getId() + "_input_event_type",
-                placeHolder: "Etkinlik nedeni",
-                name: "Reason",
-              }),
-            }),
-            new Field({
-              containsFocus: true,
-              empty: p?.startDate ? false : true,
-              label: new Label({
-                text: "Başlangıç",
-                for: this.getId() + "_datepicker_start_date",
-              }),
-              field: new DatePicker({
-                id: this.getId() + "_datepicker_start_date",
-                name: "BeginDate",
-                value: p.startDate,
-                selectDate: this._callDatePicker.bind(this)
-              }),
-            }),
-            new Field({
-              lastChild: true,
-              containsFocus: true,
-              empty: p?.endDate ? false : true,
-              label: new Label({
-                text: "Bitiş",
-                for: this.getId() + "_datepicker_end_date",
-              }),
-              field: new DatePicker({
-                id: this.getId() + "_datepicker_end_date",
-                name: "EndDate",
-                value: p.endDate,
-                selectDate: this._callDatePicker.bind(this)
-              }),
-            }),
-          ],
-        });
-      },
+      //     this._getModal().openBy(oDPW);
+      //   }
+      // },
+      // _createEventEditor: function (p) {
+      //   return new EventEditor({
+      //     toolbar: this._createEventEditorToolbar(),
+      //     items: [
+      //       new Field({
+      //         firstChild: true,
+      //         containsFocus: true,
+      //         empty: true,
+      //         // noHint: true,
+      //         label: new Label({
+      //           text: "Tür",
+      //           for: this.getId() + "_input_event_type",
+      //         }),
+      //         field: new Input({
+      //           id: this.getId() + "_input_event_type",
+      //           placeHolder: "Türü seçiniz",
+      //           name: "İzin türü seçiniz",
+      //         }),
+      //       }),
+      //       new Field({
+      //         containsFocus: true,
+      //         empty: p?.startDate ? false : true,
+      //         label: new Label({
+      //           text: "Başlangıç",
+      //           for: this.getId() + "_datepicker_start_date",
+      //         }),
+      //         field: new DatePicker({
+      //           id: this.getId() + "_datepicker_start_date",
+      //           name: "BeginDate",
+      //           value: dateUtilities.formatDate(p.startDate),
+      //           selectDate: this._callDatePicker.bind(this)
+      //         }),
+      //       }),
+      //       new Field({
+      //         lastChild: true,
+      //         containsFocus: true,
+      //         empty: p?.endDate ? false : true,
+      //         label: new Label({
+      //           text: "Bitiş",
+      //           for: this.getId() + "_datepicker_end_date",
+      //         }),
+      //         field: new DatePicker({
+      //           id: this.getId() + "_datepicker_end_date",
+      //           name: "EndDate",
+      //           value: dateUtilities.formatDate(p.endDate),
+      //           selectDate: this._callDatePicker.bind(this)
+      //         }),
+      //       }),
+      //     ],
+      //   });
+      // },
 
       _getModal: function () {
-        return this.getAggregation("_modal");
+        return this.getAggregation("modal");
       },
 
       _handleViewChange: function (e, c = null) {

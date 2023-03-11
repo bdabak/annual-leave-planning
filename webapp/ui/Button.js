@@ -128,7 +128,7 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
           }
         }
         if (bSelected) {
-          oRM.class("spp-pressed");
+          oRM.class("spp-pressed").class("spp-contains-focus");
         }
         if (bHasTooltip) {
           oRM.attr("aria-haspopup", "dialog");

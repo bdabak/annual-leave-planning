@@ -25,6 +25,7 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
           },
         },
       },
+      defaultAggregation: "items"
     },
 
     renderer: function (oRM, oControl) {

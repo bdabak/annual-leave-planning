@@ -31,12 +31,6 @@ sap.ui.define(
         },
 
         init: function () {
-          eventUtilities.subscribeEvent(
-            "PlanningCalendar",
-            "PeriodChanged",
-            this._handleYearChanged,
-            this
-          );
 
           //--Register event
           eventUtilities.subscribeEvent(
@@ -88,10 +82,15 @@ sap.ui.define(
           oRM.close("div");
         },
         ontouchstart: function (e) {
-          this._refreshCellStates();
+          if (e.which == 2 || e.which == 3) {
+            this._refreshCellStates();
+            return;
+          }
+          
           e.preventDefault();
           var t = $(e.target);
           if (t && t.hasClass("spp-calendar-cell-inner")  && !t.hasClass("spp-other-month") ) {
+           
             if (!this._touchEndProxy) {
               this._touchEndProxy = $.proxy(this._ontouchend, this);
             }
@@ -106,6 +105,8 @@ sap.ui.define(
               return;
             }
 
+            e.setMarked();
+            
             // The if (Device.support.touch) is removed and both mouse and touch events are supported always
             if (!this._dragStarted) {
               this._dragStarted = true;
@@ -119,8 +120,6 @@ sap.ui.define(
               );
             }
 
-            
-           
             s.addClass("spp-editing");
           }
         },
@@ -225,16 +224,6 @@ sap.ui.define(
             });
           } else {
             this._refreshCellStates();
-          }
-        },
-        _handleYearChanged: function (c, e, o) {
-          var p = o.period;
-          if (this.getYear() === p.year) {
-            return;
-          }
-          var y = parseInt(p.year, 10);
-          if (y) {
-            this.setYear(y);
           }
         },
         _refreshCellStates: function () {
