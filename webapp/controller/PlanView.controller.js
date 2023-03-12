@@ -40,28 +40,34 @@ sap.ui.define(
       "com.thy.ux.annualleaveplanning.controller.PlanView",
       {
         onInit: function () {
+          var legend = [
+            {
+              type: "holiday",
+              text: "Resmi tatiller",
+              color: "spp-sch-foreground-orange",
+              selected: true,
+            },
+            {
+              type: "plan",
+              text: "Planlanan izin",
+              color: "spp-sch-foreground-blue",
+              selected: true,
+            },
+            {
+              type: "leave",
+              text: "Yıllık izin",
+              color: "spp-sch-foreground-green",
+              selected: true,
+            },
+          ];
+
           var oViewModel = new JSONModel({
             page: {
               mode: "Y",
               period: dateUtilities.getToday(),
               tabIndex: "0",
-              legend: [
-                {
-                  type: "holiday",
-                  text: "Resmi tatiller",
-                  color: "spp-sch-foreground-orange",
-                },
-                {
-                  type: "plan",
-                  text: "Planlanan izin",
-                  color: "spp-sch-foreground-blue",
-                },
-                {
-                  type: "leave",
-                  text: "Yıllık izin",
-                  color: "spp-sch-foreground-green",
-                },
-              ],
+              legend: legend,
+              legendChanged: null,
             },
           });
 
@@ -240,8 +246,8 @@ sap.ui.define(
             ],
           };
 
-          dateUtilities.setHolidayCalendar(_.cloneDeep(holidayCalendar));
-
+          dateUtilities.setHolidayCalendar(holidayCalendar);
+          dateUtilities.setLegendSettings(legend);
           /* Subscribe Event Handlers */
           eventUtilities.subscribeEvent(
             "PlanningCalendar",
@@ -270,12 +276,14 @@ sap.ui.define(
           this._handlePeriodChange(b);
         },
 
+        onLegendSelectionChanged: function () {
+          dateUtilities.setLegendSettings(this.getPageProperty("legend"));
+
+          this.setPageProperty("legendChanged", new Date().getTime());
+        },
+
         onViewChange: function (e) {
           var s = e.getSource();
-          this._handleViewChange(s);
-        },
-        onViewChangeMobile: function (e) {
-          var s = e.getParameter("selectedItem");
           this._handleViewChange(s);
         },
 
@@ -329,6 +337,22 @@ sap.ui.define(
           //--View Change Handler
           this._handleViewChange(s);
         },
+
+        onEventDialogClosed: function(){
+          if(this._oEventDialog) this._oEventDialog.close();
+        }, 
+        onAfterEventDialogClosed: function(){
+          this._createEventCancelled();
+          this._oEventDialog = null;
+        },  
+
+        onEventCancelled: function(){
+          this._cancelCreateEvent();
+          if(this._oEventDialog) {
+            this._oEventDialog.destroy();
+            this._oEventDialog = null;
+          }
+        }, 
 
         /* Helper methods */
         getModal: function () {
@@ -474,6 +498,58 @@ sap.ui.define(
           }
         },
 
+        _handleDisplayEventWidget: function (c, e, o) {
+          if (o && o.element) {
+            this._openDisplayEventDialog(o.element, o.day);
+          }
+        },
+
+        _openDisplayEventDialog: function (r, d) {
+          var that = this;
+          var o = $(r);
+          if (!o) {
+            return;
+          }
+          var eO = o.offset(); //Element position
+          var eH = o.outerHeight(); //Element height
+          var eW = o.outerWidth();
+
+          var aStyles = new Map([
+            ["transform", `matrix(1, 0, 0, 1, ${eO.left}, -100%)`],
+          ]);
+
+          var oDialog = new Dialog({
+            header: new DialogHeader({
+              title: d.title,
+              closed: function () {
+                that._getModal().close();
+              },
+            }),
+            styles: aStyles,
+            elementPosition: {
+              offset: { ...eO },
+              outerHeight: eH,
+              outerWidth: eW,
+            },
+            headerDockTop: true,
+            content: this._createDisplayEventWidget(d),
+            closed: function () {},
+          });
+
+          this.getModal().openBy(oDialog);
+        },
+
+        _createDisplayEventWidget: function (d) {
+          return new EventContainer({
+            widget: true,
+            events: [
+              new CalEvent({
+                color: "spp-holiday-all-day",
+                text: d.holiday.text,
+              }),
+            ],
+          });
+        },
         _openCreateEventDialog: function (r, p) {
           var that = this;
           var o = $(r);
@@ -490,33 +566,51 @@ sap.ui.define(
             ["--date-width-difference", "1em"],
           ]);
 
-          var oDialog = new Dialog({
-            header: new DialogHeader({
-              title: "Yeni Plan",
-              closed: function () {
-                oDialog.close();
-              },
-            }),
-            styles: aStyles,
-            elementPosition: {
-              offset: { ...eO },
-              outerHeight: eH,
-              outerWidth: eW,
-            },
-            classList: ["spp-eventeditor"],
-            content: this._createEventEditor(p),
-            closed: function () {
-              //--Codes that perform operations after dialog close
-              that._createEventCancelled();
-            },
-            cancelled: function () {
-              //--Modal closed cancel event
-              that._cancelCreateEvent();
-            },
-          });
+          var oDialog = Fragment.load({
+            id: this.getView().getId(),
+            name: "com.thy.ux.annualleaveplanning.view.fragment.EditEventDialog",
+            controller: this,
+          }).then(
+            function (d) {
+              d.setStyles(aStyles);
+              d.setElementPosition({
+                offset: { ...eO },
+                outerHeight: eH,
+                outerWidth: eW,
+              });
+              this._oEventDialog = d;
+              this.getModal().openBy(this._oEventDialog);
+            }.bind(this)
+          );
 
-          this.getModal().openBy(oDialog);
+          // var oDialog = new Dialog({
+          //   header: new DialogHeader({
+          //     title: "Yeni Plan",
+          //     closed: function () {
+          //       oDialog.close();
+          //     },
+          //   }),
+          //   styles: aStyles,
+          //   elementPosition: {
+          //     offset: { ...eO },
+          //     outerHeight: eH,
+          //     outerWidth: eW,
+          //   },
+          //   classList: ["spp-eventeditor"],
+          //   content: this._createEventEditor(p),
+          //   closed: function () {
+          //     //--Codes that perform operations after dialog close
+          //     that._createEventCancelled();
+          //   },
+          //   cancelled: function () {
+          //     //--Modal closed cancel event
+          //     that._cancelCreateEvent();
+          //   },
+          // });
         },
+
+
+
         _createEventCancelled: function () {
           this._cancelCreateEvent();
           this.getModal().close();

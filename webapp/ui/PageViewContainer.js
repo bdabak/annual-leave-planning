@@ -113,7 +113,7 @@ sap.ui.define(
                     .removeClass("spp-hidden")
                     .addClass("spp-active-view")
                     .addClass(d === "L" ? "spp-slide-left" : "spp-slide-right");
-
+                    oView.setProperty("hidden", false, true);
                   ok = true;
                 }
               } else {
@@ -124,6 +124,7 @@ sap.ui.define(
                     .removeClass("spp-slide-left")
                     .removeClass("spp-active-view")
                     .addClass("spp-hidden");
+                  oView.setProperty("hidden", true, true);
                 }
               }
             });
@@ -141,6 +142,7 @@ sap.ui.define(
                 .removeClass("spp-hidden")
                 .addClass("spp-active-view")
                 .addClass(d === "L" ? "spp-slide-left" : "spp-slide-right");
+                oView.setProperty("hidden", false, true);
             } else {
               oView
                 .$()
@@ -148,6 +150,7 @@ sap.ui.define(
                 .removeClass("spp-slide-right")
                 .removeClass("spp-slide-left")
                 .addClass("spp-hidden");
+                oView.setProperty("hidden", true, true);
             }
           });
         },

@@ -18,6 +18,11 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
           bindable: true,
           defaultValue: false,
         },
+        rerender: {
+          type: "string",
+          bindable: true,
+          defaultValue: null,
+        }
       },
       aggregations: {
         content: {

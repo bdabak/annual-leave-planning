@@ -565,120 +565,120 @@ sap.ui.define(
       //   this._getModal().openBy(oContent);
       // },
 
-      _handleCreateEvent: function (c, e, o) {
-        if (o && o.element) {
-          this._openCreateEventDialog(o.element, o.period);
-        }
-      },
-      _handleDisplayEventWidget: function (c, e, o) {
-        if (o && o.element) {
-          //this._openDisplayEventDialog(o.element, o.day);
-        }
-      },
+      // _handleCreateEvent: function (c, e, o) {
+      //   if (o && o.element) {
+      //     this._openCreateEventDialog(o.element, o.period);
+      //   }
+      // },
+      // _handleDisplayEventWidget: function (c, e, o) {
+      //   if (o && o.element) {
+      //     //this._openDisplayEventDialog(o.element, o.day);
+      //   }
+      // },
 
-      _openDisplayEventDialog: function (r, d) {
-        var that = this;
-        var o = $(r);
-        if (!o) {
-          return;
-        }
-        var eO = o.offset(); //Element position
-        var eH = o.outerHeight(); //Element height
-        var eW = o.outerWidth();
+      // _openDisplayEventDialog: function (r, d) {
+      //   var that = this;
+      //   var o = $(r);
+      //   if (!o) {
+      //     return;
+      //   }
+      //   var eO = o.offset(); //Element position
+      //   var eH = o.outerHeight(); //Element height
+      //   var eW = o.outerWidth();
 
-        var aStyles = new Map([
-          ["transform", `matrix(1, 0, 0, 1, ${eO.left}, -100%)`],
-        ]);
+      //   var aStyles = new Map([
+      //     ["transform", `matrix(1, 0, 0, 1, ${eO.left}, -100%)`],
+      //   ]);
 
-        var oDialog = new Dialog({
-          header: new DialogHeader({
-            title: d.title,
-            closed: function () {
-              that._getModal().close();
-            },
-          }),
-          styles: aStyles,
-          elementPosition: {
-            offset: { ...eO },
-            outerHeight: eH,
-            outerWidth: eW,
-          },
-          headerDockTop: true,
-          content: this._createDisplayEventWidget(d),
-          closed: function () {},
-        });
+      //   var oDialog = new Dialog({
+      //     header: new DialogHeader({
+      //       title: d.title,
+      //       closed: function () {
+      //         that._getModal().close();
+      //       },
+      //     }),
+      //     styles: aStyles,
+      //     elementPosition: {
+      //       offset: { ...eO },
+      //       outerHeight: eH,
+      //       outerWidth: eW,
+      //     },
+      //     headerDockTop: true,
+      //     content: this._createDisplayEventWidget(d),
+      //     closed: function () {},
+      //   });
 
-        this._getModal().openBy(oDialog);
-      },
+      //   this._getModal().openBy(oDialog);
+      // },
 
-      _createDisplayEventWidget: function (d) {
-        // console.log(d);
-        // return new EventContainer({
-        //   widget: true,
-        //   events: [
-        //     new CalEvent({
-        //       color: "spp-holiday-all-day",
-        //       text: d.holiday.text
-        //     })
-        //   ]
-        // })
-      },
+      // _createDisplayEventWidget: function (d) {
+      //   // console.log(d);
+      //   // return new EventContainer({
+      //   //   widget: true,
+      //   //   events: [
+      //   //     new CalEvent({
+      //   //       color: "spp-holiday-all-day",
+      //   //       text: d.holiday.text
+      //   //     })
+      //   //   ]
+      //   // })
+      // },
 
-      _openCreateEventDialog: function (r, p) {
-        var that = this;
-        var o = $(r);
-        if (!o) {
-          return;
-        }
-        var eO = o.offset(); //Element position
-        var eH = o.outerHeight(); //Element height
-        var eW = o.outerWidth();
+      // _openCreateEventDialog: function (r, p) {
+      //   var that = this;
+      //   var o = $(r);
+      //   if (!o) {
+      //     return;
+      //   }
+      //   var eO = o.offset(); //Element position
+      //   var eH = o.outerHeight(); //Element height
+      //   var eW = o.outerWidth();
 
-        var aStyles = new Map([
-          ["transform", `matrix(1, 0, 0, 1, ${eO.left}, -100%)`],
-          ["--date-time-length", "14em"],
-          ["--date-width-difference", "1em"],
-        ]);
+      //   var aStyles = new Map([
+      //     ["transform", `matrix(1, 0, 0, 1, ${eO.left}, -100%)`],
+      //     ["--date-time-length", "14em"],
+      //     ["--date-width-difference", "1em"],
+      //   ]);
 
-        var oDialog = new Dialog({
-          header: new DialogHeader({
-            title: "Yeni Plan",
-            closed: function () {
-              oDialog.close();
-            },
-          }),
-          styles: aStyles,
-          elementPosition: {
-            offset: { ...eO },
-            outerHeight: eH,
-            outerWidth: eW,
-          },
-          classList: ["spp-eventeditor"],
-          content: this._createEventEditor(p),
-          closed: function () {
-            //--Codes that perform operations after dialog close
-            that._createEventCancelled();
-          },
-          cancelled: function(){
-            //--Modal closed cancel event
-            that._cancelCreateEvent();
-          }
-        });
+      //   var oDialog = new Dialog({
+      //     header: new DialogHeader({
+      //       title: "Yeni Plan",
+      //       closed: function () {
+      //         oDialog.close();
+      //       },
+      //     }),
+      //     styles: aStyles,
+      //     elementPosition: {
+      //       offset: { ...eO },
+      //       outerHeight: eH,
+      //       outerWidth: eW,
+      //     },
+      //     classList: ["spp-eventeditor"],
+      //     content: this._createEventEditor(p),
+      //     closed: function () {
+      //       //--Codes that perform operations after dialog close
+      //       that._createEventCancelled();
+      //     },
+      //     cancelled: function(){
+      //       //--Modal closed cancel event
+      //       that._cancelCreateEvent();
+      //     }
+      //   });
 
-        this._getModal().openBy(oDialog);
-      },
+      //   this._getModal().openBy(oDialog);
+      // },
 
-      _cancelCreateEvent: function(){
-        eventUtilities.publishEvent(
-          "PlanningCalendar",
-          "CreateEventCancelled",
-          null
-        );
-      },
-      _createEventCancelled: function () {
-        this._cancelCreateEvent();
-        this._getModal().close();
-      },
+      // _cancelCreateEvent: function(){
+      //   eventUtilities.publishEvent(
+      //     "PlanningCalendar",
+      //     "CreateEventCancelled",
+      //     null
+      //   );
+      // },
+      // _createEventCancelled: function () {
+      //   this._cancelCreateEvent();
+      //   this._getModal().close();
+      // },
 
       // _createEventEditorToolbar() {
       //   var that = this;
@@ -788,90 +788,90 @@ sap.ui.define(
       //   });
       // },
 
-      _getModal: function () {
-        return this.getAggregation("modal");
-      },
+      // _getModal: function () {
+      //   return this.getAggregation("modal");
+      // },
 
-      _handleViewChange: function (e, c = null) {
-        var that = this;
-        var s = e ? e.getSource() : c;
-        if (!s) {
-          return;
-        }
-        var i = s.data("tab-index");
-        var m = s.data("view-mode");
-        var d = "right"; //by default animate from right direction
+      // _handleViewChange: function (e, c = null) {
+      //   var that = this;
+      //   var s = e ? e.getSource() : c;
+      //   if (!s) {
+      //     return;
+      //   }
+      //   var i = s.data("tab-index");
+      //   var m = s.data("view-mode");
+      //   var d = "right"; //by default animate from right direction
 
-        if (this.getTabIndex() < i) {
-          d = "R";
-        } else {
-          d = "L";
-        }
+      //   if (this.getTabIndex() < i) {
+      //     d = "R";
+      //   } else {
+      //     d = "L";
+      //   }
 
-        this.setProperty("tabIndex", i, true);
-        this.setProperty("mode", m, true);
+      //   this.setProperty("tabIndex", i, true);
+      //   this.setProperty("mode", m, true);
 
-        this._publishViewChanged(
-          jQuery.proxy(that._handleViewChangeCompleted, that),
-          false,
-          d
-        );
-      },
-      _handleViewChangeCompleted: function () {
-        var i = this.getTabIndex();
-        var p = this.getPeriod();
-        var m = this.getMode();
-        eventUtilities.publishEvent("PlanningCalendar", "ViewChangeCompleted", {
-          period: { ...p },
-          mode: m,
-          tabIndex: i,
-        });
-      },
-      _handlePeriodChange: function (b) {
-        var p = this.getPeriod();
-        var x = { ...p };
-        var m = this.getMode();
-        var that = this;
-        switch (b) {
-          case "T": //Today
-            p = dateUtilities.getToday();
-            break;
-          case "N": //Next period
-            p = dateUtilities.getNextPeriod(p, m);
-            break;
-          case "P": //Previous period
-            p = dateUtilities.getPrevPeriod(p, m);
-            break;
-        }
+      //   this._publishViewChanged(
+      //     jQuery.proxy(that._handleViewChangeCompleted, that),
+      //     false,
+      //     d
+      //   );
+      // },
+      // _handleViewChangeCompleted: function () {
+      //   var i = this.getTabIndex();
+      //   var p = this.getPeriod();
+      //   var m = this.getMode();
+      //   eventUtilities.publishEvent("PlanningCalendar", "ViewChangeCompleted", {
+      //     period: { ...p },
+      //     mode: m,
+      //     tabIndex: i,
+      //   });
+      // },
+      // _handlePeriodChange: function (b) {
+      //   var p = this.getPeriod();
+      //   var x = { ...p };
+      //   var m = this.getMode();
+      //   var that = this;
+      //   switch (b) {
+      //     case "T": //Today
+      //       p = dateUtilities.getToday();
+      //       break;
+      //     case "N": //Next period
+      //       p = dateUtilities.getNextPeriod(p, m);
+      //       break;
+      //     case "P": //Previous period
+      //       p = dateUtilities.getPrevPeriod(p, m);
+      //       break;
+      //   }
 
-        var d = dateUtilities.decidePeriodChangeDirection(x, p);
+      //   var d = dateUtilities.decidePeriodChangeDirection(x, p);
 
-        this.setProperty("period", p, true);
+      //   this.setProperty("period", p, true);
 
-        this._publishPeriodChanged(
-          jQuery.proxy(that._publishViewChanged, that, null, true, d)
-        );
-      },
+      //   this._publishPeriodChanged(
+      //     jQuery.proxy(that._publishViewChanged, that, null, true, d)
+      //   );
+      // },
 
-      _publishPeriodChanged: function (fnCb) {
-        var p = this.getPeriod();
-        var m = this.getMode();
-        eventUtilities.publishEvent("PlanningCalendar", "PeriodChanged", {
-          period: { ...p },
-          mode: m,
-          fnCallback: fnCb,
-        });
-      },
+      // _publishPeriodChanged: function (fnCb) {
+      //   var p = this.getPeriod();
+      //   var m = this.getMode();
+      //   eventUtilities.publishEvent("PlanningCalendar", "PeriodChanged", {
+      //     period: { ...p },
+      //     mode: m,
+      //     fnCallback: fnCb,
+      //   });
+      // },
 
-      _publishViewChanged: function (fnCb, e, d) {
-        var i = this.getTabIndex();
-        eventUtilities.publishEvent("PlanningCalendar", "ViewChanged", {
-          tabIndex: i,
-          transitionEffect: e,
-          direction: d,
-          fnCallback: fnCb ? fnCb : null,
-        });
-      },
+      // _publishViewChanged: function (fnCb, e, d) {
+      //   var i = this.getTabIndex();
+      //   eventUtilities.publishEvent("PlanningCalendar", "ViewChanged", {
+      //     tabIndex: i,
+      //     transitionEffect: e,
+      //     direction: d,
+      //     fnCallback: fnCb ? fnCb : null,
+      //   });
+      // },
     });
   }
 );

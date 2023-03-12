@@ -13,7 +13,11 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
             singularName: "item",
           },
         },
-        events: {},
+        events: {
+          legendSelectionChanged: {
+
+          }
+        },
       },
       renderer: function (oRM, oControl) {
         oRM.openStart("ul", oControl); //Main

@@ -160,7 +160,28 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
     setHolidayCalendar: function (h) {
       this._holidayCalendar = _.cloneDeep(h);
     },
+
+    setLegendSettings: function(l){
+      this._legendSettings = _.cloneDeep(l);
+    },
+
+    checkHolidaysVisible: function(){
+      var s = _.find(this._legendSettings, ["type", "holiday"]);
+
+      if(s && s?.selected){
+        return true;
+      }else{
+        return false;
+      }
+
+    },
+
     checkDateHoliday: function (d) {
+
+      if(!this.checkHolidaysVisible()){
+        return;
+      }
+
       var m = moment(d, "DD.MM.YYYY");
       var y = m.format("YYYY");
 
@@ -178,6 +199,9 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
       };
     },
     getDayAttributes: function (d) {
+      if(!this.checkHolidaysVisible()){
+        return;
+      }
       var m = moment(d, "DD.MM.YYYY");
       var y = m.format("YYYY");
       var l = [];

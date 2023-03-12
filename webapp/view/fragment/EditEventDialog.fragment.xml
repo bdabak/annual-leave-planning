@@ -1,0 +1,63 @@
+<core:FragmentDefinition xmlns="com.thy.ux.annualleaveplanning.ui"
+    xmlns:core="sap.ui.core">
+    <Dialog id="CreateEditEventDialog" closed=".onAfterEventDialogClosed" cancelled=".onEventCancelled" class="spp-eventeditor">
+        <header>
+            <DialogHeader id="CreateEditEventDialogHeader" title="İzin Planla / Talep Et" closed=".onEventDialogClosed" />
+        </header>
+        <content>
+            <EventEditor id="CreateEditEventEditor"
+        >
+                <items>
+                    <FormField id="FormFieldLeaveType" firstChild="true" containsFocus="true" empty="true">
+                        <label>
+                            <FormLabel id="FormLabelLeaveType" text="{i18n>leaveType}" for="FormInputLeaveType" />
+
+                        </label>
+                        <field>
+                            <FormInput id="FormInputLeaveType" value="{planModel>/editEvent/leaveType}" name="LeaveType" placeHolder="{i18n>leaveType}" />
+
+                        </field>
+                    </FormField>
+
+                    <FormField id="FormFieldStartDate" containsFocus="true" empty="false">
+                        <label>
+                            <FormLabel id="FormLabelStartDate" text="{i18n>leaveStartDate}" for="FormInputStartDate" />
+
+                        </label>
+                        <field>
+                            <FormDatePicker id="FormInputStartDate" value="{planModel>/editEvent/startDate}" selectDate=".onCallDatePicker" />
+                        </field>
+                    </FormField>
+
+                    <FormField id="FormFieldEndDate" lastChild="true" containsFocus="true" empty="false">
+                        <label>
+                            <FormLabel id="FormLabelEndDate" text="{i18n>leaveEndDate}" for="FormInputEndDate" />
+
+                        </label>
+                        <field>
+                            <FormDatePicker id="FormInputEndDate" value="{planModel>/editEvent/EndDate}" selectDate=".onCallDatePicker" />
+                        </field>
+                    </FormField>
+                </items>
+                <toolbar>
+                    <Toolbar id="CreateEditEventDialogToolbar">
+                        <items>
+                            <Button id="CreateEditEventDialogSaveAction"
+                                label="{i18n>saveAction}"
+                                raised="true"
+                                firstChild="true"
+                                class="spp-blue"
+                                press=".onEventSave"
+                            />
+                             <Button id="CreateEditEventDialogCancelAction"
+                                label="{i18n>cancelAction}"
+                                lastChild="true"
+                                press=".onEventCancelled"
+                            />
+                        </items>
+                    </Toolbar>
+                </toolbar>
+            </EventEditor>
+        </content>
+    </Dialog>
+</core:FragmentDefinition>

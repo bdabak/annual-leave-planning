@@ -2,11 +2,13 @@
     xmlns:core="sap.ui.core">
     <PageSidebar id="LeaveManagementPageSidebar" hidden="false">
         <items>
-            <Legend id="LeaveManagementPageLegend" items="{planModel>legend}">
+            <Legend id="LeaveManagementPageLegend" items="{planModel>legend}"
+            legendSelectionChanged=".onLegendSelectionChanged">
                 <items>
-                    <LegendItem
+                    <LegendItem id="LeaveManagementPageLegendItem"
                         color="{planModel>color}"
-                        text="{planModel>text}" />
+                        text="{planModel>text}" 
+                        selected="{planModel>selected}"/>
                 </items>
             </Legend>
         </items>
