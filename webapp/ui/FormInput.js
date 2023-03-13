@@ -58,6 +58,7 @@ sap.ui.define([
             oRM.attr("autocomplete", oControl.getAutoComplete());
             oRM.attr("placeholder", oControl.getPlaceHolder());
             oRM.attr("role", oControl.getRole());
+            oRM.attr("value", oControl.getValue());
             oRM.openEnd();
             oRM.close("input"); //Main
             //--Input--//

@@ -12,6 +12,7 @@ sap.ui.define(
     "com/thy/ux/annualleaveplanning/ui/FormLabel",
     "com/thy/ux/annualleaveplanning/ui/FormInput",
     "com/thy/ux/annualleaveplanning/ui/FormDatePicker",
+    "com/thy/ux/annualleaveplanning/ui/DatePickerWidget",
     "com/thy/ux/annualleaveplanning/utils/date-utilities",
     "com/thy/ux/annualleaveplanning/utils/event-utilities",
   ],
@@ -31,6 +32,7 @@ sap.ui.define(
     Label,
     Input,
     DatePicker,
+    DatePickerWidget,
     dateUtilities,
     eventUtilities
   ) {
@@ -48,30 +50,18 @@ sap.ui.define(
               selected: true,
             },
             {
-              type: "plan",
+              type: "planned",
               text: "Planlanan izin",
               color: "spp-sch-foreground-blue",
               selected: true,
             },
             {
-              type: "leave",
+              type: "annual",
               text: "Yıllık izin",
               color: "spp-sch-foreground-green",
               selected: true,
             },
           ];
-
-          var oViewModel = new JSONModel({
-            page: {
-              mode: "Y",
-              period: dateUtilities.getToday(),
-              tabIndex: "0",
-              legend: legend,
-              legendChanged: null,
-            },
-          });
-
-          this.getView().setModel(oViewModel, "planModel");
 
           var holidayCalendar = {
             holidayList: {
@@ -232,9 +222,9 @@ sap.ui.define(
             },
 
             holidayInfo: [
-              { id: "RAM", text: "Ramazan Bayramı 2023" },
-              { id: "SAC", text: "Kurban Bayramı 2023" },
-              { id: "JAN01", text: "Yılbaşı tatili 2023" },
+              { id: "RAM", text: "Ramazan Bayramı" },
+              { id: "SAC", text: "Kurban Bayramı" },
+              { id: "JAN01", text: "Yılbaşı Tatili" },
               { id: "APR23", text: "Ulusal Egemenlik ve Çocuk Bayramı" },
               { id: "MAY01", text: "Emek ve Dayanışma Günü" },
               { id: "MAY19", text: "Atatürk'ü Anma Gençlik ve Spor Bayramı" },
@@ -245,9 +235,40 @@ sap.ui.define(
               { id: "DEC31", text: "Yılbaşı Arefesi" },
             ],
           };
+          var oViewModel = new JSONModel({
+            page: {
+              mode: "Y",
+              period: dateUtilities.getToday(),
+              tabIndex: "0",
+              legend: legend,
+              legendChanged: null,
+              eventEdit:{
+                leaveType: null,
+                startDate: null,
+                endDate: null,
+              },
+            },
+            holidayCalendar: holidayCalendar,
+            plannedLeaves: [
+              {
+                startDate: new Date(2023, 5, 5),
+                endDate: new Date(2023, 5, 11),
+              },
+              {
+                startDate: new Date(2023, 6, 17),
+                endDate: new Date(2023, 6, 23),
+              }
+            ]
+           
+          });
 
-          dateUtilities.setHolidayCalendar(holidayCalendar);
-          dateUtilities.setLegendSettings(legend);
+          this.getView().setModel(oViewModel, "planModel");
+
+         
+
+          // dateUtilities.setHolidayCalendar(holidayCalendar);
+          // dateUtilities.setLegendSettings(legend);
+          dateUtilities.setProxyModel(oViewModel);
           /* Subscribe Event Handlers */
           eventUtilities.subscribeEvent(
             "PlanningCalendar",
@@ -277,7 +298,7 @@ sap.ui.define(
         },
 
         onLegendSelectionChanged: function () {
-          dateUtilities.setLegendSettings(this.getPageProperty("legend"));
+          // dateUtilities.setLegendSettings(this.getPageProperty("legend"));
 
           this.setPageProperty("legendChanged", new Date().getTime());
         },
@@ -338,21 +359,82 @@ sap.ui.define(
           this._handleViewChange(s);
         },
 
-        onEventDialogClosed: function(){
-          if(this._oEventDialog) this._oEventDialog.close();
-        }, 
-        onAfterEventDialogClosed: function(){
+        onEventDialogClosed: function () {
+          if (this._oEventDialog) this._oEventDialog.close();
+        },
+        onAfterEventDialogClosed: function () {
           this._createEventCancelled();
           this._oEventDialog = null;
-        },  
+        },
 
-        onEventCancelled: function(){
+        onEventCancelled: function () {
           this._cancelCreateEvent();
-          if(this._oEventDialog) {
-            this._oEventDialog.destroy();
-            this._oEventDialog = null;
+          this._closeEventDialog();
+        },
+
+       
+
+        onEventSave: function(){
+          var oEvent = this.getPageProperty("eventEdit");
+          var aPL = this.getProperty("plannedLeaves");
+
+          aPL.push({
+            startDate: dateUtilities.convertToDate(oEvent.startDate),
+            endDate: dateUtilities.convertToDate(oEvent.endDate)
+          });
+          this.setProperty("plannedLeaves", aPL);
+
+          this.setPageProperty("legendChanged", new Date().getTime());
+          
+          Swal.fire({
+            position: "bottom",
+            icon: "success",
+            title: "Planlı izin kaydedildi",
+            showConfirmButton: false,
+            toast: true,
+            timer: 2000,
+          });
+
+          this._closeEventDialog();
+        },
+
+        onCallDatePicker: function (e) {
+          var s = e.getParameter("sourceField");
+          var t = e.getParameter("targetField");
+          var p = e.getParameter("period");
+          var o = t.$();
+
+          if(this._oDatePickerWidget){
+            this._oDatePickerWidget.destroy();
           }
-        }, 
+
+          if (o && o?.length > 0) {
+            var eO = o.offset(); //Element position
+            var eH = o.outerHeight(); //Element height
+            var eW = o.outerWidth();
+
+            this._oDatePickerWidget = new DatePickerWidget({
+              floating: true,
+              period: p,
+              select: function (e) {
+                var d = e.getParameter("selectedDate");
+                if (s && typeof s.handleValueSelection === "function") {
+                  s.handleValueSelection(d);
+                }
+              },
+              selectedDate: dateUtilities.convertPeriodToDate(p),
+              elementPosition: {
+                offset: { ...eO },
+                outerHeight: eH,
+                outerWidth: eW,
+              },
+            });
+
+            s.registerDatePickerWidget(this._oDatePickerWidget);
+
+            this.getModal().openBy(this._oDatePickerWidget);
+          }
+        },
 
         /* Helper methods */
         getModal: function () {
@@ -366,39 +448,55 @@ sap.ui.define(
           return this.getView().getModel(m);
         },
 
+        getProperty: function(p){
+          return this.getModel("planModel").getProperty("/" + p);
+        },
+
+        setProperty: function(p,v){
+          return this.getModel("planModel").setProperty("/" + p, v);
+        },
+
         getPageProperty: function (p) {
           return this.getModel("planModel").getProperty("/page/" + p);
         },
         setPageProperty: function (p, v) {
-          return this.getModel("planModel").setProperty("/page/" + p, v);
+          this.getModel("planModel").setProperty("/page/" + p, v);
         },
         getPageProps: function () {
           return this.getModel("planModel").getProperty("/page");
         },
         setPageProps: function (o) {
-          return this.getModel("planModel").setProperty("/page", { ...o });
+          this.getModel("planModel").setProperty("/page", { ...o });
         },
         getPeriod: function () {
           return this.getPageProperty("period");
         },
         setPeriod: function (p) {
-          return this.setPageProperty("period", p);
+          this.setPageProperty("period", p);
         },
         getMode: function () {
           return this.getPageProperty("mode");
         },
         setMode: function (m) {
-          return this.setPageProperty("mode", m);
+          this.setPageProperty("mode", m);
         },
 
         getTabIndex: function () {
           return this.getPageProperty("tabIndex");
         },
         setTabIndex: function (i) {
-          return this.setPageProperty("tabIndex", i);
+          this.setPageProperty("tabIndex", i);
         },
 
         /* Private methods */
+        _closeEventDialog: function(){
+          if (this._oEventDialog) {
+            this._oEventDialog.destroy();
+            this._oEventDialog = null;
+            //--Close modal--//
+            this.getModal().close();
+          }
+        },
         _handlePeriodChange: function (b) {
           var p = this.getPeriod();
           var x = { ...p };
@@ -415,8 +513,12 @@ sap.ui.define(
               p = dateUtilities.getPrevPeriod(p, m);
               break;
           }
-
+          
           var d = dateUtilities.decidePeriodChangeDirection(x, p);
+
+          if(d === null){
+            return;
+          }
 
           this.setPeriod(p);
 
@@ -551,7 +653,6 @@ sap.ui.define(
           });
         },
         _openCreateEventDialog: function (r, p) {
-          var that = this;
           var o = $(r);
           if (!o) {
             return;
@@ -559,6 +660,14 @@ sap.ui.define(
           var eO = o.offset(); //Element position
           var eH = o.outerHeight(); //Element height
           var eW = o.outerWidth();
+
+          var oEvent = {
+            leaveType: "Planlanan İzin",
+            startDate: dateUtilities.formatDate(p.startDate),
+            endDate: dateUtilities.formatDate(p.endDate)
+          };
+          this.setPageProperty("eventEdit", oEvent);
+
 
           var aStyles = new Map([
             ["transform", `matrix(1, 0, 0, 1, ${eO.left}, -100%)`],
@@ -608,8 +717,6 @@ sap.ui.define(
           //   },
           // });
         },
-
-
 
         _createEventCancelled: function () {
           this._cancelCreateEvent();

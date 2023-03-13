@@ -46,6 +46,7 @@ sap.ui.define(
       },
       renderer: function (oRM, oControl) {
         var e = oControl.getDay();
+        var bSelectable = dateUtilities.checkDateIsSelectable(e.date);
         var dP = oControl.getDatePicker();
         var s = oControl.getSelectedDate();
         var c = oControl
@@ -53,6 +54,11 @@ sap.ui.define(
           .setDay(e.day)
           .setDatePicker(dP);
         oRM.openStart("div", oControl); //Main
+
+        if(!bSelectable){
+          oRM.class("spp-past-date");
+        }
+
         oRM
           .class("spp-day-name")
           .class("spp-calendar-cell")
@@ -99,6 +105,14 @@ sap.ui.define(
         return (p && p.$()) || null;
       },
       _getDayClass: function (d) {
+        var p = dateUtilities.checkDatePlanned(d);
+
+        if(p){
+          return "spp-planned-leave";
+        }
+
+
+
         var h = dateUtilities.checkDateHoliday(d);
 
         if (!h) {
@@ -113,6 +127,9 @@ sap.ui.define(
         }
       },
       ontap: function () {
+        if(this.getDatePicker()){
+          return;
+        }
         var d = this.getDay().date;
         var a = dateUtilities.getDayAttributes(d) || null;
         if (!a) {

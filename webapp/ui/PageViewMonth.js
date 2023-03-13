@@ -234,11 +234,11 @@ sap.ui.define(
             t.hasClass("spp-cal-event-bar-container") &&
             !t.hasClass("spp-other-month")
           ) {
-            if (!this._touchEndProxy) {
-              this._touchEndProxy = $.proxy(this._ontouchend, this);
-            }
-            if (!this._touchMoveProxy) {
-              this._touchMoveProxy = $.proxy(this._ontouchmove, this);
+           
+            var n = t.parents(".spp-past-date");
+            if(n.length>0){
+              this._refreshCellStates();
+              return;
             }
 
             var s = t.parents(".spp-weeks-container");
@@ -246,6 +246,13 @@ sap.ui.define(
             if (s.length === 0) {
               this._refreshCellStates();
               return;
+            }
+
+            if (!this._touchEndProxy) {
+              this._touchEndProxy = $.proxy(this._ontouchend, this);
+            }
+            if (!this._touchMoveProxy) {
+              this._touchMoveProxy = $.proxy(this._ontouchmove, this);
             }
 
             e.setMarked();

@@ -37,7 +37,12 @@ sap.ui.define(
         },
         renderer: function (oRM, oControl) {
           var e = oControl.getDay();
+          var bSelectable = dateUtilities.checkDateIsSelectable(e.date);
           oRM.openStart("div", oControl); //Day
+
+          if(!bSelectable){
+            oRM.class("spp-past-date");
+          }
           oRM
             // .class("spp-day-name")
             .class("spp-calendar-cell")

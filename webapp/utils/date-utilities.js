@@ -1,7 +1,29 @@
 sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
   "use strict";
-  var _holidayCalendar = {};
+
+  var _planModel = {};
   return {
+
+    setProxyModel: function(m){
+      this._planModel = m;
+    },
+
+    getProxyModel: function(){
+      return this._planModel;
+    },
+
+    getProxyModelProperty: function(p){
+      return this._planModel.getProperty(p);
+    },
+
+    getHolidayCalendar: function(){
+      return this.getProxyModelProperty("/holidayCalendar");
+    },
+
+    getPlannedLeaves: function(){
+      return this.getProxyModelProperty("/plannedLeaves");
+    },
+
     formatDate: function(d){
       //--Init momentJS
       this.initializeMoment();
@@ -142,7 +164,13 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
     decidePeriodChangeDirection: function (o, n) {
       var oP = moment(o.day + "." + o.month + "." + o.year, "DD.MM.YYYY");
       var nP = moment(n.day + "." + n.month + "." + n.year, "DD.MM.YYYY");
-      return oP.isAfter(nP) ? "L" : oP.isBefore(nP) ? "R" : "";
+      return oP.isAfter(nP) ? "L" : oP.isBefore(nP) ? "R" : null;
+    },
+
+    convertToDate: function(d){
+      var m = moment(d, "DD.MM.YYYY");
+
+      return m.toDate();
     },
 
     findDatesBetweenTwoDates: function (b, e) {
@@ -157,16 +185,21 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
       return dates;
     },
 
-    setHolidayCalendar: function (h) {
-      this._holidayCalendar = _.cloneDeep(h);
-    },
-
-    setLegendSettings: function(l){
-      this._legendSettings = _.cloneDeep(l);
-    },
-
     checkHolidaysVisible: function(){
-      var s = _.find(this._legendSettings, ["type", "holiday"]);
+      //var s = _.find(this._legendSettings, ["type", "holiday"]);
+      var s = _.find(this.getProxyModelProperty("/page/legend"), ["type", "holiday"]);
+
+      if(s && s?.selected){
+        return true;
+      }else{
+        return false;
+      }
+
+    },
+
+    checkPlannedVisible: function(){
+      //var s = _.find(this._legendSettings, ["type", "holiday"]);
+      var s = _.find(this.getProxyModelProperty("/page/legend"), ["type", "planned"]);
 
       if(s && s?.selected){
         return true;
@@ -177,7 +210,6 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
     },
 
     checkDateHoliday: function (d) {
-
       if(!this.checkHolidaysVisible()){
         return;
       }
@@ -186,7 +218,7 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
       var y = m.format("YYYY");
 
       //--Search in variable holidays
-      var v = _.find(this._holidayCalendar.holidayList[y], {
+      var v = _.find(this.getHolidayCalendar()?.holidayList[y], {
         month: m.format("MM"),
         day: m.format("DD"),
       });
@@ -198,12 +230,40 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
         type: v.type,
       };
     },
+    checkDatePlanned: function (d) {
+      if(!this.checkPlannedVisible()){
+        return;
+      }
+
+      var m = moment(d, "DD.MM.YYYY");
+
+      //--Search in variable holidays
+      var pL = _.find(this.getPlannedLeaves(), function(l,i){
+        // console.log(m,l);
+        if (m.isBetween(moment(l.startDate), moment(l.endDate), undefined, "[]")){
+          return true;
+        }
+      });
+
+      if (!pL) {
+        return null;
+      }
+      return true;
+    },
+
+    checkDateIsSelectable: function(d){
+      var m = moment(d, "DD.MM.YYYY");
+      var t = moment(new Date());
+
+      return m.isAfter(t,"day");
+    },
+
     getDayAttributes: function (d) {
       if(!this.checkHolidaysVisible()){
         return;
       }
       var m = moment(d, "DD.MM.YYYY");
-      var y = m.format("YYYY");
+      var y = m.clone().format("YYYY");
       var l = [];
       var e = {};
       var that = this;
@@ -238,18 +298,18 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
 
       //--Search in holidays
       var hL =
-        _.filter(this._holidayCalendar.holidayList[y], {
+        _.filter(this.getHolidayCalendar()?.holidayList[y], {
           month: m.format("MM"),
           day: m.format("DD"),
         }) || [];
       if (hL.length > 0) {
         $.each(hL, function (i, h) {
-          var s = _.find(that._holidayCalendar.holidayInfo, [
+          var s = _.find(that.getHolidayCalendar().holidayInfo, [
             "id",
             h.belongsTo,
           ]);
           if (s) {
-            var sT = _.filter(that._holidayCalendar.holidayList[y], [
+            var sT = _.filter(that.getHolidayCalendar().holidayList[y], [
               "belongsTo",
               h.belongsTo,
             ]);
@@ -259,7 +319,7 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
               belongsTo: h.belongsTo,
             });
 
-            var aT = _.filter(that._holidayCalendar.holidayList[y], {
+            var aT = _.filter(that.getHolidayCalendar().holidayList[y], {
               month: m.format("MM"),
               day: m.format("DD"),
             });
@@ -277,6 +337,16 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
               rowSpan: calcSpan(sI, o, sT),
             };
             l.push(e);
+          }
+        });
+      }
+
+      //--Search in plans
+      if(m.format("MM") === "06"){
+        var pL = _.find(this.getPlannedLeaves(), function(l,i){
+          // console.log(m,l);
+          if (m.isBetween(moment(l.startDate), moment(l.endDate), undefined, "[]")){
+            console.log(m,l);
           }
         });
       }

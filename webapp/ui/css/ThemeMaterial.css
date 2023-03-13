@@ -5,9 +5,11 @@
 
 :root,:host {
   --b-fa-font-solid: normal 900 1em/1 "Font Awesome 6 Free";
-  --color-blue: #3183fe;
   --color-green: #27ca37;
+  --color-green-hover: #26812f;
   --color-orange: #feac31;
+  --color-blue: #3183fe;
+  --color-blue-hover: #1a5fc6;
   --color-orange-hover: #e49e34;
   --color-deep-orange: #ff7043;
   --color-deep-orange-hover: #df572e;
@@ -21547,9 +21549,17 @@ button.spp-button.spp-recurrencelegendbutton {
   color: #1a1a1a !important;
 }
 
+.spp-planned-leave:not(.spp-other-month):hover .spp-calendar-cell-inner {
+  background-color: var(--color-blue-hover) !important;
+}
+
 .spp-annual-leave:not(.spp-other-month) {
   background-color: var(--color-green);
   color: #1a1a1a !important;
+}
+
+.spp-annual-leave:not(.spp-other-month):hover .spp-calendar-cell-inner {
+  background-color: var(--color-green-hover) !important;
 }
 
 .spp-holiday-half-day:not(.spp-other-month) {
@@ -21577,3 +21587,14 @@ button.spp-button.spp-recurrencelegendbutton {
   background-color: rgb(219, 219, 219);
 }
 
+.spp-past-date:hover .spp-calendar-cell-inner{
+  cursor: not-allowed !important;
+}
+
+.spp-cal-empty-cell:not(.spp-past-date){
+  cursor: pointer;
+}
+
+.spp-past-date:hover{
+  cursor: not-allowed !important;
+}

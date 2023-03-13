@@ -47,13 +47,13 @@ sap.ui.define(
           },
         },
 
-        associations:{
+        associations: {
           datePickerWidget: {
             type: "com.thy.ux.annualleaveplanning.ui.FormFieldTrigger",
             multiple: false,
-          }
+          },
         },
-        
+
         events: {
           selectDate: {
             sourceField: {
@@ -78,38 +78,45 @@ sap.ui.define(
         this.setAggregation("dateTrigger", dT);
       },
 
-      registerDatePickerWidget: function(c){
+      registerDatePickerWidget: function (c) {
         this.setAssociation("datePickerWidget", c.getId());
       },
 
-      handleValueSelection: function(v){
+      handleValueSelection: function (v) {
         this.setValue(dateUtilities.formatDate(v));
         this.closeDatePicker();
-      },  
+      },
 
-      closeDatePicker: function(){
+      closeDatePicker: function () {
         var a = this.getAssociation("datePickerWidget", null);
-        if(a){
-          var c = $("#"+a).control();
-          if(c && c.length > 0){
+        if (a) {
+          var c = $("#" + a).control();
+          if (c && c.length > 0) {
             c[0].destroy();
             this._dateSelectionActive = false;
             this.removeAssociation("datePickerWidget", a, true);
           }
         }
+        this._dateSelectionActive = false;
       },
 
-      toggleDatePicker: function () {
-        if (this._dateSelectionActive) {
+      openDatePicker: function () {
+        if (!this._dateSelectionActive) {
           this.closeDatePicker();
-          this._dateSelectionActive = false;
-        } else {
           this._dateSelectionActive = true;
           this.fireSelectDate({
             targetField: this.getParent(),
             sourceField: this,
             period: dateUtilities.convertDateToPeriod(this.getValue()),
           });
+        }
+      },
+
+      toggleDatePicker: function () {
+        if (this._dateSelectionActive) {
+          this.closeDatePicker();
+        } else {
+          this.openDatePicker();
         }
       },
       renderer: function (oRM, oControl) {
@@ -135,6 +142,9 @@ sap.ui.define(
         oRM.renderControl(oControl.getAggregation("dateTrigger"));
 
         oRM.close("div"); //Main
+      },
+      onfocusin: function () {
+        this.openDatePicker();
       },
     });
   }

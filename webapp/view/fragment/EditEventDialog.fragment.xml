@@ -8,34 +8,35 @@
             <EventEditor id="CreateEditEventEditor"
         >
                 <items>
-                    <FormField id="FormFieldLeaveType" firstChild="true" containsFocus="true" empty="true">
+                    <FormField id="FormFieldLeaveType" firstChild="true" containsFocus="true" 
+                    empty="{= ${planModel>eventEdit/leaveType} === '' || ${planModel>eventEdit/leaveType} === null }">
                         <label>
                             <FormLabel id="FormLabelLeaveType" text="{i18n>leaveType}" for="FormInputLeaveType" />
 
                         </label>
                         <field>
-                            <FormInput id="FormInputLeaveType" value="{planModel>/editEvent/leaveType}" name="LeaveType" placeHolder="{i18n>leaveType}" />
+                            <FormInput id="FormInputLeaveType" value="{planModel>eventEdit/leaveType}" name="LeaveType"  />
 
                         </field>
                     </FormField>
 
-                    <FormField id="FormFieldStartDate" containsFocus="true" empty="false">
+                    <FormField id="FormFieldStartDate" containsFocus="true" empty="{= ${planModel>eventEdit/startDate} === null }">
                         <label>
                             <FormLabel id="FormLabelStartDate" text="{i18n>leaveStartDate}" for="FormInputStartDate" />
 
                         </label>
                         <field>
-                            <FormDatePicker id="FormInputStartDate" value="{planModel>/editEvent/startDate}" selectDate=".onCallDatePicker" />
+                            <FormDatePicker id="FormInputStartDate" value="{planModel>eventEdit/startDate}" selectDate=".onCallDatePicker" />
                         </field>
                     </FormField>
 
-                    <FormField id="FormFieldEndDate" lastChild="true" containsFocus="true" empty="false">
+                    <FormField id="FormFieldEndDate" lastChild="true" containsFocus="true" empty="{= ${planModel>eventEdit/endDate} === null }">
                         <label>
                             <FormLabel id="FormLabelEndDate" text="{i18n>leaveEndDate}" for="FormInputEndDate" />
 
                         </label>
                         <field>
-                            <FormDatePicker id="FormInputEndDate" value="{planModel>/editEvent/EndDate}" selectDate=".onCallDatePicker" />
+                            <FormDatePicker id="FormInputEndDate" value="{planModel>eventEdit/endDate}" selectDate=".onCallDatePicker" />
                         </field>
                     </FormField>
                 </items>

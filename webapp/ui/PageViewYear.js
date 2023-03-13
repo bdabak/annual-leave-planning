@@ -86,23 +86,23 @@ sap.ui.define(
             this._refreshCellStates();
             return;
           }
-          
+          this._refreshCellStates();
           e.preventDefault();
           var t = $(e.target);
           if (t && t.hasClass("spp-calendar-cell-inner")  && !t.hasClass("spp-other-month") ) {
-           
+
+            var s = t.parent(".spp-calendar-cell.spp-cal-empty-cell").not(".spp-past-date");
+
+            if (!s.length>0) {
+              this._refreshCellStates();
+              return;
+            }
+
             if (!this._touchEndProxy) {
               this._touchEndProxy = $.proxy(this._ontouchend, this);
             }
             if (!this._touchMoveProxy) {
               this._touchMoveProxy = $.proxy(this._ontouchmove, this);
-            }
-
-            var s = t.parent(".spp-calendar-cell.spp-cal-empty-cell");
-
-            if (!s.length>0) {
-              this._refreshCellStates();
-              return;
             }
 
             e.setMarked();
