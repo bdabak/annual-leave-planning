@@ -47,18 +47,21 @@ sap.ui.define(
               type: "holiday",
               text: "Resmi tatiller",
               color: "spp-sch-foreground-orange",
+              design: "spp-holiday-all-day-event",
               selected: true,
             },
             {
               type: "planned",
               text: "Planlanan izin",
               color: "spp-sch-foreground-blue",
+              design: "spp-planned-leave-event",
               selected: true,
             },
             {
               type: "annual",
               text: "Yıllık izin",
               color: "spp-sch-foreground-green",
+              design: "spp-annual-leave-event",
               selected: true,
             },
           ];
@@ -257,6 +260,10 @@ sap.ui.define(
               {
                 startDate: new Date(2023, 6, 17),
                 endDate: new Date(2023, 6, 23),
+              },
+              {
+                startDate: new Date(2023, 5, 26),
+                endDate: new Date(2023, 6, 2),
               }
             ]
            

@@ -56,7 +56,7 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
       var bEvent = oControl.getEventType();
       var bFuture = oControl.getHasFuture();
       var bOVerflow = oControl.getHasOverflow();
-      var iRow = oControl.getRowIndex();
+      var iRow = oControl.getParent()?.getEvents()?.length > 0 ? oControl.getParent()?.getEvents()?.length - 1 : 0 || 0;
       var iSpan = oControl.getRowSpan();
       oRM.openStart("div", oControl); //Main
       oRM
@@ -80,12 +80,15 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
         if(s === 1){
           return "14.29%";
         }else{
-          return (14.29 * s).toString() + "%";
+          var l = 14.29 * s;
+          l = l > 100 ? 100 : l;
+          return (l).toString() + "%";
         }
       })(iSpan);
       
       if(!bPast && bFuture){
         oRM.style("width", `${w}`);
+        oRM.style("top", `${((iRow+1) * 22 + 3).toString() + "px"}`);
       }else{
         oRM.style("width", `${w}`);
         oRM.style("top", `${((iRow+1) * 22 + 3).toString() + "px"}`);

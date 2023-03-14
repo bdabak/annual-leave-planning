@@ -98,9 +98,9 @@ sap.ui.define(
 
           $.each(a, function (i, e) {
             var n = new Event({
-              eventType: "holiday",
-              color: "spp-cal-color-deep-orange",
-              text: e.holiday.text,
+              eventType: e.type,
+              color: e.color,
+              text: e.text,
               height: "20px",
               hasPast: e.hasPast,
               hasFuture: e.hasFuture,
@@ -148,6 +148,8 @@ sap.ui.define(
               }
             };
 
+            
+
             var calcFuture = function(i,s,a){
               
               var mB = moment(a[i], "DD.MM.YYYY");
@@ -162,8 +164,8 @@ sap.ui.define(
 
             var n = new Event({
               eventType: "newEvent",
-              color: "spp-cal-color-blue",
-              text: "New Event",
+              color: "spp-cal-new-event",
+              text: "Yeni İzin",
               height: "20px",
               hasPast: i > 0,
               hasFuture: calcFuture(i,o,a),
