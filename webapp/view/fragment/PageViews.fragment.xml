@@ -3,19 +3,23 @@
     xmlns:m="sap.m">
     <PageViewContainer id="LeaveManagementPageViewContainer">
         <views>
-            <PageView id="LeaveManagementPageViewYear" hidden="false" tabIndex="0" navigationActive="true" rerender="{planModel>legendChanged}">
+            <PageView id="LeaveManagementPageViewYear" hidden="false" tabIndex="0" navigationActive="true"  viewType="year" rerender="{planModel>legendChanged}"
+            class="spp-yearview spp-daycellrenderer">
                 <content>
                     <PageViewYear id="LeaveManagementPageViewYearContent" year="{= parseInt(${planModel>period/year},10) }" />
                 </content>
             </PageView>
 
-            <PageView id="LeaveManagementPageViewMonth" hidden="true" tabIndex="1" navigationActive="true" rerender="{planModel>legendChanged}">
+            <PageView id="LeaveManagementPageViewMonth" hidden="true" tabIndex="1" navigationActive="true"  viewType="month" rerender="{planModel>legendChanged}"
+            class="spp-monthview spp-daycellrenderer">
                 <content>
                     <PageViewMonth id="LeaveManagementPageViewMonthContent" year="{= parseInt(${planModel>period/year},10) }" month="{= parseInt(${planModel>period/month},10) }" />
                 </content>
             </PageView>
 
-            <PageView id="LeaveManagementPageViewAgenda" hidden="true" tabIndex="2" navigationActive="true">
+            <PageView id="LeaveManagementPageViewAgenda" hidden="true" tabIndex="2" navigationActive="true" viewType="agenda"
+                class="spp-daterangeowner spp-eventlist spp-agendaview spp-slide-vertical spp-gridbase spp-grid spp-grid-position spp-enable-sticky spp-grid-notextselection spp-fill-last-column"
+            >
                 <content>
                     <m:Text text="Agenda" />
                 </content>

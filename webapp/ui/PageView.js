@@ -22,6 +22,11 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
           type: "string",
           bindable: true,
           defaultValue: null,
+        },
+        viewType: {
+          type: "string",
+          bindable: true,
+          defaultValue: null,
         }
       },
       aggregations: {
@@ -50,7 +55,6 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
         .class("spp-responsive")
         .class("spp-calendarmixin")
         .class("spp-daycellcollecter")
-        .class("spp-daycellrenderer")
         .class("spp-yearview")
         .class("spp-touch")
         .class("spp-vbox")
@@ -75,8 +79,11 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
       oRM
         .class("spp-hbox")
         .class("spp-box-center")
-        .class("spp-panel-body-wrap")
-        .class("spp-yearview-body-wrap");
+        .class("spp-panel-body-wrap");
+      if(oControl.getViewType()){
+        oRM.class(`spp-${oControl.getViewType()}view-body-wrap`);
+      }
+        
       oRM.openEnd();
       oRM.renderControl(oControl.getContent());
       oRM.close("div"); //Sub div
