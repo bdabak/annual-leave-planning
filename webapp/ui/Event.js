@@ -4,10 +4,10 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
   return Control.extend("com.thy.ux.annualleaveplanning.ui.Event", {
     metadata: {
       properties: {
-        eventType:{
+        eventType: {
           type: "string",
           bindable: true,
-          defaultValue: ""
+          defaultValue: "",
         },
         color: {
           type: "string",
@@ -37,16 +37,26 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
           bindable: true,
           defaultValue: false,
         },
-        rowIndex:{
+        rowIndex: {
           type: "int",
           bindable: true,
-          defaultValue: 0
+          defaultValue: 0,
         },
-        rowSpan:{
+        rowSpan: {
           type: "int",
           bindable: true,
-          defaultValue: 1
-        }
+          defaultValue: 1,
+        },
+        endDate: {
+          type: "string",
+          bindable: true,
+          defaultValue: null,
+        },
+        forAgenda: {
+          type: "boolean",
+          bindable: true,
+          defaultValue: false,
+        },
       },
       aggregations: {},
       events: {},
@@ -56,8 +66,12 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
       var bEvent = oControl.getEventType();
       var bFuture = oControl.getHasFuture();
       var bOVerflow = oControl.getHasOverflow();
-      var iRow = oControl.getParent()?.getEvents()?.length > 0 ? oControl.getParent()?.getEvents()?.length - 1 : 0 || 0;
+      var iRow =
+        oControl.getParent()?.getEvents()?.length > 0
+          ? oControl.getParent()?.getEvents()?.length - 1
+          : 0 || 0;
       var iSpan = oControl.getRowSpan();
+      var bAgenda = oControl.getForAgenda();
       oRM.openStart("div", oControl); //Main
       oRM
         .class("spp-cal-event-wrap")
@@ -65,35 +79,38 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
         .class("spp-solid-bar")
         .class("spp-past-event");
 
-      if(bEvent === "newEvent"){
+      if (bEvent === "newEvent") {
         oRM.class("spp-is-creating");
       }
 
-      if(bOVerflow){
+      if (bOVerflow) {
         oRM.class("spp-overflow");
-      }else{
+      } else {
         bPast ? oRM.class("spp-continues-past") : null;
         bFuture ? oRM.class("spp-continues-future") : null;
       }
-      
-      var w = (function(s) {
-        if(s === 1){
+
+      var w = (function (s) {
+        if (s === 1) {
           return "14.29%";
-        }else{
+        } else {
           var l = 14.29 * s;
           l = l > 100 ? 100 : l;
-          return (l).toString() + "%";
+          return l.toString() + "%";
         }
       })(iSpan);
-      
-      if(!bPast && bFuture){
-        oRM.style("width", `${w}`);
-        oRM.style("top", `${((iRow+1) * 22 + 3).toString() + "px"}`);
-      }else{
-        oRM.style("width", `${w}`);
-        oRM.style("top", `${((iRow+1) * 22 + 3).toString() + "px"}`);
-      }
 
+      if (!bAgenda) {
+        if (!bPast && bFuture) {
+          oRM.style("width", `${w}`);
+          oRM.style("top", `${((iRow + 1) * 22 + 3).toString() + "px"}`);
+        } else {
+          oRM.style("width", `${w}`);
+          oRM.style("top", `${((iRow + 1) * 22 + 3).toString() + "px"}`);
+        }
+      } else {
+        oRM.style("min-width", "150px");
+      }
       //--Render day class
       oRM.class(oControl.getColor());
       //--Render day class
@@ -103,6 +120,9 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
       //--Render event
       oRM.openStart("div").class("spp-cal-event");
       oRM.style("height", oControl.getHeight());
+      if (bAgenda) {
+        oRM.style("justify-content", "center");
+      }
       oRM.attr("role", "presentation");
       oRM.openEnd();
 
@@ -128,8 +148,10 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
       oRM
         .openStart("div")
         .class("spp-cal-event-desc")
-        .attr("role", "presentation")
-        .openEnd();
+        .attr("role", "presentation");
+      
+      oRM.openEnd();
+
       oRM.text(oControl.getText());
       oRM.close("div");
       //--Render event description--//

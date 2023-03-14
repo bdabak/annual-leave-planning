@@ -17,11 +17,18 @@
                 </content>
             </PageView>
 
-            <PageView id="LeaveManagementPageViewAgenda" hidden="true" tabIndex="2" navigationActive="true" viewType="agenda"
+            <PageView id="LeaveManagementPageViewAgenda" hidden="true" tabIndex="2" navigationActive="true" viewType="agenda" rerender="{planModel>legendChanged}"
                 class="spp-daterangeowner spp-eventlist spp-agendaview spp-slide-vertical spp-gridbase spp-grid spp-grid-position spp-enable-sticky spp-grid-notextselection spp-fill-last-column"
             >
                 <content>
-                    <m:Text text="Agenda" />
+                    <PageViewAgenda
+                        period="{planModel>period}"
+                        emptyText="{i18n>noEventsFound}"
+                    >
+                        <rows>
+                            
+                        </rows>
+                    </PageViewAgenda>
                 </content>
             </PageView>
 

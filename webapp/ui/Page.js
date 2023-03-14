@@ -120,35 +120,9 @@ sap.ui.define(
           sLibraryPath + "/ui/css/ThemeMaterial.css"
         );
 
-        //--Create header
-        // var h = new Header({
-        //   toolbar: this._renderHeaderToolbar(),
-        // });
-        // this.setAggregation("header", h);
-
-        //--Create content
-        // var c = this._renderContent();
-        // this.setAggregation("content", c);
-
-        //--Create model
-        // var m = new Modal();
-        // this.setAggregation("modal", m);
-
-        //--Subscribe to event method
-        // eventUtilities.subscribeEvent(
-        //   "PlanningCalendar",
-        //   "CreateEvent",
-        //   this._handleCreateEvent,
-        //   this
-        // );
-
-        // //--Subscribe to event
-        // eventUtilities.subscribeEvent(
-        //   "PlanningCalendar",
-        //   "DisplayEventWidget",
-        //   this._handleDisplayEventWidget,
-        //   this
-        // );
+        //--Initialize moment locale
+        dateUtilities.initializeMoment();
+        
       },
 
       renderer: function (oRM, oControl) {

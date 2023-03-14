@@ -11,6 +11,11 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
             bindable: true,
             defaultValue: false,
           },
+          showEventTime: {
+            type: "boolean",
+            bindable: true,
+            defaultValue: false,
+          }
         },
         aggregations: {
           events: {

@@ -24,33 +24,21 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
     },
 
     formatDate: function (d) {
-      //--Init momentJS
-      this.initializeMoment();
-
       var m = moment(d, "DD.MM.YYYY");
 
       return m.format("DD.MM.YYYY");
     },
     convertDateToPeriod: function (d) {
-      //--Init momentJS
-      this.initializeMoment();
-
       var m = moment(d, "DD.MM.YYYY");
 
       return this.getPeriod(m);
     },
     convertPeriodToDate: function (p) {
-      //--Init momentJS
-      this.initializeMoment();
-
       var m = moment(p.day + "." + p.month + "." + p.year, "DD.MM.YYYY");
 
       return m.format("DD.MM.YYYY");
     },
     getMonthData: function (y, m) {
-      //--Init momentJS
-      this.initializeMoment();
-
       var m = m.toString().padStart(2, "0") + "." + y.toString();
       var o = moment(m, "MM.YYYY"); // Get moment object of month
       var s = moment(o).startOf("month").weekday(0);
@@ -137,8 +125,6 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
       };
     },
     formatPeriodText: function (p, a) {
-      //--Init momentJS
-      this.initializeMoment();
       var m = moment(p.day + "." + p.month + "." + p.year, "DD.MM.YYYY");
       switch (a) {
         case "Y":
@@ -212,16 +198,13 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
       }
     },
 
-    getEventColor: function(t){
-      var s = _.find(this.getProxyModelProperty("/page/legend"), [
-        "type",
-        t,
-      ]);
+    getEventColor: function (t) {
+      var s = _.find(this.getProxyModelProperty("/page/legend"), ["type", t]);
 
-      if(s && s?.design){
-        return s.design
-      }else{
-        return "spp-unknown"
+      if (s && s?.design) {
+        return s.design;
+      } else {
+        return "spp-unknown";
       }
     },
 
@@ -276,8 +259,40 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
       return m.isAfter(t, "day");
     },
 
-    getDayAttributes: function (d) {
-      var m = moment(d, "DD.MM.YYYY");
+    getDayAttributesWithinPeriod: function (p, o) {
+      var m = moment(p.day + "." + p.month + "." + p.year, "DD.MM.YYYY");
+      var s, e;
+      if (o === "Y") {
+        s = m.clone().startOf("year");
+        e = m.clone().endOf("year");
+      } else {
+        s = m.clone().startOf("month");
+        e = m.clone().endOf("month");
+      }
+      var a = [];
+
+      while (s.isSameOrBefore(e)) {
+        var l = this.getDayAttributes(s, true) || [];
+        if (l.length > 0) {
+          a.push({
+            date: s.format("DD.MM.YYYY"),
+            dayOfWeek: s.format("e"),
+            day: s.format("DD"),
+            dayText: s.format("dddd"),
+            month: s.format("MM"),
+            monthText: s.format("MMM"),
+            year: s.format("YYYY"),
+            eventList: _.cloneDeep(l),
+          });
+        }
+        s.add(1, "d");
+      }
+
+      return a;
+    },
+
+    getDayAttributes: function (d, a = false) {
+      var m = moment.isMoment(d) ? d.clone() : moment(d, "DD.MM.YYYY");
       var y = m.clone().format("YYYY");
       var l = [];
       var e = {};
@@ -285,6 +300,9 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
       var o = parseInt(m.format("E"), 10);
 
       var calcSpan = function (i, s, sT) {
+        if (a) {
+          return 1;
+        }
         if (i !== 0 && s !== 1) {
           return 1;
         } else {
@@ -300,6 +318,9 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
       };
 
       var calcOverflow = function (i, s, sT) {
+        if (a) {
+          return false;
+        }
         if (i === 0 || s === 1) {
           return false;
         } else {
@@ -312,6 +333,13 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
       };
 
       var calcHasFuture = function (i, sT, y) {
+        if (a) {
+          if (i === sT.length - 1) {
+            return false;
+          }
+          return true;
+        }
+
         if (i === 0) {
           if (sT.length === 1) {
             return false;
@@ -375,31 +403,37 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
               return true;
             }
             e = {
+              m: m,
               title: m.format("MMMM, ddd DD"),
               type: "planned",
               color: pC,
               text: "Planlı izin",
               hasPast: !p.start,
-              hasFuture:
-                p.index === 0
-                  ? pL.length === 1
-                    ? false
-                    : p.week === pL[pL.length - 1].week
-                    ? false
-                    : true
-                  : p.index === pL.length - 1
+              hasFuture: a
+                ? p.index < pL.length - 1
+                  ? true
+                  : false
+                : p.index === 0
+                ? pL.length === 1
                   ? false
-                  : true,
-              hasOverflow: p.index === 0 || p.day === 1 ? false : true,
+                  : p.week === pL[pL.length - 1].week
+                  ? false
+                  : true
+                : p.index === pL.length - 1
+                ? false
+                : true,
+              hasOverflow: a ? false : p.index === 0 || p.day === 1 ? false : true,
               rowIndex: 0,
-              rowSpan:
+              rowSpan: a ? 1 : 
                 p.index !== 0 && p.day !== 1
                   ? 1
-                  : p.day === 7 || (p.index === pL.length - 1)
+                  : p.day === 7 || p.index === pL.length - 1
                   ? 1
-                  : (pL.length - p.index + p.day - 1) > 7
+                  : pL.length - p.index + p.day - 1 > 7
                   ? 7
                   : pL.length - p.index,
+              startDate: moment(c.startDate).format("DD MMM"),
+              endDate: moment(c.endDate).format("DD MMM"),
             };
             l.push(e);
           } else {
@@ -443,6 +477,7 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
               });
 
               e = {
+                m: m,
                 title: m.format("MMMM, ddd DD"),
                 type: "holiday",
                 color: hC,
@@ -450,8 +485,20 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
                 hasPast: sI > 0,
                 hasFuture: calcHasFuture(sI, sT, y),
                 hasOverflow: calcOverflow(sI, o, sT),
-                rowIndex: aI,
+                rowIndex: a ? 0 : aI,
                 rowSpan: calcSpan(sI, o, sT),
+                startDate: moment(
+                  sT[0].day + "." + sT[0].month + "." + y,
+                  "DD.MM.YYYY"
+                ).format("DD MMM"),
+                endDate: moment(
+                  sT[sT.length - 1].day +
+                    "." +
+                    sT[sT.length - 1].month +
+                    "." +
+                    y,
+                  "DD.MM.YYYY"
+                ).format("DD MMM"),
               };
               l.push(e);
             }
