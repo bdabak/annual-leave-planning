@@ -23482,6 +23482,8 @@ button.spp-button.spp-recurrencelegendbutton {
   flex-flow: column nowrap;
   justify-content: flex-start;
   padding: 1em;
+  align-items: center;
+    background-color: rgb(249 249 249);
 }
 
 .spp-sidebar .spp-sidebar-body-wrap > .spp-toolbar {

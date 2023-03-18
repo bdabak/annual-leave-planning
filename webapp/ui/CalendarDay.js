@@ -137,7 +137,7 @@ sap.ui.define(
           return;
         }
         var d = this.getDay().date;
-        var a = dateUtilities.getDayAttributes(d) || null;
+        var a = dateUtilities.getDayAttributes(d, false) || null;
         if (!a) {
           return;
         }
