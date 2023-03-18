@@ -30,7 +30,8 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
           .class("spp-widget-scroller")
           .class("spp-resize-monitored");
 
-          oRM.style("flex", "1 1 auto")
+          oRM
+          // .style("flex", "1 1 auto")
              .style("min-height","110px")
              .style("overflow","hidden auto");
 

@@ -15,11 +15,11 @@ sap.ui.define(
         metadata: {
           properties: {
             year: {
-              type: "int",
+              type: "string",
               bindable: true,
             },
             month: {
-              type: "int",
+              type: "string",
               bindable: true,
             },
           },

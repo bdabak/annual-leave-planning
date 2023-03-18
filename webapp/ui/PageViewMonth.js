@@ -419,7 +419,7 @@ sap.ui.define(
           Swal.fire({
             position: "bottom",
             icon: "info",
-            title: "Yeni plan iptal edildi",
+            title: "İzin girişi iptal edildi",
             showConfirmButton: false,
             toast: true,
             timer: 2000,

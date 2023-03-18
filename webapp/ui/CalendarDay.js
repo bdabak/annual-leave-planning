@@ -105,12 +105,18 @@ sap.ui.define(
         return (p && p.$()) || null;
       },
       _getDayClass: function (d) {
-        var p = dateUtilities.checkDatePlanned(d);
+
+        var p = dateUtilities.checkDateAnnual(d);
+
+        if(p){
+          return "spp-annual-leave";
+        }
+
+        p = dateUtilities.checkDatePlanned(d);
 
         if(p){
           return "spp-planned-leave";
         }
-
 
 
         var h = dateUtilities.checkDateHoliday(d);

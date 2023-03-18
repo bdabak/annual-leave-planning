@@ -921,6 +921,9 @@
 .spp-fa-sign-out:before {
   content: "\f08b";
 }
+.spp-fa-sigma:before {
+  content: "\f68b";
+}
 
 .spp-fa-arrow-right-long:before {
   content: "\f178";
@@ -19993,6 +19996,7 @@ button.spp-button.spp-recurrencelegendbutton {
 .spp-resourcecombo.spp-show-event-color:not(.spp-uses-chipview)
   .spp-resource-icon {
   display: block;
+  margin-inline: 0 0.5em;
 }
 
 .spp-resourcecombo-picker .spp-icon {
@@ -20002,6 +20006,7 @@ button.spp-button.spp-recurrencelegendbutton {
 
 .spp-resourcecombo-picker.spp-show-event-color .spp-icon {
   display: block;
+  
 }
 
 .spp-resourcecombo-picker.spp-show-event-color
@@ -21633,7 +21638,7 @@ button.spp-button.spp-recurrencelegendbutton {
 
 .spp-cal-agenda-date-date-number {
   margin: 0 0.1em 0 0;
-  font-size: 3em;
+  font-size: 2.5em;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -23621,12 +23626,12 @@ button.spp-button.spp-recurrencelegendbutton {
   display: flex;
   flex-flow: row wrap;
   align-content: flex-start;
-  justify-content: space-around;
+  justify-content: space-between;
   font-size: 0.9em;
   font-weight: 300;
   padding: 1em;
   column-gap: 1em;
-  row-gap: 3em;
+  row-gap: 0.5em;
   padding-inline-start: max((25% - 23em) - 2em, 1em);
 }
 
@@ -23773,6 +23778,7 @@ button.spp-button.spp-recurrencelegendbutton {
 
 .spp-yearview-content .spp-calendar-cell {
   position: relative;
+  transition:background-color 0.3s ease-in-out;
 }
 
 .spp-yearview-content .spp-calendar-cell.spp-cal-tentative-event {
@@ -24615,6 +24621,15 @@ button.spp-button.spp-recurrencelegendbutton {
   background-color: var(--color-orange-hover) !important;
 }
 
+.spp-planned-leave:not(.spp-other-month):hover .spp-calendar-cell-inner {
+  background-color: var(--color-blue-hover) !important;
+}
+
+
+.spp-annual-leave:not(.spp-other-month):hover .spp-calendar-cell-inner {
+  background-color: var(--color-green-hover) !important;
+}
+
 .spp-holiday-half-day.spp-other-month {
   background-color: rgb(219, 219, 219);
 }
@@ -24640,4 +24655,21 @@ button.spp-button.spp-recurrencelegendbutton {
 
 .spp-past-date:hover {
   cursor: not-allowed !important;
+}
+
+.spp-floating-combo-picker{
+  position: absolute;
+  contain: layout style;
+  pointer-events: all;
+  transition: opacity .2s;
+  box-shadow: 0 3px 6px #0000001f, 0 3px 6px #0000003d;
+  top: -200px;
+  left: 0;
+  z-index: 11001;
+  will-change: top;
+  transition: top 350ms;
+}
+
+.spp-floating-combo-picker.spp-animate-fly-down{
+  top: 0;
 }

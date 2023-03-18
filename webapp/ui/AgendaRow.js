@@ -1,5 +1,5 @@
 sap.ui.define(["sap/ui/core/Control", "com/thy/ux/annualleaveplanning/ui/AgendaEventContainer", "com/thy/ux/annualleaveplanning/ui/Event"], 
-function (Control, EventContainer, Event) {
+function (Control, AgendaEventContainer, Event) {
   "use strict";
 
   return Control.extend("com.thy.ux.annualleaveplanning.ui.AgendaRow", {
@@ -64,7 +64,7 @@ function (Control, EventContainer, Event) {
 
     renderEvents: function (oRM, oControl, r) {
       oControl.destroyAggregation("eventContainer");
-      var eC = new EventContainer();
+      var eC = new AgendaEventContainer();
       $.each(r.eventList, function(i,e){
         var n = new Event({
           eventType: e.type,
@@ -109,17 +109,19 @@ function (Control, EventContainer, Event) {
         .class("spp-cal-agenda-date-date-text")
         .attr("role", "presentation")
         .openEnd();
-      oRM
-        .openStart("div") //Date
-        .openEnd();
-      oRM.text(r.dayText);
-      oRM.close("div");
+     
 
       oRM
         .openStart("div") //Date
         .openEnd();
       oRM.text(r.monthText + " " + r.year);
       oRM.close("div");
+
+      oRM
+      .openStart("div") //Date
+      .openEnd();
+    oRM.text(r.dayText);
+    oRM.close("div");
 
       oRM.close("div");
       //--Date text--//

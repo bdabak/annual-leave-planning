@@ -52,13 +52,13 @@ sap.ui.define(
           if(m){
             eH = eH + 49;
           }
-          var oRow = new AgendaRow({
+          var nR = new AgendaRow({
             rowInfo: r,
             height: eH,
             top: t
           });
           t = t + eH;
-          that.addAggregation("rows", oRow);
+          that.addAggregation("rows", nR);
         });
       },
 

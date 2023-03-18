@@ -6,7 +6,9 @@
             <PageView id="LeaveManagementPageViewYear" hidden="false" tabIndex="0" navigationActive="true"  viewType="year" rerender="{planModel>legendChanged}"
             class="spp-yearview spp-daycellrenderer">
                 <content>
-                    <PageViewYear id="LeaveManagementPageViewYearContent" year="{= parseInt(${planModel>period/year},10) }" />
+                    <PageViewYear id="LeaveManagementPageViewYearContent" year="{= parseInt(${planModel>period/year},10) }" 
+                        entitlementDate="{planModel>header/entitlementDate}"
+                    />
                 </content>
             </PageView>
 

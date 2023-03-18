@@ -250,6 +250,29 @@ sap.ui.define(
                 startDate: null,
                 endDate: null,
               },
+              header:{
+                entitlementDate:new Date(2023,2,1),
+                statistics:{
+                  leaveQuotaBalance: "53",
+                  leaveUsed: "12",
+                  toBePlannedLeave: "32",
+                  plannedLeave: "12.5",
+                }  
+              },
+              leaveTypes: [
+                {
+                  type: "0010",
+                  description: "Planlanan İzin",
+                  color: "spp-sch-foreground-blue",
+                  selected: false
+                },
+                {
+                  type: "0100",
+                  description: "Yıllık İzin",
+                  color: "spp-sch-foreground-green",
+                  selected: false
+                },             
+              ]
             },
             holidayCalendar: holidayCalendar,
             plannedLeaves: [
@@ -265,7 +288,10 @@ sap.ui.define(
                 startDate: new Date(2023, 5, 26),
                 endDate: new Date(2023, 6, 2),
               }
-            ]
+            ],
+            annualLeaves:[
+            ],
+            
            
           });
 
@@ -273,9 +299,9 @@ sap.ui.define(
 
          
 
-          // dateUtilities.setHolidayCalendar(holidayCalendar);
-          // dateUtilities.setLegendSettings(legend);
+          // Set proxy model for dateUtilities
           dateUtilities.setProxyModel(oViewModel);
+          
           /* Subscribe Event Handlers */
           eventUtilities.subscribeEvent(
             "PlanningCalendar",
@@ -291,6 +317,33 @@ sap.ui.define(
             this._handleDisplayEventWidget,
             this
           );
+        },
+
+        onPickLeaveType: function(e){
+          var t = e.getSource();
+          var o = $(t.getDomRef());
+          
+          if(this._oPicker){
+            this._oPicker.destroy();
+          }
+
+          if (o && o?.length > 0) {
+            var eO = o.offset(); //Element position
+            var eH = o.outerHeight(); //Element height
+            var eW = o.outerWidth();
+
+            this._oPicker = e.getParameter("picker");
+
+            this._oPicker.setElementPosition({
+                offset: { ...eO },
+                outerHeight: eH,
+                outerWidth: eW,
+              },
+            );
+
+            this.getModal().openBy(this._oPicker);
+          }
+
         },
 
         /* Event handlers*/
@@ -383,20 +436,21 @@ sap.ui.define(
 
         onEventSave: function(){
           var oEvent = this.getPageProperty("eventEdit");
-          var aPL = this.getProperty("plannedLeaves");
+          var sPath = oEvent.leaveType.key === "0010" ? "plannedLeaves" : "annualLeaves";
+          var aPL = this.getProperty(sPath);
 
           aPL.push({
             startDate: dateUtilities.convertToDate(oEvent.startDate),
             endDate: dateUtilities.convertToDate(oEvent.endDate)
           });
-          this.setProperty("plannedLeaves", aPL);
+          this.setProperty(sPath, aPL);
 
           this.setPageProperty("legendChanged", new Date().getTime());
           
           Swal.fire({
             position: "bottom",
             icon: "success",
-            title: "Planlı izin kaydedildi",
+            title: oEvent.leaveType.value + " kaydedildi",
             showConfirmButton: false,
             toast: true,
             timer: 2000,
@@ -669,7 +723,10 @@ sap.ui.define(
           var eW = o.outerWidth();
 
           var oEvent = {
-            leaveType: "Planlanan İzin",
+            leaveType: {
+              key: null,
+              value: null
+            },
             startDate: dateUtilities.formatDate(p.startDate),
             endDate: dateUtilities.formatDate(p.endDate)
           };

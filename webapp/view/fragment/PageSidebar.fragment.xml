@@ -11,6 +11,11 @@
                         selected="{planModel>selected}"/>
                 </items>
             </Legend>
+
+            <StatisticCard id="LeaveManagementPageStats1" title="Toplam Kota" theme="success" value="{path:'planModel>header/statistics/leaveQuotaBalance', type: 'sap.ui.model.type.Float', formatOptions:{maxFractionDigits:2, groupingEnabled: false, decimalSeparator:','}}"  />
+            <StatisticCard id="LeaveManagementPageStats2"  title="Kullanılan İzin" theme="emphasize" value="{path:'planModel>header/statistics/leaveUsed', type: 'sap.ui.model.type.Float', formatOptions:{maxFractionDigits:2, groupingEnabled: false, decimalSeparator:','}}"  />
+            <StatisticCard id="LeaveManagementPageStats3" title="Planlanacak İzin" theme="secondary" value="{path:'planModel>header/statistics/toBePlannedLeave', type: 'sap.ui.model.type.Float',formatOptions:{maxFractionDigits:2, groupingEnabled: false, decimalSeparator:','}}"  />
+            <StatisticCard id="LeaveManagementPageStats4" title="Planlanan İzin" theme="primary" value="{path:'planModel>header/statistics/plannedLeave', type: 'sap.ui.model.type.Float',formatOptions:{maxFractionDigits:2, groupingEnabled: false, decimalSeparator:','}}"  />
         </items>
     </PageSidebar>
 </core:FragmentDefinition>

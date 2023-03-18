@@ -5,20 +5,27 @@
             <DialogHeader id="CreateEditEventDialogHeader" title="İzin Planla / Talep Et" closed=".onEventDialogClosed" />
         </header>
         <content>
-            <EventEditor id="CreateEditEventEditor"
-        >
+            <EventEditor id="CreateEditEventEditor">
                 <items>
-                    <FormField id="FormFieldLeaveType" firstChild="true" containsFocus="true" 
-                    empty="{= ${planModel>eventEdit/leaveType} === '' || ${planModel>eventEdit/leaveType} === null }">
+                    <FormField id="FormFieldLeaveType" firstChild="true" empty="{= ${planModel>eventEdit/leaveType/key} === '' || ${planModel>eventEdit/leaveType/key} === null }"
+                    fieldType="combo">
                         <label>
-                            <FormLabel id="FormLabelLeaveType" text="{i18n>leaveType}" for="FormInputLeaveType" />
-
+                            <FormLabel id="FormLabelLeaveType" text="{i18n>leaveType}" for="FormComboLeaveType" />
                         </label>
                         <field>
-                            <FormInput id="FormInputLeaveType" value="{planModel>eventEdit/leaveType}" name="LeaveType"  />
-
+                            <FormComboBox id="FormComboLeaveType" key="{planModel>eventEdit/leaveType/key}" value="{planModel>eventEdit/leaveType/value}" name="LeaveType" icon="{planModel>eventEdit/leaveType/icon}" >
+                                <comboPicker>
+                                    <PickerListWidget id="FormPickerLeaveType" multiselect="false" items="{planModel>leaveTypes}">
+                                        <items>
+                                            <PickerListWidgetItem id="FormPickerItemLeaveType" icon="{planModel>color}" key="{planModel>type}" value="{planModel>description}" selected="{= ${planModel>eventEdit/leaveType/key} === ${planModel>type} }" />
+                                        </items>
+                                    </PickerListWidget>
+                                </comboPicker>
+                            </FormComboBox>
                         </field>
                     </FormField>
+
+
 
                     <FormField id="FormFieldStartDate" containsFocus="true" empty="{= ${planModel>eventEdit/startDate} === null }">
                         <label>
@@ -43,18 +50,8 @@
                 <toolbar>
                     <Toolbar id="CreateEditEventDialogToolbar">
                         <items>
-                            <Button id="CreateEditEventDialogSaveAction"
-                                label="{i18n>saveAction}"
-                                raised="true"
-                                firstChild="true"
-                                class="spp-blue"
-                                press=".onEventSave"
-                            />
-                             <Button id="CreateEditEventDialogCancelAction"
-                                label="{i18n>cancelAction}"
-                                lastChild="true"
-                                press=".onEventCancelled"
-                            />
+                            <Button id="CreateEditEventDialogSaveAction" label="{i18n>saveAction}" raised="true" firstChild="true" class="spp-blue" press=".onEventSave" />
+                            <Button id="CreateEditEventDialogCancelAction" label="{i18n>cancelAction}" lastChild="true" press=".onEventCancelled" />
                         </items>
                     </Toolbar>
                 </toolbar>

@@ -23,6 +23,10 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
       return this.getProxyModelProperty("/plannedLeaves");
     },
 
+    getAnnualLeaves: function () {
+      return this.getProxyModelProperty("/annualLeaves");
+    },
+
     formatDate: function (d) {
       var m = moment(d, "DD.MM.YYYY");
 
@@ -197,6 +201,18 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
         return false;
       }
     },
+    checkAnnualVisible: function () {
+      var s = _.find(this.getProxyModelProperty("/page/legend"), [
+        "type",
+        "annual",
+      ]);
+
+      if (s && s?.selected) {
+        return true;
+      } else {
+        return false;
+      }
+    },
 
     getEventColor: function (t) {
       var s = _.find(this.getProxyModelProperty("/page/legend"), ["type", t]);
@@ -236,7 +252,7 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
 
       var m = moment(d, "DD.MM.YYYY");
 
-      //--Search in variable holidays
+      //--Search in planned leaves
       var pL = _.find(this.getPlannedLeaves(), function (l, i) {
         // console.log(m,l);
         if (
@@ -252,11 +268,38 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
       return true;
     },
 
+    checkDateAnnual: function (d) {
+      if (!this.checkAnnualVisible()) {
+        return;
+      }
+
+      var m = moment(d, "DD.MM.YYYY");
+
+      //--Search in annual leaves
+      var pL = _.find(this.getAnnualLeaves(), function (l, i) {
+        if (
+          m.isBetween(moment(l.startDate), moment(l.endDate), undefined, "[]")
+        ) {
+          return true;
+        }
+      });
+
+      if (!pL) {
+        return null;
+      }
+      return true;
+    },
+
     checkDateIsSelectable: function (d) {
+      var eSD = this.getProxyModelProperty("/page/header/entitlementDate") || null; 
+      if(eSD){
+        var s = moment(eSD);
+        var e = s.clone().add(1,"y");
+      }
       var m = moment(d, "DD.MM.YYYY");
       var t = moment(new Date());
 
-      return m.isAfter(t, "day");
+      return m.isAfter(t, "day") && m.isBetween(s, e, undefined, "[)");
     },
 
     getDayAttributesWithinPeriod: function (p, o) {
@@ -441,6 +484,60 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
           }
         });
       }
+
+       //--Search in annual leaves
+      if (this.checkAnnualVisible()) {
+        var pC = that.getEventColor("annual");
+        $.each(this.getAnnualLeaves(), function (i, c) {
+          if (
+            m.isBetween(moment(c.startDate), moment(c.endDate), undefined, "[]")
+          ) {
+            var pL = findDatesBetweenPeriod(c.startDate, c.endDate);
+
+            var p = _.find(pL, ["date", m.toDate()]);
+            if (!p) {
+              return true;
+            }
+            e = {
+              m: m,
+              title: m.format("MMMM, ddd DD"),
+              type: "annual",
+              color: pC,
+              text: "Yıllık izin",
+              hasPast: !p.start,
+              hasFuture: a
+                ? p.index < pL.length - 1
+                  ? true
+                  : false
+                : p.index === 0
+                ? pL.length === 1
+                  ? false
+                  : p.week === pL[pL.length - 1].week
+                  ? false
+                  : true
+                : p.index === pL.length - 1
+                ? false
+                : true,
+              hasOverflow: a ? false : p.index === 0 || p.day === 1 ? false : true,
+              rowIndex: 0,
+              rowSpan: a ? 1 : 
+                p.index !== 0 && p.day !== 1
+                  ? 1
+                  : p.day === 7 || p.index === pL.length - 1
+                  ? 1
+                  : pL.length - p.index + p.day - 1 > 7
+                  ? 7
+                  : pL.length - p.index,
+              startDate: moment(c.startDate).format("DD MMM"),
+              endDate: moment(c.endDate).format("DD MMM"),
+            };
+            l.push(e);
+          } else {
+            return true;
+          }
+        });
+      }
+
 
       //--Search in holidays
       if (this.checkHolidaysVisible()) {

@@ -14,7 +14,7 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
           },
         },
         events: {},
-      },
+      }, 
       renderer: function (oRM, oControl) {
         oRM.openStart("div", oControl); //Main
         oRM.class("spp-cal-event-bar-container");
