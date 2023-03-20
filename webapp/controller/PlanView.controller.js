@@ -675,7 +675,7 @@ sap.ui.define(
             header: new DialogHeader({
               title: d.title,
               closed: function () {
-                that._getModal().close();
+                that.getModal().close();
               },
             }),
             styles: aStyles,
