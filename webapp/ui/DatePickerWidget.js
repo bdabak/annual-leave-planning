@@ -77,7 +77,7 @@ sap.ui.define(
           var bH = cW.height() - (oEP.offset.top + oEP.outerHeight);
 
           if (tH > bH) {
-            y = oEP.offset.top - eOH - 10;
+            y = oEP.offset.top - eOH - 15;
           } else {
             y = oEP.offset.top + oEP.outerHeight + 5;
           }

@@ -20006,7 +20006,6 @@ button.spp-button.spp-recurrencelegendbutton {
 
 .spp-resourcecombo-picker.spp-show-event-color .spp-icon {
   display: block;
-  
 }
 
 .spp-resourcecombo-picker.spp-show-event-color
@@ -23483,7 +23482,7 @@ button.spp-button.spp-recurrencelegendbutton {
   justify-content: flex-start;
   padding: 1em;
   align-items: center;
-    background-color: rgb(249 249 249);
+  background-color: rgb(249 249 249);
 }
 
 .spp-sidebar .spp-sidebar-body-wrap > .spp-toolbar {
@@ -23780,11 +23779,11 @@ button.spp-button.spp-recurrencelegendbutton {
 
 .spp-yearview-content .spp-calendar-cell {
   position: relative;
-  transition:background-color 0.3s ease-in-out;
+  transition: background-color 0.3s ease-in-out;
 }
 
 .spp-yearview-content .spp-calendar-cell.spp-cal-tentative-event {
-  background-color:  var(--cal-new-event);
+  background-color: var(--cal-new-event);
 }
 
 .spp-yearview-content
@@ -24627,7 +24626,6 @@ button.spp-button.spp-recurrencelegendbutton {
   background-color: var(--color-blue-hover) !important;
 }
 
-
 .spp-annual-leave:not(.spp-other-month):hover .spp-calendar-cell-inner {
   background-color: var(--color-green-hover) !important;
 }
@@ -24659,11 +24657,11 @@ button.spp-button.spp-recurrencelegendbutton {
   cursor: not-allowed !important;
 }
 
-.spp-floating-combo-picker{
+.spp-floating-combo-picker {
   position: absolute;
   contain: layout style;
   pointer-events: all;
-  transition: opacity .2s;
+  transition: opacity 0.2s;
   box-shadow: 0 3px 6px #0000001f, 0 3px 6px #0000003d;
   top: -200px;
   left: 0;
@@ -24672,6 +24670,6 @@ button.spp-button.spp-recurrencelegendbutton {
   transition: top 350ms;
 }
 
-.spp-floating-combo-picker.spp-animate-fly-down{
+.spp-floating-combo-picker.spp-animate-fly-down {
   top: 0;
 }

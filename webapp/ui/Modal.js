@@ -1,70 +1,95 @@
-sap.ui.define(["sap/ui/core/Control","com/thy/ux/annualleaveplanning/utils/event-utilities",], function (Control,eventUtilities) {
-  "use strict";
+sap.ui.define(
+  [
+    "sap/ui/core/Control",
+    "com/thy/ux/annualleaveplanning/utils/event-utilities",
+  ],
+  function (Control, eventUtilities) {
+    "use strict";
 
-  return Control.extend("com.thy.ux.annualleaveplanning.ui.Modal", {
-    metadata: {
-      properties: {},
-      aggregations: {
-        content: {
-          type: "sap.ui.core.Control",
-          multiple: true,
+    return Control.extend("com.thy.ux.annualleaveplanning.ui.Modal", {
+      metadata: {
+        properties: {},
+        aggregations: {
+          content: {
+            type: "sap.ui.core.Control",
+            multiple: false,
+          },
+          subContent: {
+            type: "sap.ui.core.Control",
+            multiple: false,
+          },
         },
+        events: {},
       },
-      events: {
-      },
-    },
-    init: function(){
+      init: function () {},
+      renderer: function (oRM, oControl) {
+        var c = oControl.getContent();
+        oRM.openStart("div", oControl); //Main
+        oRM
+          .class("spp-float-root")
+          .class("spp-outer")
+          .class("spp-overlay-scrollbar");
+        if (sap.ui.Device.browser.chrome) {
+          oRM.class("spp-chrome");
+        } else if (sap.ui.Device.browser.firefox) {
+          oRM.class("spp-firefox");
+        } else if (sap.ui.Device.browser.safari) {
+          oRM.class("spp-safari");
+        }
+        if (c) {
+          oRM.class("spp-float-overlay");
+        }
+        oRM.openEnd();
 
-    },
-    renderer: function (oRM, oControl) {
-      var c = oControl.getContent(); 
-      oRM.openStart("div", oControl); //Main
-      oRM
-        .class("spp-float-root")
-        .class("spp-outer")
-        .class("spp-overlay-scrollbar");
-      if(sap.ui.Device.browser.chrome){
-        oRM
-        .class("spp-chrome");
-      }else if(sap.ui.Device.browser.firefox){
-        oRM
-        .class("spp-firefox");
-      }else if(sap.ui.Device.browser.safari){
-        oRM
-        .class("spp-safari");
-      }
-      if(c && c.length>0){
-        oRM.class("spp-float-overlay");
-      } 
-      oRM.openEnd();
-      // oControl.getContent() ? oRM.renderControl(oControl.getContent()) : null;
-      $.each(c, function(i,e){
-        oRM.renderControl(e);
-      });
-      
-      oRM.close("div");
-    },
-    openBy: function(oContent){
-        this.addAggregation("content", oContent);
-    },
-    destroyContent: function(){
+        var c = oControl.getContent(); 
+        if(c){
+          oRM.renderControl(c);
+        }
+
+        var s = oControl.getSubContent() || null; 
+        if(s){
+          oRM.renderControl(s);
+        }
+       
+
+        oRM.close("div");
+      },
+      open: function (oContent) {
+        this.setAggregation("content", oContent);
+      },
+
+      openSub: function (oSubContent) {
+        this.destroyAggregation("subContent");
+        this.setAggregation("subContent", oSubContent)
+      },
+      destroyContent: function () {
+        this.getSubContent() ? this.destroyAggregation("subContent") : null;
         this.getContent() ? this.destroyAggregation("content") : null;
-    },
-    close: function(){
-        var aC =  this.getContent() || [];
-        if(aC.length > 0){
-          $.each(aC, function(i,c){
-            if(typeof c?.cancel === "function"){
-              c?.cancel();
-            }
-          });
+      },
+      close: function () {
+        
+        var s = this.getContent() || null;
+
+        if (s && typeof s?.cancel === "function") {
+          s?.cancel();
         }
+
+        this.destroyAggregation("subContent");
+
+        var c = this.getContent() || null;
+
+        if (c && typeof c?.cancel === "function") {
+          c?.cancel();
+        }
+
         this.destroyAggregation("content");
-    },
-    ontap: function(oEvent){
-        if($(oEvent.target).hasClass("spp-float-overlay")){
-            this.close();
+
+      },
+      ontap: function (oEvent) {
+        if ($(oEvent.target).hasClass("spp-float-overlay")) {
+          this.close();
         }
-    }
-  });
-});
+      },
+    });
+  }
+);

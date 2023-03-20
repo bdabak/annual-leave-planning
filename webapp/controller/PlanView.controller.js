@@ -245,34 +245,32 @@ sap.ui.define(
               tabIndex: "0",
               legend: legend,
               legendChanged: null,
-              eventEdit:{
+              eventEdit: {
                 leaveType: null,
                 startDate: null,
                 endDate: null,
               },
-              header:{
-                entitlementDate:new Date(2023,2,1),
-                statistics:{
-                  leaveQuotaBalance: "53",
-                  leaveUsed: "12",
-                  toBePlannedLeave: "32",
-                  plannedLeave: "12.5",
-                }  
+              header: {
+                entitlementDate: new Date(2023, 2, 12),
+                leaveQuotaBalance: "53",
+                leaveUsed: "12",
+                toBePlannedLeave: "32",
+                plannedLeave: "12.5",
               },
               leaveTypes: [
                 {
                   type: "0010",
                   description: "Planlanan İzin",
                   color: "spp-sch-foreground-blue",
-                  selected: false
+                  selected: false,
                 },
                 {
                   type: "0100",
                   description: "Yıllık İzin",
                   color: "spp-sch-foreground-green",
-                  selected: false
-                },             
-              ]
+                  selected: false,
+                },
+              ],
             },
             holidayCalendar: holidayCalendar,
             plannedLeaves: [
@@ -287,21 +285,16 @@ sap.ui.define(
               {
                 startDate: new Date(2023, 5, 26),
                 endDate: new Date(2023, 6, 2),
-              }
+              },
             ],
-            annualLeaves:[
-            ],
-            
-           
+            annualLeaves: [],
           });
 
           this.getView().setModel(oViewModel, "planModel");
 
-         
-
           // Set proxy model for dateUtilities
           dateUtilities.setProxyModel(oViewModel);
-          
+
           /* Subscribe Event Handlers */
           eventUtilities.subscribeEvent(
             "PlanningCalendar",
@@ -319,11 +312,11 @@ sap.ui.define(
           );
         },
 
-        onPickLeaveType: function(e){
+        onPickLeaveType: function (e) {
           var t = e.getSource();
           var o = $(t.getDomRef());
-          
-          if(this._oPicker){
+
+          if (this._oPicker) {
             this._oPicker.destroy();
           }
 
@@ -335,15 +328,13 @@ sap.ui.define(
             this._oPicker = e.getParameter("picker");
 
             this._oPicker.setElementPosition({
-                offset: { ...eO },
-                outerHeight: eH,
-                outerWidth: eW,
-              },
-            );
+              offset: { ...eO },
+              outerHeight: eH,
+              outerWidth: eW,
+            });
 
-            this.getModal().openBy(this._oPicker);
+            this.getModal().openSub(this._oPicker);
           }
-
         },
 
         /* Event handlers*/
@@ -390,7 +381,7 @@ sap.ui.define(
             r.setSelected(true);
             this._oMobileViewMenu.setStyles(aStyles);
             // this.getView().addDependent(this._oMobileViewMenu, this);
-            this.getModal().openBy(this._oMobileViewMenu);
+            this.getModal().open(this._oMobileViewMenu);
           }.bind(this);
 
           this._oMobileViewMenu = Fragment.load({
@@ -432,21 +423,20 @@ sap.ui.define(
           this._closeEventDialog();
         },
 
-       
-
-        onEventSave: function(){
+        onEventSave: function () {
           var oEvent = this.getPageProperty("eventEdit");
-          var sPath = oEvent.leaveType.key === "0010" ? "plannedLeaves" : "annualLeaves";
+          var sPath =
+            oEvent.leaveType.key === "0010" ? "plannedLeaves" : "annualLeaves";
           var aPL = this.getProperty(sPath);
 
           aPL.push({
             startDate: dateUtilities.convertToDate(oEvent.startDate),
-            endDate: dateUtilities.convertToDate(oEvent.endDate)
+            endDate: dateUtilities.convertToDate(oEvent.endDate),
           });
           this.setProperty(sPath, aPL);
 
           this.setPageProperty("legendChanged", new Date().getTime());
-          
+
           Swal.fire({
             position: "bottom",
             icon: "success",
@@ -465,7 +455,7 @@ sap.ui.define(
           var p = e.getParameter("period");
           var o = t.$();
 
-          if(this._oDatePickerWidget){
+          if (this._oDatePickerWidget) {
             this._oDatePickerWidget.destroy();
           }
 
@@ -493,7 +483,7 @@ sap.ui.define(
 
             s.registerDatePickerWidget(this._oDatePickerWidget);
 
-            this.getModal().openBy(this._oDatePickerWidget);
+            this.getModal().openSub(this._oDatePickerWidget);
           }
         },
 
@@ -509,11 +499,11 @@ sap.ui.define(
           return this.getView().getModel(m);
         },
 
-        getProperty: function(p){
+        getProperty: function (p) {
           return this.getModel("planModel").getProperty("/" + p);
         },
 
-        setProperty: function(p,v){
+        setProperty: function (p, v) {
           return this.getModel("planModel").setProperty("/" + p, v);
         },
 
@@ -550,7 +540,7 @@ sap.ui.define(
         },
 
         /* Private methods */
-        _closeEventDialog: function(){
+        _closeEventDialog: function () {
           if (this._oEventDialog) {
             this._oEventDialog.destroy();
             this._oEventDialog = null;
@@ -574,10 +564,10 @@ sap.ui.define(
               p = dateUtilities.getPrevPeriod(p, m);
               break;
           }
-          
+
           var d = dateUtilities.decidePeriodChangeDirection(x, p);
 
-          if(d === null){
+          if (d === null) {
             return;
           }
 
@@ -699,7 +689,7 @@ sap.ui.define(
             closed: function () {},
           });
 
-          this.getModal().openBy(oDialog);
+          this.getModal().openSub(oDialog);
         },
 
         _createDisplayEventWidget: function (d) {
@@ -725,13 +715,12 @@ sap.ui.define(
           var oEvent = {
             leaveType: {
               key: null,
-              value: null
+              value: null,
             },
             startDate: dateUtilities.formatDate(p.startDate),
-            endDate: dateUtilities.formatDate(p.endDate)
+            endDate: dateUtilities.formatDate(p.endDate),
           };
           this.setPageProperty("eventEdit", oEvent);
-
 
           var aStyles = new Map([
             ["transform", `matrix(1, 0, 0, 1, ${eO.left}, -100%)`],
@@ -752,7 +741,7 @@ sap.ui.define(
                 outerWidth: eW,
               });
               this._oEventDialog = d;
-              this.getModal().openBy(this._oEventDialog);
+              this.getModal().open(this._oEventDialog);
             }.bind(this)
           );
 
@@ -845,7 +834,7 @@ sap.ui.define(
 
             s.registerDatePickerWidget(oDPW);
 
-            this.getModal().openBy(oDPW);
+            this.getModal().openSub(oDPW);
           }
         },
         _createEventEditor: function (p) {
