@@ -60,6 +60,7 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
         } else {
           oRM.class("spp-expanded");
         }
+         
         oRM.openEnd();
 
         //--Side bar body wrap--//
@@ -69,6 +70,7 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
           .class("spp-box-center")
           .class("spp-panel-body-wrap")
           .class("spp-sidebar-body-wrap")
+          
           .openEnd(); // Side bar body wrap
 
         //--Side bar content--//
@@ -83,6 +85,7 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
           .class("spp-widget-scroller")
           .class("spp-resize-monitored")
           .class("spp-flex-column")
+          .style("overflow-y", "auto")
           .openEnd();
         $.each(oControl.getItems(), function (i, l) {
           oRM.renderControl(l);

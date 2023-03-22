@@ -5,9 +5,12 @@ sap.ui.define(
     "sap/ui/core/Fragment",
     "com/thy/ux/annualleaveplanning/ui/Dialog",
     "com/thy/ux/annualleaveplanning/ui/DialogHeader",
+    "com/thy/ux/annualleaveplanning/ui/DialogContent",
     "com/thy/ux/annualleaveplanning/ui/Toolbar",
     "com/thy/ux/annualleaveplanning/ui/Button",
     "com/thy/ux/annualleaveplanning/ui/EventEditor",
+    "com/thy/ux/annualleaveplanning/ui/EventContainer",
+    "com/thy/ux/annualleaveplanning/ui/Event",
     "com/thy/ux/annualleaveplanning/ui/FormField",
     "com/thy/ux/annualleaveplanning/ui/FormLabel",
     "com/thy/ux/annualleaveplanning/ui/FormInput",
@@ -25,9 +28,12 @@ sap.ui.define(
     Fragment,
     Dialog,
     DialogHeader,
+    DialogContent,
     Toolbar,
     Button,
     EventEditor,
+    EventContainer,
+    Event,
     Field,
     Label,
     Input,
@@ -274,15 +280,18 @@ sap.ui.define(
             },
             holidayCalendar: holidayCalendar,
             plannedLeaves: [
-              {
+              { 
+                eventId: "7ba1af4c23e04e628f1dbbd2fb7e3310",
                 startDate: new Date(2023, 5, 5),
                 endDate: new Date(2023, 5, 11),
               },
               {
+                eventId: "33c7de92b8df43e59235849f78a1ed2b",
                 startDate: new Date(2023, 6, 17),
                 endDate: new Date(2023, 6, 23),
               },
               {
+                eventId: "b41f1e81c80a4c74b384852022e46f7f",
                 startDate: new Date(2023, 5, 26),
                 endDate: new Date(2023, 6, 2),
               },
@@ -430,6 +439,7 @@ sap.ui.define(
           var aPL = this.getProperty(sPath);
 
           aPL.push({
+            eventId: eventUtilities.createEventId(),
             startDate: dateUtilities.convertToDate(oEvent.startDate),
             endDate: dateUtilities.convertToDate(oEvent.endDate),
           });
@@ -657,7 +667,7 @@ sap.ui.define(
           }
         },
 
-        _openDisplayEventDialog: function (r, d) {
+        _openDisplayEventDialog: function (r, l) {
           var that = this;
           var o = $(r);
           if (!o) {
@@ -673,7 +683,7 @@ sap.ui.define(
 
           var oDialog = new Dialog({
             header: new DialogHeader({
-              title: d.title,
+              title: "İzin Listesi",
               closed: function () {
                 that.getModal().close();
               },
@@ -685,23 +695,44 @@ sap.ui.define(
               outerWidth: eW,
             },
             headerDockTop: true,
-            content: this._createDisplayEventWidget(d),
-            closed: function () {},
-          });
+            alignment: "auto",
+            showPointer: true,
+            content: this._createDisplayEventWidget(l),
+            closed: function () {
 
-          this.getModal().openSub(oDialog);
+            },
+          }).addStyleClass("spp-overflowpopup");
+
+          this.getModal().open(oDialog);
         },
 
-        _createDisplayEventWidget: function (d) {
-          return new EventContainer({
-            widget: true,
-            events: [
-              new CalEvent({
-                color: "spp-holiday-all-day",
-                text: d.holiday.text,
-              }),
-            ],
+        _createDisplayEventWidget: function (l) {
+
+          var eventList = [];
+
+          $.each(l, function(i,e){
+            eventList.push(new Event({
+              eventType: e.type,
+              color: e.color,
+              text: e.text,
+              height: "25px",
+              hasPast: e.hasPast,
+              hasFuture: e.hasFuture,
+              hasOverflow: e.hasOverflow,
+              rowIndex: e.rowIndex,
+              rowSpan: 7,
+              editable: e.type === "planned"
+            }).addStyleClass("sapUiTinyMarginBottom")
+            )
           });
+
+          return  new DialogContent({
+            content:  new EventContainer({
+              widget: true,
+              events: eventList
+            })
+          });
+         
         },
         _openCreateEventDialog: function (r, p) {
           var o = $(r);
@@ -723,7 +754,7 @@ sap.ui.define(
           this.setPageProperty("eventEdit", oEvent);
 
           var aStyles = new Map([
-            ["transform", `matrix(1, 0, 0, 1, ${eO.left}, -100%)`],
+            // ["transform", `matrix(1, 0, 0, 1, ${eO.left}, -100%)`],
             ["--date-time-length", "14em"],
             ["--date-width-difference", "1em"],
           ]);
@@ -735,11 +766,11 @@ sap.ui.define(
           }).then(
             function (d) {
               d.setStyles(aStyles);
-              d.setElementPosition({
-                offset: { ...eO },
-                outerHeight: eH,
-                outerWidth: eW,
-              });
+              // d.setElementPosition({
+              //   offset: { ...eO },
+              //   outerHeight: eH,
+              //   outerWidth: eW,
+              // });
               this._oEventDialog = d;
               this.getModal().open(this._oEventDialog);
             }.bind(this)

@@ -291,10 +291,11 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
     },
 
     checkDateIsSelectable: function (d) {
-      var eSD = this.getProxyModelProperty("/page/header/entitlementDate") || null; 
-      if(eSD){
+      var eSD =
+        this.getProxyModelProperty("/page/header/entitlementDate") || null;
+      if (eSD) {
         var s = moment(eSD);
-        var e = s.clone().add(1,"y");
+        var e = s.clone().add(1, "y");
       }
       var m = moment(d, "DD.MM.YYYY");
       var t = moment(new Date());
@@ -332,6 +333,131 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
       }
 
       return a;
+    },
+
+    getEventsWithinPeriod: function () {
+      var that = this;
+      var p = this.getProxyModelProperty("/page/period") || null;
+      var eSD =
+        this.getProxyModelProperty("/page/header/entitlementDate") || null;
+      if (eSD) {
+        var sP = moment(eSD);
+        sP.year(p.year);
+        var eP = sP.clone().add(1, "y");
+      }
+
+      var eL = [];
+
+      var _checkEventLiesWithinPeriod = function (s, e) {
+        var sM = moment(s);
+        var eM = moment(e);
+        var lwp = false;
+
+        if (eM.isBefore(sP) || sM.isAfter(eP)) {
+          return false;
+        }
+
+        if (
+          sM.isBetween(sP, eP, undefined, "[]") ||
+          eM.isBetween(sP, eP, undefined, "[]") ||
+          (sM.isAfter(sP) && eM.isSameOrBefore(eP)) ||
+          (sM.isBefore(eP) && eM.isSameOrAfter(eP))
+        ) {
+          return true;
+        }
+
+        // while (sM.isSameOrBefore(eM)) {
+        //   if(sM.isBetween(sP,eP, undefined, "[]")){
+        //     lwp = true;
+        //     break;
+        //   }
+        //   sM.add(1, "d");
+        // }
+
+        return lwp;
+      };
+
+      //--List annual leaves
+      if (this.checkAnnualVisible()) {
+        var aC = that.getEventColor("annual");
+        $.each(this.getAnnualLeaves(), function (i, c) {
+          var l = _checkEventLiesWithinPeriod(c.startDate, c.endDate);
+          if (l) {
+            var sD = moment(c.startDate);
+            var eD = moment(c.endDate);
+            var e = {
+              eventId: c.eventId,
+              type: "annual",
+              color: aC,
+              text: "Yıllık izin",
+              startDate: {
+                date: sD.format("DD.MM.YYYY"),
+                dayOfWeek: sD.format("e"),
+                day: sD.format("DD"),
+                dayText: sD.format("dddd"),
+                month: sD.format("MM"),
+                monthText: sD.format("MMM"),
+                year: sD.format("YYYY"),
+              },
+              endDate: {
+                date: eD.format("DD.MM.YYYY"),
+                dayOfWeek: eD.format("e"),
+                day: eD.format("DD"),
+                dayText: eD.format("dddd"),
+                month: eD.format("MM"),
+                monthText: eD.format("MMM"),
+                year: eD.format("YYYY"),
+              },
+            };
+
+            eL.push(e);
+          }
+        });
+      }
+
+      //--List plans
+      if (this.checkPlannedVisible()) {
+        var pC = that.getEventColor("planned");
+        $.each(this.getPlannedLeaves(), function (i, c) {
+          var l = _checkEventLiesWithinPeriod(c.startDate, c.endDate);
+          if (l) {
+            var sD = moment(c.startDate);
+            var eD = moment(c.endDate);
+            var e = {
+              eventId: c.eventId,
+              type: "planned",
+              color: pC,
+              text: "Planlı izin",
+              startDate: {
+                date: sD.format("DD.MM.YYYY"),
+                dayOfWeek: sD.format("e"),
+                day: sD.format("DD"),
+                dayText: sD.format("dddd"),
+                month: sD.format("MM"),
+                monthText: sD.format("MMM"),
+                year: sD.format("YYYY"),
+              },
+              endDate: {
+                date: eD.format("DD.MM.YYYY"),
+                dayOfWeek: eD.format("e"),
+                day: eD.format("DD"),
+                dayText: eD.format("dddd"),
+                month: eD.format("MM"),
+                monthText: eD.format("MMM"),
+                year: eD.format("YYYY"),
+              },
+            };
+
+            eL.push(e);
+          }
+        });
+      }
+
+      //--List holidays
+      if (this.checkHolidaysVisible()) {
+      }
+
+      return eL;
     },
 
     getDayAttributes: function (d, a = false) {
@@ -465,16 +591,21 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
                 : p.index === pL.length - 1
                 ? false
                 : true,
-              hasOverflow: a ? false : p.index === 0 || p.day === 1 ? false : true,
+              hasOverflow: a
+                ? false
+                : p.index === 0 || p.day === 1
+                ? false
+                : true,
               rowIndex: 0,
-              rowSpan: a ? 1 : 
-                p.index !== 0 && p.day !== 1
-                  ? 1
-                  : p.day === 7 || p.index === pL.length - 1
-                  ? 1
-                  : pL.length - p.index + p.day - 1 > 7
-                  ? 7
-                  : pL.length - p.index,
+              rowSpan: a
+                ? 1
+                : p.index !== 0 && p.day !== 1
+                ? 1
+                : p.day === 7 || p.index === pL.length - 1
+                ? 1
+                : pL.length - p.index + p.day - 1 > 7
+                ? 7
+                : pL.length - p.index,
               startDate: moment(c.startDate).format("DD MMM"),
               endDate: moment(c.endDate).format("DD MMM"),
             };
@@ -485,7 +616,7 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
         });
       }
 
-       //--Search in annual leaves
+      //--Search in annual leaves
       if (this.checkAnnualVisible()) {
         var pC = that.getEventColor("annual");
         $.each(this.getAnnualLeaves(), function (i, c) {
@@ -518,16 +649,21 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
                 : p.index === pL.length - 1
                 ? false
                 : true,
-              hasOverflow: a ? false : p.index === 0 || p.day === 1 ? false : true,
+              hasOverflow: a
+                ? false
+                : p.index === 0 || p.day === 1
+                ? false
+                : true,
               rowIndex: 0,
-              rowSpan: a ? 1 : 
-                p.index !== 0 && p.day !== 1
-                  ? 1
-                  : p.day === 7 || p.index === pL.length - 1
-                  ? 1
-                  : pL.length - p.index + p.day - 1 > 7
-                  ? 7
-                  : pL.length - p.index,
+              rowSpan: a
+                ? 1
+                : p.index !== 0 && p.day !== 1
+                ? 1
+                : p.day === 7 || p.index === pL.length - 1
+                ? 1
+                : pL.length - p.index + p.day - 1 > 7
+                ? 7
+                : pL.length - p.index,
               startDate: moment(c.startDate).format("DD MMM"),
               endDate: moment(c.endDate).format("DD MMM"),
             };
@@ -537,7 +673,6 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
           }
         });
       }
-
 
       //--Search in holidays
       if (this.checkHolidaysVisible()) {

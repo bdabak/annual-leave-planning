@@ -30,6 +30,16 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
             type:"boolean",
             bindable: true,
             defaultValue: false
+          },
+          alignment:{
+            type: "string",
+            bindable: true,
+            defaultValue: "center"
+          },
+          showPointer:{
+            type:"boolean",
+            bindable: true,
+            defaultValue: false
           }
         },
         aggregations: {
@@ -58,8 +68,9 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
       onAfterRendering: function () {
         Control.prototype.onAfterRendering.apply(this, arguments);
         var oEP = this.getElementPosition() || null;
+        var sAlign = this.getAlignment() || null;
 
-        if (!oEP) {
+        if (!oEP || sAlign !== "auto") {
           return;
         }
 
@@ -80,11 +91,11 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
 
         if(tH > bH){
           alignment = "spp-aligned-above";
-          y = oEP.offset.top - eOH - 5;
+          y = oEP.offset.top - eOH - 6;
           bTop = true;
         }else{
           alignment = "spp-aligned-below";
-          y = oEP.offset.top + oEP.outerHeight + 5 ;
+          y = oEP.offset.top + oEP.outerHeight + 6 ;
           bTop = false;
         }
 
@@ -118,7 +129,7 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
         }else{
           $(".spp-anchor").removeClass("spp-anchor-top").addClass("spp-anchor-bottom");
         }
-        var xA = eOW / 2;
+        var xA = eOW / 2 - 10;
         $(".spp-anchor").removeAttr("style").attr("style", `transform:translateX(${xA}px)`);
 
       },
@@ -128,6 +139,7 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
         var aStyles = oControl.getStyles();
         var aClassList = oControl.getClassList();
         var bDockTop = oControl.getHeaderDockTop();
+        var sAlign = oControl.getAlignment() || null;
 
         oRM.openStart("div", oControl); //Main
         oRM
@@ -180,6 +192,11 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
             oRM.style(key, value);
           });
         }
+
+        if(sAlign){
+          oRM.class(`spp-popup-align-${sAlign}`); 
+        }
+
         oRM.openEnd();
 
         //-Header-//
@@ -190,9 +207,11 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
         oRM.renderControl(oContent);
         //-Content-//
 
-        //--Render Pointer--//
-        oControl._renderPointer(oRM);
-        //--Render Pointer--//
+        if(oControl.getShowPointer()){
+          //--Render Pointer--//
+          oControl._renderPointer(oRM);
+          //--Render Pointer--//
+        }
 
         oRM.close("div"); //Main
       },

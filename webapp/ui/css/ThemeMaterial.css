@@ -9148,7 +9148,7 @@ body {
   overflow: hidden;
   overflow: -moz-hidden-unscrollable;
   overflow: clip;
-  z-index: 11000;
+  z-index: 8;
   contain: strict;
   display: flex;
   justify-content: center;
@@ -9158,6 +9158,7 @@ body {
 .spp-float-overlay {
   pointer-events: auto !important;
   background-color: rgba(0, 0, 0, 0.1); /* Black background with opacity */
+  transition: background-color 0.3s ease;
 }
 
 .spp-float-root.spp-safari {
@@ -12115,7 +12116,7 @@ body.spp-container.spp-outer {
   display: flex;
   background-color: #2196f3;
   color: #fff;
-  padding: 1em;
+  padding: 0.5em  1em;
   flex: 0 0 auto;
   align-items: center;
   z-index: 1;
@@ -12420,7 +12421,7 @@ fieldset.spp-fieldset-content > legend.spp-fieldset-legend {
   position: fixed;
   inset: 0;
   pointer-events: all;
-  z-index: 11001;
+  z-index: 9;
 }
 
 @media (max-width: 480px) {
@@ -24672,4 +24673,14 @@ button.spp-button.spp-recurrencelegendbutton {
 
 .spp-floating-combo-picker.spp-animate-fly-down {
   top: 0;
+}
+
+.spp-popup-align-center{
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  -webkit-transform: translateX(-50%) translateY(-50%);
+  -moz-transform: translateX(-50%) translateY(-50%);
+  -ms-transform: translateX(-50%) translateY(-50%);
+  transform: translateX(-50%) translateY(-50%);
 }

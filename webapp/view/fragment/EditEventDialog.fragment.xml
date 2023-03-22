@@ -1,6 +1,7 @@
 <core:FragmentDefinition xmlns="com.thy.ux.annualleaveplanning.ui"
     xmlns:core="sap.ui.core">
-    <Dialog id="CreateEditEventDialog" closed=".onAfterEventDialogClosed" cancelled=".onEventCancelled" class="spp-eventeditor">
+    <Dialog id="CreateEditEventDialog" closed=".onAfterEventDialogClosed" cancelled=".onEventCancelled" class="spp-eventeditor"
+    showPointer="false" alignment="center">
         <header>
             <DialogHeader id="CreateEditEventDialogHeader" title="İzin Planla / Talep Et" closed=".onEventDialogClosed" />
         </header>

@@ -141,6 +141,7 @@ sap.ui.define(
         if (!a) {
           return;
         }
+        
         eventUtilities.publishEvent("PlanningCalendar", "DisplayEventWidget", {
           element: this.$(),
           day: a,

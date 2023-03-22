@@ -45,10 +45,10 @@ sap.ui.define(
         var that = this;
         var m = sap.ui.Device.system.phone;
         var t = 0;
-        var eL = dateUtilities.getDayAttributesWithinPeriod(this.getPeriod(), "Y");
+        var eL = dateUtilities.getEventsWithinPeriod();
         this.destroyAggregation("rows");
         $.each(eL, function(i,r ){
-          var eH = (31 * r.eventList.length) + 43;
+          var eH = 77;
           if(m){
             eH = eH + 49;
           }
@@ -60,10 +60,12 @@ sap.ui.define(
           t = t + eH;
           that.addAggregation("rows", nR);
         });
+
+        return t;
       },
 
       renderer: function (oRM, oControl) {
-        oControl.fetchPeriodAgenda();
+        var totalHeight = oControl.fetchPeriodAgenda();
         oRM.openStart("div", oControl); //Main
         oRM.class("spp-grid-panel-body");
         oRM.attr("role", "grid");
@@ -81,7 +83,7 @@ sap.ui.define(
         //--Header--//
 
         //--Body--//
-        oControl.renderBody(oRM, oControl);
+        oControl.renderBody(oRM, oControl, totalHeight);
         //--Body--//
 
         oRM.close("div");
@@ -106,7 +108,7 @@ sap.ui.define(
 
         oRM.close("header"); //Header
       },
-      renderBody: function (oRM, oControl) {
+      renderBody: function (oRM, oControl, th) {
         var aRows = oControl.getAggregation("rows") || [];
         oRM
           .openStart("div") //Body
@@ -131,7 +133,7 @@ sap.ui.define(
           .class("spp-single-child")
           .class("spp-resize-monitored")
           .style("--event-row-spacing", "8px")
-          .style("height", "1600px") //TODO - Calculate
+          .style("height", `${th+10}px`) 
           .attr("role", "presentation");
         oRM.openEnd();
 

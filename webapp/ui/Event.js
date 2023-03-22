@@ -1,13 +1,30 @@
-sap.ui.define(["sap/ui/core/Control"], function (Control) {
+sap.ui.define(["sap/ui/core/Control",
+	"sap/m/ActionSheet"], function (Control,
+	ActionSheet) {
   "use strict";
 
   return Control.extend("com.thy.ux.annualleaveplanning.ui.Event", {
     metadata: {
       properties: {
+        eventId:{
+          type: "string",
+          bindable: true,
+          defaultValue: "",
+        },
         eventType: {
           type: "string",
           bindable: true,
           defaultValue: "",
+        },
+        startDate: {
+          type: "string",
+          bindable: true,
+          defaultValue: null,
+        },
+        endDate: {
+          type: "string",
+          bindable: true,
+          defaultValue: null,
         },
         color: {
           type: "string",
@@ -47,16 +64,16 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
           bindable: true,
           defaultValue: 1,
         },
-        endDate: {
-          type: "string",
-          bindable: true,
-          defaultValue: null,
-        },
         forAgenda: {
           type: "boolean",
           bindable: true,
           defaultValue: false,
         },
+        editable: {
+          type: "boolean",
+          bindable: true,
+          defaultValue: false
+        }
       },
       aggregations: {},
       events: {},
@@ -66,6 +83,7 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
       var bEvent = oControl.getEventType();
       var bFuture = oControl.getHasFuture();
       var bOVerflow = oControl.getHasOverflow();
+      var sEventId = oControl.getEventId() || null;
       var iRow =
         oControl.getParent()?.getEvents()?.length > 0
           ? oControl.getParent()?.getEvents()?.length - 1
@@ -115,6 +133,9 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
       oRM.class(oControl.getColor());
       //--Render day class
       oRM.attr("role", "presentation");
+      if(sEventId){
+        oRM.attr("data-event-id", sEventId);
+      }
       oRM.openEnd();
 
       //--Render event
@@ -164,5 +185,33 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
 
       oRM.close("div");
     },
+    ontap:function(){
+      if(!this.getEditable()){
+        return;
+      }
+      var that = this;
+
+      if(!this._actionSheet){
+        this._actionSheet = new sap.m.ActionSheet({
+          buttons:[
+            new sap.m.Button({
+              text: "Değiştir",
+              icon: "sap-icon://edit"
+            }),
+            new sap.m.Button({
+              text: "Sil",
+              icon: "sap-icon://delete",
+              type: "Reject"
+            }),
+          ],
+          afterClose:function(){
+            that._actionSheet.destroy();
+            that._actionSheet = null;
+          }
+        });
+        
+        this._actionSheet.openBy(this);
+      }
+    }
   });
 });

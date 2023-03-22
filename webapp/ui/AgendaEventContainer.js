@@ -24,11 +24,11 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
           oRM.openStart("div"); //Agenda Row
           oRM.class("spp-cal-agenda-event-row");
           oRM.openEnd();
-          oRM.openStart("div"); //Event Time
-          oRM.class("spp-cal-eventlist-event-time");
-          oRM.openEnd();
-          oRM.text("Btş: " + e.getEndDate());
-          oRM.close("div"); //Event time
+          // oRM.openStart("div"); //Event Time
+          // oRM.class("spp-cal-eventlist-event-time");
+          // oRM.openEnd();
+          // oRM.text("Btş: " + e.getEndDate());
+          // oRM.close("div"); //Event time
           oRM.renderControl(e);
           oRM.close("div"); //Agenda Row
         });
