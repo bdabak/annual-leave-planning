@@ -253,8 +253,11 @@ sap.ui.define(
               legendChanged: null,
               eventEdit: {
                 leaveType: null,
+                eventId: null,
                 startDate: null,
                 endDate: null,
+                new: false,
+                title: "",
               },
               header: {
                 entitlementDate: new Date(2023, 2, 12),
@@ -266,12 +269,14 @@ sap.ui.define(
               leaveTypes: [
                 {
                   type: "0010",
+                  value: "planned",
                   description: "Planlanan İzin",
                   color: "spp-sch-foreground-blue",
                   selected: false,
                 },
                 {
                   type: "0100",
+                  value: "annual",
                   description: "Yıllık İzin",
                   color: "spp-sch-foreground-green",
                   selected: false,
@@ -280,7 +285,7 @@ sap.ui.define(
             },
             holidayCalendar: holidayCalendar,
             plannedLeaves: [
-              { 
+              {
                 eventId: "7ba1af4c23e04e628f1dbbd2fb7e3310",
                 startDate: new Date(2023, 5, 5),
                 endDate: new Date(2023, 5, 11),
@@ -309,6 +314,20 @@ sap.ui.define(
             "PlanningCalendar",
             "CreateEvent",
             this._handleCreateEvent,
+            this
+          );
+
+          eventUtilities.subscribeEvent(
+            "PlanningCalendar",
+            "EditEvent",
+            this._handleEditEvent,
+            this
+          );
+
+          eventUtilities.subscribeEvent(
+            "PlanningCalendar",
+            "DeleteEvent",
+            this._handleDeleteEvent,
             this
           );
 
@@ -432,25 +451,114 @@ sap.ui.define(
           this._closeEventDialog();
         },
 
-        onEventSave: function () {
+        onEventDelete: function () {
+          var that = this;
           var oEvent = this.getPageProperty("eventEdit");
           var sPath =
             oEvent.leaveType.key === "0010" ? "plannedLeaves" : "annualLeaves";
-          var aPL = this.getProperty(sPath);
+          var eL = this.getProperty(sPath) || [];
 
-          aPL.push({
-            eventId: eventUtilities.createEventId(),
-            startDate: dateUtilities.convertToDate(oEvent.startDate),
-            endDate: dateUtilities.convertToDate(oEvent.endDate),
+          if (eL.length === 0) {
+            that._closeEventDialog();
+            return;
+          }
+
+          var i = _.findIndex(eL, ["eventId", oEvent.eventId]);
+
+          Swal.fire({
+            title: this.getText("eventDeleteConfirmationTitle"),
+            html: this.getText("eventDeleteConfirmationText", [
+              oEvent.startDate,
+              oEvent.endDate,
+              oEvent.leaveType.value,
+            ]),
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            backdrop: false,
+            confirmButtonText: this.getText("deleteAction"),
+            cancelButtonText: this.getText("cancelAction"),
+          }).then((a) => {
+            that._closeEventDialog();
+            if (a.isConfirmed) {
+              eL = _.remove(eL, i);
+              that.setProperty(sPath, eL);
+              that.setPageProperty("legendChanged", new Date().getTime());
+
+              Swal.fire({
+                position: "bottom",
+                icon: "success",
+                html: this.getText("eventDeleted", [
+                  oEvent.startDate,
+                  oEvent.endDate,
+                  oEvent.leaveType.value,
+                ]),
+                showConfirmButton: false,
+                toast: true,
+                timer: 2000,
+              });
+            }
           });
-          this.setProperty(sPath, aPL);
+        },
+
+        onEventSave: function () {
+          var oEvent = this.getPageProperty("eventEdit");
+
+          if (
+            oEvent.leaveType.key === "" ||
+            oEvent.leaveType.key === null ||
+            oEvent.leaveType.key === undefined
+          ) {
+            Swal.fire({
+              position: "bottom",
+              icon: "error",
+              html: this.getText("selectEventType"),
+              toast: true,
+              backdrop: false,
+            });
+            return;
+          }
+
+          var sPath =
+            oEvent.leaveType.key === "0010" ? "plannedLeaves" : "annualLeaves";
+          var eL = this.getProperty(sPath);
+
+          if (oEvent.new) {
+            eL.push({
+              eventId: eventUtilities.createEventId(),
+              startDate: dateUtilities.convertToDate(oEvent.startDate),
+              endDate: dateUtilities.convertToDate(oEvent.endDate),
+            });
+          } else {
+            var i = _.findIndex(eL, ["eventId", oEvent.eventId]);
+            if (!i) {
+              Swal.fire({
+                position: "bottom",
+                icon: "error",
+                html: "İzin bulunamadı",
+                toast: true,
+                showConfirmButton: false,
+                backdrop: false,
+                timer: 2000,
+              });
+            }
+            eL[i] = {
+              eventId: oEvent.eventId,
+              startDate: dateUtilities.convertToDate(oEvent.startDate),
+              endDate: dateUtilities.convertToDate(oEvent.endDate),
+            };
+          }
+          this.setProperty(sPath, eL);
 
           this.setPageProperty("legendChanged", new Date().getTime());
 
           Swal.fire({
             position: "bottom",
             icon: "success",
-            title: oEvent.leaveType.value + " kaydedildi",
+            html: this.getText(oEvent.new ? "eventCreated" : "eventEdited", [
+              oEvent.leaveType.value,
+            ]),
             showConfirmButton: false,
             toast: true,
             timer: 2000,
@@ -547,6 +655,13 @@ sap.ui.define(
         },
         setTabIndex: function (i) {
           this.setPageProperty("tabIndex", i);
+        },
+
+        getText: function (t, a = []) {
+          return this.getOwnerComponent()
+            .getModel("i18n")
+            .getResourceBundle()
+            .getText(t, a);
         },
 
         /* Private methods */
@@ -657,8 +772,48 @@ sap.ui.define(
         },
         _handleCreateEvent: function (c, e, o) {
           if (o && o.element) {
-            this._openCreateEventDialog(o.element, o.period);
+            this._openEditEventDialog(o.element, o.period, true);
           }
+        },
+        _handleDeleteEvent: function (c, e, o) {
+          var s = `${o.eventType}Leaves`;
+          var a = this.getProperty(s) || [];
+
+          if (a.length === 0) {
+            return;
+          }
+
+          var c = _.find(a, ["eventId", o.eventId]) || null;
+
+          if (!c) {
+            return;
+          }
+        },
+        _handleEditEvent: function (c, e, o) {
+          var s = `${o.eventType}Leaves`;
+          var a = this.getProperty(s) || [];
+
+          if (a.length === 0) {
+            return;
+          }
+
+          var c = _.find(a, ["eventId", o.eventId]) || null;
+
+          if (!c) {
+            return;
+          }
+
+          var l = this.getPageProperty("leaveTypes") || [];
+          var t = _.find(l, ["value", o.eventType]);
+
+          var o = {
+            ...c,
+            leaveType: {
+              ...t,
+            },
+          };
+
+          this._openEditEventDialog(null, o, false);
         },
 
         _handleDisplayEventWidget: function (c, e, o) {
@@ -698,58 +853,52 @@ sap.ui.define(
             alignment: "auto",
             showPointer: true,
             content: this._createDisplayEventWidget(l),
-            closed: function () {
-
-            },
+            closed: function () {},
           }).addStyleClass("spp-overflowpopup");
 
           this.getModal().open(oDialog);
         },
 
         _createDisplayEventWidget: function (l) {
-
           var eventList = [];
 
-          $.each(l, function(i,e){
-            eventList.push(new Event({
-              eventType: e.type,
-              color: e.color,
-              text: e.text,
-              height: "25px",
-              hasPast: e.hasPast,
-              hasFuture: e.hasFuture,
-              hasOverflow: e.hasOverflow,
-              rowIndex: e.rowIndex,
-              rowSpan: 7,
-              editable: e.type === "planned"
-            }).addStyleClass("sapUiTinyMarginBottom")
-            )
+          $.each(l, function (i, e) {
+            eventList.push(
+              new Event({
+                eventId: e.eventId,
+                eventType: e.type,
+                color: e.color,
+                text: e.text,
+                height: "25px",
+                hasPast: e.hasPast,
+                hasFuture: e.hasFuture,
+                hasOverflow: e.hasOverflow,
+                rowIndex: e.rowIndex,
+                rowSpan: 7,
+                editable: e.type === "planned",
+              }).addStyleClass("sapUiTinyMarginBottom")
+            );
           });
 
-          return  new DialogContent({
-            content:  new EventContainer({
+          return new DialogContent({
+            content: new EventContainer({
               widget: true,
-              events: eventList
-            })
+              events: eventList,
+            }),
           });
-         
         },
-        _openCreateEventDialog: function (r, p) {
-          var o = $(r);
-          if (!o) {
-            return;
-          }
-          var eO = o.offset(); //Element position
-          var eH = o.outerHeight(); //Element height
-          var eW = o.outerWidth();
-
+        _openEditEventDialog: function (r, p, n) {
           var oEvent = {
             leaveType: {
-              key: null,
-              value: null,
+              key: n ? null : p.leaveType.type,
+              value: n ? null : p.leaveType.description,
+              icon: n ? null : p.leaveType.color,
             },
+            eventId: p.eventId,
             startDate: dateUtilities.formatDate(p.startDate),
             endDate: dateUtilities.formatDate(p.endDate),
+            new: n,
+            title: this.getText(n ? "newEventTitle" : "editEventTitle"),
           };
           this.setPageProperty("eventEdit", oEvent);
 
@@ -775,31 +924,6 @@ sap.ui.define(
               this.getModal().open(this._oEventDialog);
             }.bind(this)
           );
-
-          // var oDialog = new Dialog({
-          //   header: new DialogHeader({
-          //     title: "Yeni Plan",
-          //     closed: function () {
-          //       oDialog.close();
-          //     },
-          //   }),
-          //   styles: aStyles,
-          //   elementPosition: {
-          //     offset: { ...eO },
-          //     outerHeight: eH,
-          //     outerWidth: eW,
-          //   },
-          //   classList: ["spp-eventeditor"],
-          //   content: this._createEventEditor(p),
-          //   closed: function () {
-          //     //--Codes that perform operations after dialog close
-          //     that._createEventCancelled();
-          //   },
-          //   cancelled: function () {
-          //     //--Modal closed cancel event
-          //     that._cancelCreateEvent();
-          //   },
-          // });
         },
 
         _createEventCancelled: function () {
@@ -813,29 +937,29 @@ sap.ui.define(
             null
           );
         },
-        _createEventEditorToolbar() {
-          var that = this;
-          return new Toolbar({
-            items: [
-              new Button({
-                raised: true,
-                label: "Kaydet",
-                firstChild: true,
-                classList: ["spp-blue"],
-                press: function () {
-                  //TODO
-                },
-              }),
-              new Button({
-                lastChild: true,
-                label: "İptal",
-                press: function () {
-                  that._createEventCancelled();
-                },
-              }),
-            ],
-          });
-        },
+        // _createEventEditorToolbar() {
+        //   var that = this;
+        //   return new Toolbar({
+        //     items: [
+        //       new Button({
+        //         raised: true,
+        //         label: "Kaydet",
+        //         firstChild: true,
+        //         classList: ["spp-blue"],
+        //         press: function () {
+        //           //TODO
+        //         },
+        //       }),
+        //       new Button({
+        //         lastChild: true,
+        //         label: "İptal",
+        //         press: function () {
+        //           that._createEventCancelled();
+        //         },
+        //       }),
+        //     ],
+        //   });
+        // },
         _callDatePicker: function (e) {
           var s = e.getParameter("sourceField");
           var t = e.getParameter("targetField");
@@ -868,57 +992,57 @@ sap.ui.define(
             this.getModal().openSub(oDPW);
           }
         },
-        _createEventEditor: function (p) {
-          return new EventEditor({
-            toolbar: this._createEventEditorToolbar(),
-            items: [
-              new Field({
-                firstChild: true,
-                containsFocus: true,
-                empty: true,
-                // noHint: true,
-                label: new Label({
-                  text: "Tür",
-                  for: this.getView().getId() + "_input_event_type",
-                }),
-                field: new Input({
-                  id: this.getView().getId() + "_input_event_type",
-                  placeHolder: "Türü seçiniz",
-                  name: "İzin türü seçiniz",
-                }),
-              }),
-              new Field({
-                containsFocus: true,
-                empty: p?.startDate ? false : true,
-                label: new Label({
-                  text: "Başlangıç",
-                  for: this.getView().getId() + "_datepicker_start_date",
-                }),
-                field: new DatePicker({
-                  id: this.getView().getId() + "_datepicker_start_date",
-                  name: "BeginDate",
-                  value: dateUtilities.formatDate(p.startDate),
-                  selectDate: this._callDatePicker.bind(this),
-                }),
-              }),
-              new Field({
-                lastChild: true,
-                containsFocus: true,
-                empty: p?.endDate ? false : true,
-                label: new Label({
-                  text: "Bitiş",
-                  for: this.getView().getId() + "_datepicker_end_date",
-                }),
-                field: new DatePicker({
-                  id: this.getView().getId() + "_datepicker_end_date",
-                  name: "EndDate",
-                  value: dateUtilities.formatDate(p.endDate),
-                  selectDate: this._callDatePicker.bind(this),
-                }),
-              }),
-            ],
-          });
-        },
+        // _createEventEditor: function (p) {
+        //   return new EventEditor({
+        //     toolbar: this._createEventEditorToolbar(),
+        //     items: [
+        //       new Field({
+        //         firstChild: true,
+        //         containsFocus: true,
+        //         empty: true,
+        //         // noHint: true,
+        //         label: new Label({
+        //           text: "Tür",
+        //           for: this.getView().getId() + "_input_event_type",
+        //         }),
+        //         field: new Input({
+        //           id: this.getView().getId() + "_input_event_type",
+        //           placeHolder: "Türü seçiniz",
+        //           name: "İzin türü seçiniz",
+        //         }),
+        //       }),
+        //       new Field({
+        //         containsFocus: true,
+        //         empty: p?.startDate ? false : true,
+        //         label: new Label({
+        //           text: "Başlangıç",
+        //           for: this.getView().getId() + "_datepicker_start_date",
+        //         }),
+        //         field: new DatePicker({
+        //           id: this.getView().getId() + "_datepicker_start_date",
+        //           name: "BeginDate",
+        //           value: dateUtilities.formatDate(p.startDate),
+        //           selectDate: this._callDatePicker.bind(this),
+        //         }),
+        //       }),
+        //       new Field({
+        //         lastChild: true,
+        //         containsFocus: true,
+        //         empty: p?.endDate ? false : true,
+        //         label: new Label({
+        //           text: "Bitiş",
+        //           for: this.getView().getId() + "_datepicker_end_date",
+        //         }),
+        //         field: new DatePicker({
+        //           id: this.getView().getId() + "_datepicker_end_date",
+        //           name: "EndDate",
+        //           value: dateUtilities.formatDate(p.endDate),
+        //           selectDate: this._callDatePicker.bind(this),
+        //         }),
+        //       }),
+        //     ],
+        //   });
+        // },
       }
     );
   }

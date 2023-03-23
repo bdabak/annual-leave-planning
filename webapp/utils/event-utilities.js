@@ -13,7 +13,7 @@ sap.ui.define([], function () {
       b.unsubscribe(c, e, m, t);
       b.subscribe(c, e, m, t);
     },
-    createEventId: function() { // Public Domain/MIT
+    createEventId: function() { 
       var d = new Date().getTime();//Timestamp
       var d2 = ((typeof performance !== 'undefined') && performance.now && (performance.now()*1000)) || 0;//Time in microseconds since page-load or 0 if unsupported
       return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {

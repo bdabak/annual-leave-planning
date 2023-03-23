@@ -13867,7 +13867,8 @@ a.spp-menuitem:hover .spp-menu-text {
 }
 
 .spp-red {
-  --widget-primary-color-rgb: 244, 67, 54;
+  --widget-primary-color-rgb: 213, 53, 28;
+  --widget-primary-color-rgbx: 244, 67, 54;
 }
 
 .spp-deep-orange {

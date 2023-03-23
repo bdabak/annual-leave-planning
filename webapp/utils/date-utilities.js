@@ -573,6 +573,7 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
             }
             e = {
               m: m,
+              eventId: c.eventId,
               title: m.format("MMMM, ddd DD"),
               type: "planned",
               color: pC,
@@ -630,6 +631,7 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
               return true;
             }
             e = {
+              eventId: c.eventId,
               m: m,
               title: m.format("MMMM, ddd DD"),
               type: "annual",
@@ -709,6 +711,7 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
               });
 
               e = {
+                eventId: null,
                 m: m,
                 title: m.format("MMMM, ddd DD"),
                 type: "holiday",

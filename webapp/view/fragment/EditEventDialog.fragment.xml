@@ -3,7 +3,7 @@
     <Dialog id="CreateEditEventDialog" closed=".onAfterEventDialogClosed" cancelled=".onEventCancelled" class="spp-eventeditor"
     showPointer="false" alignment="center">
         <header>
-            <DialogHeader id="CreateEditEventDialogHeader" title="İzin Planla / Talep Et" closed=".onEventDialogClosed" />
+            <DialogHeader id="CreateEditEventDialogHeader" title="{planModel>eventEdit/title}" closed=".onEventDialogClosed" />
         </header>
         <content>
             <EventEditor id="CreateEditEventEditor">
@@ -14,7 +14,8 @@
                             <FormLabel id="FormLabelLeaveType" text="{i18n>leaveType}" for="FormComboLeaveType" />
                         </label>
                         <field>
-                            <FormComboBox id="FormComboLeaveType" key="{planModel>eventEdit/leaveType/key}" value="{planModel>eventEdit/leaveType/value}" name="LeaveType" icon="{planModel>eventEdit/leaveType/icon}" >
+                            <FormComboBox id="FormComboLeaveType" key="{planModel>eventEdit/leaveType/key}" value="{planModel>eventEdit/leaveType/value}" name="LeaveType" icon="{planModel>eventEdit/leaveType/icon}" 
+                            editable="{planModel>eventEdit/new}">
                                 <comboPicker>
                                     <PickerListWidget id="FormPickerLeaveType" multiselect="false" items="{planModel>leaveTypes}">
                                         <items>
@@ -52,6 +53,9 @@
                     <Toolbar id="CreateEditEventDialogToolbar">
                         <items>
                             <Button id="CreateEditEventDialogSaveAction" label="{i18n>saveAction}" raised="true" firstChild="true" class="spp-blue" press=".onEventSave" />
+                            <Button id="CreateEditEventDialogDeleteAction"
+                                icon="spp-icon-trash"
+                             label="{i18n>deleteAction}" raised="true" firstChild="false" class="spp-red" press=".onEventDelete" visible="{= !${planModel>eventEdit/new} }"/>
                             <Button id="CreateEditEventDialogCancelAction" label="{i18n>cancelAction}" lastChild="true" press=".onEventCancelled" />
                         </items>
                     </Toolbar>

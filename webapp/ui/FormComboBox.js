@@ -48,6 +48,11 @@ sap.ui.define(
             bindable: false,
             defaultValue: false,
           },
+          editable: {
+            type: "boolean",
+            bindable: true,
+            defaultValue: true,
+          },
         },
         aggregations: {
           comboTrigger: {
@@ -59,9 +64,7 @@ sap.ui.define(
             multiple: false,
           },
         },
-        events: {
-         
-        },
+        events: {},
       },
       init: function () {
         var cT = new FieldTrigger({
@@ -73,6 +76,9 @@ sap.ui.define(
       },
 
       togglePicker: function () {
+        if (!this.getEditable()) {
+          return;
+        }
         var e = this.getExpanded();
         if (!e) {
           this.getComboPicker().open(this);
@@ -111,6 +117,7 @@ sap.ui.define(
         oRM.openStart("input");
         oRM.attr("type", oControl.getType());
         oRM.attr("name", oControl.getName());
+        oRM.attr("disabled", oControl.getEditable());
         oRM.attr("autocomplete", oControl.getAutoComplete());
         oRM.attr("placeholder", oControl.getPlaceHolder());
         oRM.attr("role", "combobox");
@@ -123,18 +130,21 @@ sap.ui.define(
         oRM.close("input");
         //--Input--//
 
-        //--Trigger--//
-        oRM.renderControl(oControl.getAggregation("comboTrigger"));
-        //--Trigger--//
+        if (oControl.getEditable()) {
+          //--Trigger--//
+          oRM.renderControl(oControl.getAggregation("comboTrigger"));
+          //--Trigger--//
 
-        //--ComboList--//
-        oRM.renderControl(oControl.getAggregation("comboPicker"));
-        //--ComobList--//
+          //--ComboList--//
+
+          oRM.renderControl(oControl.getAggregation("comboPicker"));
+          //--ComobList--//
+        }
 
         oRM.close("div"); //Main
       },
 
-      setSelected: function(k,v, i){
+      setSelected: function (k, v, i) {
         this.setKey(k);
         this.setValue(v);
         this.setIcon(i);
@@ -144,7 +154,10 @@ sap.ui.define(
         this.getParent().setProperty("opened", false);
       },
 
-      onfocusin:function(){
+      onfocusin: function () {
+        if (!this.getEditable()) {
+          return;
+        }
         var e = this.getExpanded();
         if (!e) {
           this.getComboPicker().open(this);
@@ -152,14 +165,17 @@ sap.ui.define(
           this.getParent().setProperty("opened", true);
         }
       },
-      onfocusout:function(){
+      onfocusout: function () {
+        if (!this.getEditable()) {
+          return;
+        }
         var e = this.getExpanded();
         // if (e){
         //   this.getComboPicker().close();
         //   this.setProperty("expanded", false, true);
         //   this.getParent().setProperty("opened", false);
         // }
-      }
+      },
     });
   }
 );
