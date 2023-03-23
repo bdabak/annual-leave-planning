@@ -57,6 +57,10 @@ sap.ui.define(
           // sLibraryPath + "/ui/css/ThemeIstanbul.css"
         );
 
+        jQuery.sap.includeStyleSheet(
+          sLibraryPath + "/ui/css/Animate.css"
+        );
+
         //--Initialize moment locale
         dateUtilities.initializeMoment();
       },

@@ -9254,7 +9254,7 @@ body {
   box-shadow: 0 3px 6px #0000001f, 0 3px 6px #0000003d;
   top: 0;
   left: 0;
-  z-index: 11001;
+  z-index: 21;
 }
 
 .spp-firefox .spp-float-root > .spp-floating {
@@ -14614,7 +14614,7 @@ fieldset.spp-fieldset-content > legend.spp-fieldset-legend {
   position: fixed;
   inset: 0;
   pointer-events: all;
-  z-index: 11001;
+  z-index: 21;
 }
 
 @media (max-width: 480px) {

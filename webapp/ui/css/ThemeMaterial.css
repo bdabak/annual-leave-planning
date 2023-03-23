@@ -9174,7 +9174,7 @@ body {
   box-shadow: 0 3px 6px #0000001f, 0 3px 6px #0000003d;
   top: 0;
   left: 0;
-  z-index: 11001;
+  z-index: 21;
 }
 
 .spp-firefox .spp-float-root > .spp-floating {
@@ -24667,7 +24667,7 @@ button.spp-button.spp-recurrencelegendbutton {
   box-shadow: 0 3px 6px #0000001f, 0 3px 6px #0000003d;
   top: -200px;
   left: 0;
-  z-index: 11001;
+  z-index: 21;
   will-change: top;
   transition: top 350ms;
 }
@@ -24677,11 +24677,8 @@ button.spp-button.spp-recurrencelegendbutton {
 }
 
 .spp-popup-align-center{
-  position: fixed !important;
-  top: 50% !important;
+  float: left;
   left: 50% !important;
-  -webkit-transform: translateX(-50%) translateY(-50%);
-  -moz-transform: translateX(-50%) translateY(-50%);
-  -ms-transform: translateX(-50%) translateY(-50%);
-  transform: translateX(-50%) translateY(-50%);
+  top: 50% !important;
+  transform: translate(-50%, -50%);
 }

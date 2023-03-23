@@ -40,6 +40,11 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
             type:"boolean",
             bindable: true,
             defaultValue: false
+          },
+          animate: {
+            type:"boolean",
+            bindable: true,
+            defaultValue: false
           }
         },
         aggregations: {
@@ -69,6 +74,9 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
         Control.prototype.onAfterRendering.apply(this, arguments);
         var oEP = this.getElementPosition() || null;
         var sAlign = this.getAlignment() || null;
+
+        // this.addStyleClass("animate__animated");
+        // this.addStyleClass("animate__fadeInDown");
 
         if (!oEP || sAlign !== "auto") {
           return;
@@ -132,6 +140,7 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
         var xA = eOW / 2 - 10;
         $(".spp-anchor").removeAttr("style").attr("style", `transform:translateX(${xA}px)`);
 
+        
       },
       renderer: function (oRM, oControl) {
         var oHeader = oControl.getAggregation("header") || null;
@@ -148,6 +157,7 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
           .class("spp-panel")
           .class("spp-popup")
           .class("spp-floating")
+          
 
           .class("spp-header-dock-top")
           .class("spp-panel-has-bottom-toolbar")
@@ -196,6 +206,12 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
         if(sAlign){
           oRM.class(`spp-popup-align-${sAlign}`); 
         }
+
+        if(oControl.getAnimate()){
+          oRM.class("animate__animated")
+          .class("animate__pulse");
+        }
+       
 
         oRM.openEnd();
 

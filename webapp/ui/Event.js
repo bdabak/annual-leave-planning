@@ -80,7 +80,8 @@ sap.ui.define(
           },
         },
         aggregations: {},
-        events: {},
+        events: {
+        },
       },
       renderer: function (oRM, oControl) {
         var bPast = oControl.getHasPast();
@@ -201,7 +202,7 @@ sap.ui.define(
           this._actionSheet = new ActionSheet({
             buttons: [
               new sap.m.Button({
-                text: "Değiştir",
+                text: that.getModel("i18n").getResourceBundle().getText("editAction"),
                 icon: "sap-icon://edit",
                 press: function () {
                   eventUtilities.publishEvent("PlanningCalendar", "EditEvent", {
@@ -211,7 +212,17 @@ sap.ui.define(
                 },
               }),
               new sap.m.Button({
-                text: "Sil",
+                text: that.getModel("i18n").getResourceBundle().getText("splitAction"),
+                icon: "sap-icon://screen-split-two",
+                press: function () {
+                  eventUtilities.publishEvent("PlanningCalendar", "SplitEvent", {
+                    eventId: eventId,
+                    eventType: eventType,
+                  });
+                },
+              }),
+              new sap.m.Button({
+                text: that.getModel("i18n").getResourceBundle().getText("deleteAction"),
                 icon: "sap-icon://delete",
                 type: "Reject",
                 press: function () {

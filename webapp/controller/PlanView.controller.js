@@ -6,15 +6,8 @@ sap.ui.define(
     "com/thy/ux/annualleaveplanning/ui/Dialog",
     "com/thy/ux/annualleaveplanning/ui/DialogHeader",
     "com/thy/ux/annualleaveplanning/ui/DialogContent",
-    "com/thy/ux/annualleaveplanning/ui/Toolbar",
-    "com/thy/ux/annualleaveplanning/ui/Button",
-    "com/thy/ux/annualleaveplanning/ui/EventEditor",
     "com/thy/ux/annualleaveplanning/ui/EventContainer",
     "com/thy/ux/annualleaveplanning/ui/Event",
-    "com/thy/ux/annualleaveplanning/ui/FormField",
-    "com/thy/ux/annualleaveplanning/ui/FormLabel",
-    "com/thy/ux/annualleaveplanning/ui/FormInput",
-    "com/thy/ux/annualleaveplanning/ui/FormDatePicker",
     "com/thy/ux/annualleaveplanning/ui/DatePickerWidget",
     "com/thy/ux/annualleaveplanning/utils/date-utilities",
     "com/thy/ux/annualleaveplanning/utils/event-utilities",
@@ -29,15 +22,8 @@ sap.ui.define(
     Dialog,
     DialogHeader,
     DialogContent,
-    Toolbar,
-    Button,
-    EventEditor,
     EventContainer,
     Event,
-    Field,
-    Label,
-    Input,
-    DatePicker,
     DatePickerWidget,
     dateUtilities,
     eventUtilities
@@ -482,7 +468,7 @@ sap.ui.define(
           }).then((a) => {
             that._closeEventDialog();
             if (a.isConfirmed) {
-              eL = _.remove(eL, i);
+              eL.splice(i, 1);
               that.setProperty(sPath, eL);
               that.setPageProperty("legendChanged", new Date().getTime());
 
@@ -669,9 +655,9 @@ sap.ui.define(
           if (this._oEventDialog) {
             this._oEventDialog.destroy();
             this._oEventDialog = null;
-            //--Close modal--//
-            this.getModal().close();
           }
+          //--Close modal--//
+          this.getModal()?.close();
         },
         _handlePeriodChange: function (b) {
           var p = this.getPeriod();
@@ -788,6 +774,32 @@ sap.ui.define(
           if (!c) {
             return;
           }
+
+          var l = this.getPageProperty("leaveTypes") || [];
+          var t = _.find(l, ["value", o.eventType]);
+
+          var o = {
+            ...c,
+            leaveType: {
+              ...t,
+            },
+          };
+
+          var oEvent = {
+            leaveType: {
+              key: o.leaveType.type,
+              value: o.leaveType.description,
+              icon: o.leaveType.color,
+            },
+            eventId: o.eventId,
+            startDate: dateUtilities.formatDate(o.startDate),
+            endDate: dateUtilities.formatDate(o.endDate),
+            new: false,
+            title: null,
+          };
+          this.setPageProperty("eventEdit", oEvent);
+
+          this.onEventDelete();
         },
         _handleEditEvent: function (c, e, o) {
           var s = `${o.eventType}Leaves`;
