@@ -1,6 +1,7 @@
 sap.ui.define(["sap/ui/core/Control"], function (Control) {
   "use strict";
-
+  var _isRendered = false;
+  
   return Control.extend(
     "com.thy.ux.annualleaveplanning.ui.Dialog",
     {
@@ -75,8 +76,7 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
         var oEP = this.getElementPosition() || null;
         var sAlign = this.getAlignment() || null;
 
-        // this.addStyleClass("animate__animated");
-        // this.addStyleClass("animate__fadeInDown");
+        this._isRendered = true;
 
         if (!oEP || sAlign !== "auto") {
           return;
@@ -207,9 +207,10 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
           oRM.class(`spp-popup-align-${sAlign}`); 
         }
 
-        if(oControl.getAnimate()){
+        if(oControl.getAnimate() && !oControl._isRendered){
           oRM.class("animate__animated")
-          .class("animate__pulse");
+          .class("animate__slideInDown")
+          .class("animate__faster");
         }
        
 

@@ -245,6 +245,14 @@ sap.ui.define(
                 new: false,
                 title: "",
               },
+              eventSplit: {
+                leaveType: null,
+                eventId: null,
+                startDate: null,
+                endDate: null,
+                new: false,
+                title: "",
+              },
               header: {
                 entitlementDate: new Date(2023, 2, 12),
                 leaveQuotaBalance: "53",
@@ -307,6 +315,13 @@ sap.ui.define(
             "PlanningCalendar",
             "EditEvent",
             this._handleEditEvent,
+            this
+          );
+
+          eventUtilities.subscribeEvent(
+            "PlanningCalendar",
+            "SplitEvent",
+            this._handleSplitEvent,
             this
           );
 
@@ -761,6 +776,32 @@ sap.ui.define(
             this._openEditEventDialog(o.element, o.period, true);
           }
         },
+        _handleSplitEvent: function (c, e, o) {
+          var s = `${o.eventType}Leaves`;
+          var a = this.getProperty(s) || [];
+
+          if (a.length === 0) {
+            return;
+          }
+
+          var c = _.find(a, ["eventId", o.eventId]) || null;
+
+          if (!c) {
+            return;
+          }
+
+          var l = this.getPageProperty("leaveTypes") || [];
+          var t = _.find(l, ["value", o.eventType]);
+
+          var o = {
+            ...c,
+            leaveType: {
+              ...t,
+            },
+          };
+
+          this._openSplitEventDialog(null, o);
+        },
         _handleDeleteEvent: function (c, e, o) {
           var s = `${o.eventType}Leaves`;
           var a = this.getProperty(s) || [];
@@ -923,6 +964,45 @@ sap.ui.define(
           var oDialog = Fragment.load({
             id: this.getView().getId(),
             name: "com.thy.ux.annualleaveplanning.view.fragment.EditEventDialog",
+            controller: this,
+          }).then(
+            function (d) {
+              d.setStyles(aStyles);
+              // d.setElementPosition({
+              //   offset: { ...eO },
+              //   outerHeight: eH,
+              //   outerWidth: eW,
+              // });
+              this._oEventDialog = d;
+              this.getModal().open(this._oEventDialog);
+            }.bind(this)
+          );
+        },
+
+        _openSplitEventDialog: function (r, p) {
+          var oEvent = {
+            leaveType: {
+              key: p.leaveType.type,
+              value:p.leaveType.description,
+              icon: p.leaveType.color,
+            },
+            eventId: p.eventId,
+            startDate: dateUtilities.formatDate(p.startDate),
+            endDate: dateUtilities.formatDate(p.endDate),
+            new: false,
+            title: this.getText("splitEventTitle"),
+          };
+          this.setPageProperty("eventSplit", oEvent);
+
+          var aStyles = new Map([
+            // ["transform", `matrix(1, 0, 0, 1, ${eO.left}, -100%)`],
+            ["--date-time-length", "14em"],
+            ["--date-width-difference", "1em"],
+          ]);
+
+          var oDialog = Fragment.load({
+            id: this.getView().getId(),
+            name: "com.thy.ux.annualleaveplanning.view.fragment.SplitEventDialog",
             controller: this,
           }).then(
             function (d) {

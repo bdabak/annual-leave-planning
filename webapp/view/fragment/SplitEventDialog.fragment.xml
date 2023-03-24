@@ -1,0 +1,62 @@
+<core:FragmentDefinition xmlns="com.thy.ux.annualleaveplanning.ui"
+    xmlns:core="sap.ui.core">
+    <Dialog id="SplitEventDialog" closed=".onAfterEventDialogClosed" cancelled=".onEventCancelled" class="spp-eventeditor"
+    showPointer="false" alignment="center" animate="true">
+        <header>
+            <DialogHeader id="SplitEventDialogHeader" title="{planModel>eventSplit/title}" closed=".onEventDialogClosed" />
+        </header>
+        <content>
+            <EventEditor id="SplitEventEditor">
+                <items>
+                    <FormField id="FormFieldLeaveType" firstChild="true" empty="{= ${planModel>eventSplit/leaveType/key} === '' || ${planModel>eventSplit/leaveType/key} === null }"
+                    fieldType="combo">
+                        <label>
+                            <FormLabel id="FormLabelLeaveType" text="{i18n>leaveType}" for="FormComboLeaveType" />
+                        </label>
+                        <field>
+                            <FormComboBox id="FormComboLeaveType" key="{planModel>eventSplit/leaveType/key}" value="{planModel>eventSplit/leaveType/value}" name="LeaveType" icon="{planModel>eventSplit/leaveType/icon}" 
+                            editable="false">
+                                <comboPicker>
+                                    <PickerListWidget id="FormPickerLeaveType" multiselect="false" items="{planModel>leaveTypes}">
+                                        <items>
+                                            <PickerListWidgetItem id="FormPickerItemLeaveType" icon="{planModel>color}" key="{planModel>type}" value="{planModel>description}" selected="{= ${planModel>eventSplit/leaveType/key} === ${planModel>type} }" />
+                                        </items>
+                                    </PickerListWidget>
+                                </comboPicker>
+                            </FormComboBox>
+                        </field>
+                    </FormField>
+                    <FormField id="FormFieldStartDate" containsFocus="true" empty="{= ${planModel>eventSplit/startDate} === null }">
+                        <label>
+                            <FormLabel id="FormLabelStartDate" text="{i18n>leaveStartDate}" for="FormInputStartDate" />
+
+                        </label>
+                        <field>
+                            <FormDatePicker id="FormInputStartDate" value="{planModel>eventSplit/startDate}" selectDate=".onCallDatePicker" />
+                        </field>
+                    </FormField>
+                    <FormField id="FormFieldEndDate" lastChild="true" containsFocus="true" empty="{= ${planModel>eventSplit/endDate} === null }">
+                        <label>
+                            <FormLabel id="FormLabelEndDate" text="{i18n>leaveEndDate}" for="FormInputEndDate" />
+
+                        </label>
+                        <field>
+                            <FormDatePicker id="FormInputEndDate" value="{planModel>eventSplit/endDate}" selectDate=".onCallDatePicker" />
+                        </field>
+                    </FormField>
+                </items>
+                <toolbar>
+                    <Toolbar id="SplitEventDialogToolbar">
+                        <items>
+                            <Button id="SplitEventDialogSaveAction" label="{i18n>saveAction}" raised="true" firstChild="true" class="spp-blue" press=".onEventSave" />
+                            <Button id="SplitEventDialogDeleteAction"
+                                icon="spp-icon-trash"
+                             label="{i18n>deleteAction}" raised="true" firstChild="false" class="spp-red" press=".onEventDelete" visible="{= !${planModel>eventSplit/new} }"/>
+                            <Button id="SplitEventDialogCancelAction" label="{i18n>cancelAction}" lastChild="true" press=".onEventCancelled" />
+                        </items>
+                    </Toolbar>
+                </toolbar>
+            </EventEditor>
+        </content>
+    </Dialog>
+</core:FragmentDefinition>
