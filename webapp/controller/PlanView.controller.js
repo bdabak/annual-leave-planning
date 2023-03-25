@@ -252,6 +252,7 @@ sap.ui.define(
                 endDate: null,
                 new: false,
                 title: "",
+                splits:[]
               },
               header: {
                 entitlementDate: new Date(2023, 2, 12),
@@ -605,7 +606,35 @@ sap.ui.define(
             this.getModal().openSub(this._oDatePickerWidget);
           }
         },
+        onAddSplit: function(){
+          var aS = this.getPageProperty("eventSplit/splits");
 
+          $.each(aS, function(i,s){
+            if(!s.visible){
+              s.visible = true;
+              return false;
+            }
+          });
+
+          this.setPageProperty("eventSplit/splits", aS);
+
+        },
+
+        onRemoveSplit: function(){
+          var aS = this.getPageProperty("eventSplit/splits");
+          var l = aS.length - 1;
+          
+          while(l>1){
+            if(aS[l].visible){
+              aS[l].visible = false;
+              break;
+            }
+            l--;
+          }
+
+          this.setPageProperty("eventSplit/splits", aS);
+
+        },
         /* Helper methods */
         getModal: function () {
           return this.getById("LeaveManagementPageModal");
@@ -991,6 +1020,13 @@ sap.ui.define(
             endDate: dateUtilities.formatDate(p.endDate),
             new: false,
             title: this.getText("splitEventTitle"),
+            splits: [
+              {title: this.getText("eventSplitItem", ["1"]), startDate: null, endDate: null, visible: true},
+              {title: this.getText("eventSplitItem", ["2"]), startDate: null, endDate: null, visible: true},
+              {title: this.getText("eventSplitItem", ["3"]), startDate: null, endDate: null, visible: false},
+              {title: this.getText("eventSplitItem", ["4"]), startDate: null, endDate: null, visible: false},
+              {title: this.getText("eventSplitItem", ["5"]), startDate: null, endDate: null, visible: false},
+            ]
           };
           this.setPageProperty("eventSplit", oEvent);
 

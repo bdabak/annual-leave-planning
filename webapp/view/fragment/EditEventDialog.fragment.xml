@@ -29,7 +29,8 @@
 
 
 
-                    <FormField id="FormFieldStartDate" containsFocus="true" empty="{= ${planModel>eventEdit/startDate} === null }">
+                    <FormField id="FormFieldStartDate" containsFocus="true" empty="{= ${planModel>eventEdit/startDate} === null }"
+                    fieldType="datefield">
                         <label>
                             <FormLabel id="FormLabelStartDate" text="{i18n>leaveStartDate}" for="FormInputStartDate" />
 
@@ -39,7 +40,8 @@
                         </field>
                     </FormField>
 
-                    <FormField id="FormFieldEndDate" lastChild="true" containsFocus="true" empty="{= ${planModel>eventEdit/endDate} === null }">
+                    <FormField id="FormFieldEndDate" lastChild="true" containsFocus="true" empty="{= ${planModel>eventEdit/endDate} === null }"
+                    fieldType="datefield">
                         <label>
                             <FormLabel id="FormLabelEndDate" text="{i18n>leaveEndDate}" for="FormInputEndDate" />
 

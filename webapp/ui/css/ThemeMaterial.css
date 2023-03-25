@@ -12116,7 +12116,7 @@ body.spp-container.spp-outer {
   display: flex;
   background-color: #2196f3;
   color: #fff;
-  padding: 0.5em  1em;
+  padding: 0.5em 1em;
   flex: 0 0 auto;
   align-items: center;
   z-index: 1;
@@ -24676,9 +24676,73 @@ button.spp-button.spp-recurrencelegendbutton {
   top: 0;
 }
 
-.spp-popup-align-center{
+.spp-popup-align-center {
   float: left;
   left: 50% !important;
   top: 50% !important;
   transform: translate(-50%, -50%);
+}
+
+.spp-flex-column-half {
+  flex: 1 0 calc(50% - var(--date-width-difference)) !important;
+}
+
+.spp-floating-fixed {
+  position: fixed !important;
+  z-index: 23;
+  box-shadow: 1px 1px 12px rgba(0, 0, 0, 0.2);
+}
+
+.spp-split-row {
+  display: flex;
+  width: 100%;
+  column-gap: 0.2rem;
+  padding: 0;
+  align-items: stretch;
+  margin-bottom:0.1rem;
+}
+
+
+:nth-child(1 of .spp-split-row) .spp-split-row-title{
+  background-color: var(--color-indigo);
+  color: #fff;
+}
+:nth-child(2 of .spp-split-row) .spp-split-row-title{
+  background-color: var(--color-violet);
+  color: #fff;
+}
+
+:nth-child(3 of .spp-split-row)  .spp-split-row-title{
+  background-color: var(--color-purple);
+  color: #fff;
+}
+
+:nth-child(4 of .spp-split-row)  .spp-split-row-title{
+  background-color: var(--color-blue);
+  color: #fff;
+}
+
+:nth-child(5 of .spp-split-row)  .spp-split-row-title{
+  background-color: var(--color-blue-hover);
+  color: #fff;
+}
+
+.spp-split-row-title {
+  writing-mode: vertical-lr;
+  text-orientation: sideways-right;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.6em;
+  padding: 0 0.05rem;
+  border-radius: 2px;
+}
+
+.spp-split-row-content {
+  flex: 1 0 100%;
+}
+
+.spp-popup-toolbar{
+  flex: 1 1 100%;
+  align-items: stretch;justify-content: center;
 }

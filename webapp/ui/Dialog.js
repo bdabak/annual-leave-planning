@@ -57,6 +57,7 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
             type: "sap.ui.core.Control",
             multiple: false,
           },
+         
         },
         events: {
           closed:{
@@ -223,6 +224,8 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
         //-Content-//
         oRM.renderControl(oContent);
         //-Content-//
+
+      
 
         if(oControl.getShowPointer()){
           //--Render Pointer--//

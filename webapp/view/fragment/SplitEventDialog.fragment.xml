@@ -1,21 +1,20 @@
 <core:FragmentDefinition xmlns="com.thy.ux.annualleaveplanning.ui"
-    xmlns:core="sap.ui.core">
-    <Dialog id="SplitEventDialog" closed=".onAfterEventDialogClosed" cancelled=".onEventCancelled" class="spp-eventeditor"
-    showPointer="false" alignment="center" animate="true">
+    xmlns:core="sap.ui.core"
+    xmlns:m="sap.m">
+    <Dialog id="SplitEventDialog" closed=".onAfterEventDialogClosed" cancelled=".onEventCancelled" class="spp-eventeditor" showPointer="false" alignment="center" animate="true">
         <header>
             <DialogHeader id="SplitEventDialogHeader" title="{planModel>eventSplit/title}" closed=".onEventDialogClosed" />
         </header>
         <content>
             <EventEditor id="SplitEventEditor">
                 <items>
-                    <FormField id="FormFieldLeaveType" firstChild="true" empty="{= ${planModel>eventSplit/leaveType/key} === '' || ${planModel>eventSplit/leaveType/key} === null }"
-                    fieldType="combo">
+
+                    <FormField id="SplitFormFieldLeaveType" firstChild="true" empty="{= ${planModel>eventSplit/leaveType/key} === '' || ${planModel>eventSplit/leaveType/key} === null }" fieldType="combo">
                         <label>
                             <FormLabel id="FormLabelLeaveType" text="{i18n>leaveType}" for="FormComboLeaveType" />
                         </label>
                         <field>
-                            <FormComboBox id="FormComboLeaveType" key="{planModel>eventSplit/leaveType/key}" value="{planModel>eventSplit/leaveType/value}" name="LeaveType" icon="{planModel>eventSplit/leaveType/icon}" 
-                            editable="false">
+                            <FormComboBox id="FormComboLeaveType" key="{planModel>eventSplit/leaveType/key}" value="{planModel>eventSplit/leaveType/value}" name="LeaveType" icon="{planModel>eventSplit/leaveType/icon}" editable="false">
                                 <comboPicker>
                                     <PickerListWidget id="FormPickerLeaveType" multiselect="false" items="{planModel>leaveTypes}">
                                         <items>
@@ -26,32 +25,141 @@
                             </FormComboBox>
                         </field>
                     </FormField>
-                    <FormField id="FormFieldStartDate" containsFocus="true" empty="{= ${planModel>eventSplit/startDate} === null }">
+                    <FormField id="SplitFormFieldStartDate" containsFocus="true" empty="false" fieldType="datefield" class="spp-flex-column-half sapUiTinyMarginEnd">
                         <label>
                             <FormLabel id="FormLabelStartDate" text="{i18n>leaveStartDate}" for="FormInputStartDate" />
-
                         </label>
                         <field>
-                            <FormDatePicker id="FormInputStartDate" value="{planModel>eventSplit/startDate}" selectDate=".onCallDatePicker" />
+                            <FormDatePicker id="FormInputStartDate" value="{planModel>eventSplit/startDate}" editable="false"/>
                         </field>
                     </FormField>
-                    <FormField id="FormFieldEndDate" lastChild="true" containsFocus="true" empty="{= ${planModel>eventSplit/endDate} === null }">
+                    <FormField id="SplitFormFieldEndDate" lastChild="true" containsFocus="true" empty="false" fieldType="datefield" class="spp-flex-column-half">
                         <label>
                             <FormLabel id="FormLabelEndDate" text="{i18n>leaveEndDate}" for="FormInputEndDate" />
-
                         </label>
                         <field>
-                            <FormDatePicker id="FormInputEndDate" value="{planModel>eventSplit/endDate}" selectDate=".onCallDatePicker" />
+                            <FormDatePicker id="FormInputEndDate" value="{planModel>eventSplit/endDate}" editable="false"/>
                         </field>
                     </FormField>
+
+                    <SplitRow id="Split0Panel" title="{planModel>eventSplit/splits/0/title}" visible="{planModel>eventSplit/splits/0/visible}">
+                        <content>
+                            <FormField id="Split0StartDateField" containsFocus="true" empty="{= ${planModel>eventSplit/splits/0/startDate} === null }" fieldType="datefield" class="spp-flex-column-half sapUiTinyMarginEnd">
+                                <label>
+                                    <FormLabel id="Split0StartDateFieldLabel" text="{i18n>leaveStartDate}" for="Split0StartDatePicker" />
+                                </label>
+                                <field>
+                                    <FormDatePicker id="Split0StartDatePicker" name="Split0StartDatePicker" value="{planModel>eventSplit/splits/0/startDate}" editable="true" selectDate=".onCallDatePicker" />
+                                </field>
+                            </FormField>
+                            <FormField id="Split0EndDateField" lastChild="true" containsFocus="true" empty="{= ${planModel>eventSplit/splits/0/endDate} === null }" fieldType="datefield" class="spp-flex-column-half">
+                                <label>
+                                    <FormLabel id="Split0EndDateLabel" text="{i18n>leaveEndDate}" for="Split0EndDatePicker" />
+                                </label>
+                                <field>
+                                    <FormDatePicker id="Split0EndDatePicker" name="Split0EndDatePicker" value="{planModel>eventSplit/splits/0/endDate}" editable="true" selectDate=".onCallDatePicker" />
+                                </field>
+                            </FormField>
+                        </content>
+                    </SplitRow>
+                    <SplitRow id="Split1Panel" title="{planModel>eventSplit/splits/1/title}" visible="{planModel>eventSplit/splits/1/visible}">
+                        <content>
+                            <FormField id="Split1StartDateField" containsFocus="true" empty="{= ${planModel>eventSplit/splits/1/startDate} === null }" fieldType="datefield" class="spp-flex-column-half sapUiTinyMarginEnd">
+                                <label>
+                                    <FormLabel id="Split1StartDateFieldLabel" text="{i18n>leaveStartDate}" for="Split1StartDatePicker" />
+                                </label>
+                                <field>
+                                    <FormDatePicker id="Split1StartDatePicker" name="Split1StartDatePicker" value="{planModel>eventSplit/splits/1/startDate}" editable="true" selectDate=".onCallDatePicker" />
+                                </field>
+                            </FormField>
+                            <FormField id="Split1EndDateField" lastChild="true" containsFocus="true" empty="{= ${planModel>eventSplit/splits/1/endDate} === null }" fieldType="datefield" class="spp-flex-column-half">
+                                <label>
+                                    <FormLabel id="Split1EndDateLabel" text="{i18n>leaveEndDate}" for="Split1EndDatePicker" />
+                                </label>
+                                <field>
+                                    <FormDatePicker id="Split1EndDatePicker" name="Split1EndDatePicker" value="{planModel>eventSplit/splits/1/endDate}" editable="true" selectDate=".onCallDatePicker" />
+                                </field>
+                            </FormField>
+                        </content>
+                    </SplitRow>
+
+                    <SplitRow id="Split2Panel" title="{planModel>eventSplit/splits/2/title}" visible="{planModel>eventSplit/splits/2/visible}">
+                        <content>
+                            <FormField id="Split2StartDateField" containsFocus="true" empty="{= ${planModel>eventSplit/splits/2/startDate} === null }" fieldType="datefield" class="spp-flex-column-half sapUiTinyMarginEnd">
+                                <label>
+                                    <FormLabel id="Split2StartDateFieldLabel" text="{i18n>leaveStartDate}" for="Split2StartDatePicker" />
+                                </label>
+                                <field>
+                                    <FormDatePicker id="Split2StartDatePicker" name="Split2StartDatePicker" value="{planModel>eventSplit/splits/2/startDate}" editable="true" selectDate=".onCallDatePicker" />
+                                </field>
+                            </FormField>
+                            <FormField id="Split2EndDateField" lastChild="true" containsFocus="true" empty="{= ${planModel>eventSplit/splits/2/endDate} === null }" fieldType="datefield" class="spp-flex-column-half">
+                                <label>
+                                    <FormLabel id="Split2EndDateLabel" text="{i18n>leaveEndDate}" for="Split2EndDatePicker" />
+                                </label>
+                                <field>
+                                    <FormDatePicker id="Split2EndDatePicker" name="Split2EndDatePicker" value="{planModel>eventSplit/splits/2/endDate}" editable="true" selectDate=".onCallDatePicker" />
+                                </field>
+                            </FormField>
+                        </content>
+                    </SplitRow>
+
+                    <SplitRow id="Split3Panel" title="{planModel>eventSplit/splits/3/title}" visible="{planModel>eventSplit/splits/3/visible}">
+                        <content>
+                            <FormField id="Split3StartDateField" containsFocus="true" empty="{= ${planModel>eventSplit/splits/3/startDate} === null }" fieldType="datefield" class="spp-flex-column-half sapUiTinyMarginEnd">
+                                <label>
+                                    <FormLabel id="Split3StartDateFieldLabel" text="{i18n>leaveStartDate}" for="Split3StartDatePicker" />
+                                </label>
+                                <field>
+                                    <FormDatePicker id="Split3StartDatePicker" name="Split3StartDatePicker" value="{planModel>eventSplit/splits/3/startDate}" editable="true" selectDate=".onCallDatePicker" />
+                                </field>
+                            </FormField>
+                            <FormField id="Split3EndDateField" lastChild="true" containsFocus="true" empty="{= ${planModel>eventSplit/splits/3/endDate} === null }" fieldType="datefield" class="spp-flex-column-half">
+                                <label>
+                                    <FormLabel id="Split3EndDateLabel" text="{i18n>leaveEndDate}" for="Split3EndDatePicker" />
+                                </label>
+                                <field>
+                                    <FormDatePicker id="Split3EndDatePicker" name="Split3EndDatePicker" value="{planModel>eventSplit/splits/3/endDate}" editable="true" selectDate=".onCallDatePicker" />
+                                </field>
+                            </FormField>
+                        </content>
+                    </SplitRow>
+
+                    <SplitRow id="Split4Panel" title="{planModel>eventSplit/splits/4/title}" visible="{planModel>eventSplit/splits/4/visible}">
+                        <content>
+                            <FormField id="Split4StartDateField" containsFocus="true" empty="{= ${planModel>eventSplit/splits/4/startDate} === null }" fieldType="datefield" class="spp-flex-column-half sapUiTinyMarginEnd">
+                                <label>
+                                    <FormLabel id="Split4StartDateFieldLabel" text="{i18n>leaveStartDate}" for="Split4StartDatePicker" />
+                                </label>
+                                <field>
+                                    <FormDatePicker id="Split4StartDatePicker" name="Split4StartDatePicker" value="{planModel>eventSplit/splits/4/startDate}" editable="true" selectDate=".onCallDatePicker" />
+                                </field>
+                            </FormField>
+                            <FormField id="Split4EndDateField" lastChild="true" containsFocus="true" empty="{= ${planModel>eventSplit/splits/4/endDate} === null }" fieldType="datefield" class="spp-flex-column-half">
+                                <label>
+                                    <FormLabel id="Split4EndDateLabel" text="{i18n>leaveEndDate}" for="Split4EndDatePicker" />
+                                </label>
+                                <field>
+                                    <FormDatePicker id="Split4EndDatePicker" name="Split4EndDatePicker" value="{planModel>eventSplit/splits/4/endDate}" editable="true" selectDate=".onCallDatePicker" />
+                                </field>
+                            </FormField>
+                        </content>
+                    </SplitRow>
+
+                    <Toolbar hasWrapper="false" class="spp-popup-toolbar sapUiTinyMarginTop" >
+                        <items>
+                            <Button icon="spp-icon-add" label="Bölüm Ekle" firstChild="true" lastChild="true" raised="false" solid="true"
+                                press=".onAddSplit" class="sapUiTinyMarginEnd"/>
+                                 <Button icon="spp-icon-remove" class="spp-red"  label="Bölüm Sil" firstChild="false" lastChild="true" raised="false" solid="true"
+                                press=".onRemoveSplit" />
+                        </items>
+                    </Toolbar>
+
                 </items>
                 <toolbar>
                     <Toolbar id="SplitEventDialogToolbar">
                         <items>
                             <Button id="SplitEventDialogSaveAction" label="{i18n>saveAction}" raised="true" firstChild="true" class="spp-blue" press=".onEventSave" />
-                            <Button id="SplitEventDialogDeleteAction"
-                                icon="spp-icon-trash"
-                             label="{i18n>deleteAction}" raised="true" firstChild="false" class="spp-red" press=".onEventDelete" visible="{= !${planModel>eventSplit/new} }"/>
                             <Button id="SplitEventDialogCancelAction" label="{i18n>cancelAction}" lastChild="true" press=".onEventCancelled" />
                         </items>
                     </Toolbar>

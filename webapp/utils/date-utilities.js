@@ -33,7 +33,12 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
       return m.format("DD.MM.YYYY");
     },
     convertDateToPeriod: function (d) {
-      var m = moment(d, "DD.MM.YYYY");
+      var m;
+      if(d === null || d === undefined){
+         m = moment(new Date());
+      }else{
+         m = moment(d, "DD.MM.YYYY");
+      }
 
       return this.getPeriod(m);
     },

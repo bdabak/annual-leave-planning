@@ -7,7 +7,7 @@ sap.ui.define(
   ],
   function (Control, WidgetHeader, WidgetContent, dateUtilities) {
     "use strict";
-
+    var _firstRender = false;
     return Control.extend(
       "com.thy.ux.annualleaveplanning.ui.DatePickerWidget",
       {
@@ -56,17 +56,31 @@ sap.ui.define(
          * @override
          */
         onAfterRendering: function () {
+         
           Control.prototype.onAfterRendering.apply(this, arguments);
+
+          if(!this._firstRender){
+            this._firstRender = true;
+            // this.setVisible(false);
+          }
+
           if (!this.getFloating()) {
             return;
           }
-          var oEP = this.getElementPosition() || null;
+          // var oEP = this.getElementPosition() || null;
 
-          if (!oEP) {
-            return;
-          }
-
+          // if (!oEP) {
+          //   return;
+          // }
           var t = this.$();
+          var o = t.parent().parent();
+
+          var oEP = {
+            offset: { ...o.offset() },
+            outerHeight:  o.outerHeight(),
+            outerWidth: o.outerWidth(),
+          };
+
           var eO = t.offset();
           var eOH = t.outerHeight();
           var eOW = t.outerWidth();
@@ -90,6 +104,9 @@ sap.ui.define(
             x = oEP.offset.left;
           }
 
+          // var s = `transform: translate(${x}px, ${y}px); position:fixed !important; z-index:22;`;
+          x=0;
+          y=40;
           var s = `transform: translate(${x}px, ${y}px);`;
 
           t.removeAttr("style").attr("style", s);
@@ -121,8 +138,18 @@ sap.ui.define(
           this.setProperty("period", p);
         },
         renderer: function (oRM, oControl) {
-          var p = oControl.getPeriod();
-          var s = oControl.getSelectedDate();
+
+          var p = oControl.getPeriod() || null;
+          var s = oControl.getSelectedDate() || null;
+
+          if (!s || !p) {
+            p = dateUtilities.getToday();
+            s = dateUtilities.convertPeriodToDate(p);
+          }
+
+          // if (!p) {
+          //   p = dateUtilities.convertDateToPeriod(s);
+          // } 
 
           //--Set header
           var wH = oControl.getAggregation("_widgetHeader");
@@ -148,6 +175,7 @@ sap.ui.define(
           if (oControl.getFloating()) {
             oRM
               .class("spp-floating")
+              .class("spp-floating-fixed")
               .class("spp-focus-trapped")
               .class("spp-aligned-below")
               .class("spp-outer")

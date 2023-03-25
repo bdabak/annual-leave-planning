@@ -67,7 +67,7 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
       oRM.class("spp-widget").class("spp-field");
 
       //--Variable class names
-      oRM.class(t !== "" ? `spp-${t}` : `spp-textfield`);
+      oRM.class(t !== "" ? `spp-${t}` : null).class("spp-textfield");
 
       bLabel ? oRM.class("spp-has-label") : null;
       oControl.getLabelBefore() ? oRM.class("spp-label-before") : null;
