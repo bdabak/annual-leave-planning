@@ -68,6 +68,11 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
             bindable: true,
             defaultValue: false
           },
+          // hidden: {
+          //   type: "boolean",
+          //   bindable: true,
+          //   defaultValue: false
+          // }
         },
         aggregations: {},
         events: {
@@ -94,10 +99,16 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
         var bLastChild = oControl.getLastChild() || false;
         var aClassList = oControl.getClassList() || [];
         var aAttributes = oControl.getAttributes() || [];
+        // var bHidden = oControl.getHidden();
+        
+        
 
         oRM.openStart("button", oControl); //Control
         oRM.class("spp-widget");
         
+        // if(bHidden){
+        //   oRM.class("spp-hidden");
+        // }
         
         //--Conditional classes
         oRM.class(!bTool ? "spp-button" : "spp-tool");
@@ -175,7 +186,7 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
           oRM.text(sTooltip);
           oRM.close("div");
         }
-
+        
         oRM.close("button"); //Button
       },
       ontap: function (oEvent) {

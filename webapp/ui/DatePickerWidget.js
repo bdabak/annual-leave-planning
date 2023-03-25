@@ -207,6 +207,14 @@ sap.ui.define(
           oRM.close("div");
           //--Datepicker Container--//
 
+          // if (oControl.getFloating()) {
+          //   oRM
+          //   .openStart("div")
+          //   .class("spp-dp-overlay")
+          //   .openEnd()
+          //   .close("div");
+          // }
+
           oRM.close("div"); //Main date picker
         },
 

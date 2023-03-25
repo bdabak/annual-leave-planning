@@ -24746,3 +24746,10 @@ button.spp-button.spp-recurrencelegendbutton {
   flex: 1 1 100%;
   align-items: stretch;justify-content: center;
 }
+
+.spp-dp-overlay{
+  position: fixed;
+  background-color: rgba(0,0,0,0.1);
+  width: 100%;
+  height: 100%;
+}

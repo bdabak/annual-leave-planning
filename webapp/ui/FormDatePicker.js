@@ -15,6 +15,10 @@ sap.ui.define(
             type: "string",
             bindable: true,
           },
+          referenceDate: {
+            type: "string",
+            bindable: true,
+          },
           type: {
             type: "string",
             bindable: true,
@@ -85,7 +89,7 @@ sap.ui.define(
 
       createDatePicker: function(){
         var that =  this;
-        var d = this.getValue() || null;
+        var d = this.getValue() || this.getReferenceDate() || null;
         var p;
 
         if (!d) {

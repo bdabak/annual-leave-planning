@@ -252,7 +252,8 @@ sap.ui.define(
                 endDate: null,
                 new: false,
                 title: "",
-                splits:[]
+                splits: [],
+                buttonState: null,
               },
               header: {
                 entitlementDate: new Date(2023, 2, 12),
@@ -534,7 +535,7 @@ sap.ui.define(
             });
           } else {
             var i = _.findIndex(eL, ["eventId", oEvent.eventId]);
-            if (!i) {
+            if (!(i>=0)) {
               Swal.fire({
                 position: "bottom",
                 icon: "error",
@@ -559,6 +560,73 @@ sap.ui.define(
             position: "bottom",
             icon: "success",
             html: this.getText(oEvent.new ? "eventCreated" : "eventEdited", [
+              oEvent.leaveType.value,
+            ]),
+            showConfirmButton: false,
+            toast: true,
+            timer: 2000,
+          });
+
+          this._closeEventDialog();
+        },
+
+        onSplitSave: function () {
+          var oEvent = this.getPageProperty("eventSplit");
+
+          var sPath =
+            oEvent.leaveType.key === "0010" ? "plannedLeaves" : "annualLeaves";
+          var eL = this.getProperty(sPath);
+
+          var i = _.findIndex(eL, ["eventId", oEvent.eventId]);
+          if (!(i>=0)) {
+            Swal.fire({
+              position: "bottom",
+              icon: "error",
+              html: "İzin bulunamadı",
+              toast: true,
+              showConfirmButton: false,
+              timer: 2000,
+            });
+            return;
+          }
+
+          //TODO: Add split checks
+          //TODO: Add split checks
+
+          var vS = _.filter(oEvent.splits, ["visible", true]);
+
+          if (vS.length < 2) {
+            Swal.fire({
+              position: "bottom",
+              icon: "error",
+              html: "İzni en az 2 parçaya bölmelisiniz",
+              toast: true,
+              showConfirmButton: true,
+              timer: 2000,
+            });
+            return;
+          }
+
+          eL.splice(i, 1);
+
+          $.each(vS, function (i, s) {
+            eL.push({
+              eventId: eventUtilities.createEventId(),
+              startDate: dateUtilities.convertToDate(s.startDate),
+              endDate: dateUtilities.convertToDate(s.endDate),
+            });
+          });
+
+          this.setProperty(sPath, eL);
+
+          this.setPageProperty("legendChanged", new Date().getTime());
+
+          Swal.fire({
+            position: "bottom",
+            icon: "success",
+            html: this.getText("eventSplitted", [
+              oEvent.startDate,
+              oEvent.endDate,
               oEvent.leaveType.value,
             ]),
             showConfirmButton: false,
@@ -606,26 +674,26 @@ sap.ui.define(
             this.getModal().openSub(this._oDatePickerWidget);
           }
         },
-        onAddSplit: function(){
+        onAddSplit: function () {
           var aS = this.getPageProperty("eventSplit/splits");
 
-          $.each(aS, function(i,s){
-            if(!s.visible){
+          $.each(aS, function (i, s) {
+            if (!s.visible) {
               s.visible = true;
               return false;
             }
           });
 
           this.setPageProperty("eventSplit/splits", aS);
-
+          this.setPageProperty("eventSplit/buttonState", new Date().getTime());
         },
 
-        onRemoveSplit: function(){
+        onRemoveSplit: function () {
           var aS = this.getPageProperty("eventSplit/splits");
           var l = aS.length - 1;
-          
-          while(l>1){
-            if(aS[l].visible){
+
+          while (l > 1) {
+            if (aS[l].visible) {
               aS[l].visible = false;
               break;
             }
@@ -633,7 +701,15 @@ sap.ui.define(
           }
 
           this.setPageProperty("eventSplit/splits", aS);
-
+          this.setPageProperty("eventSplit/buttonState", new Date().getTime());
+        },
+        checkAddSplitVisible: function (s = [], r) {
+          var v = _.filter(s, ["visible", true]);
+          return v.length < 5;
+        },
+        checkRemoveSplitVisible: function (s = [], r) {
+          var v = _.filter(s, ["visible", true]);
+          return v.length > 2;
         },
         /* Helper methods */
         getModal: function () {
@@ -1009,24 +1085,62 @@ sap.ui.define(
         },
 
         _openSplitEventDialog: function (r, p) {
+          var sD = dateUtilities.formatDate(p.startDate);
+          var eD = dateUtilities.formatDate(p.endDate);
           var oEvent = {
             leaveType: {
               key: p.leaveType.type,
-              value:p.leaveType.description,
+              value: p.leaveType.description,
               icon: p.leaveType.color,
             },
             eventId: p.eventId,
-            startDate: dateUtilities.formatDate(p.startDate),
-            endDate: dateUtilities.formatDate(p.endDate),
+            startDate: sD,
+            endDate: eD,
             new: false,
             title: this.getText("splitEventTitle"),
             splits: [
-              {title: this.getText("eventSplitItem", ["1"]), startDate: null, endDate: null, visible: true},
-              {title: this.getText("eventSplitItem", ["2"]), startDate: null, endDate: null, visible: true},
-              {title: this.getText("eventSplitItem", ["3"]), startDate: null, endDate: null, visible: false},
-              {title: this.getText("eventSplitItem", ["4"]), startDate: null, endDate: null, visible: false},
-              {title: this.getText("eventSplitItem", ["5"]), startDate: null, endDate: null, visible: false},
-            ]
+              {
+                title: this.getText("eventSplitItem", ["1"]),
+                startDate: null,
+                endDate: null,
+                visible: true,
+                refStartDate: sD,
+                refEndDate: eD,
+              },
+              {
+                title: this.getText("eventSplitItem", ["2"]),
+                startDate: null,
+                endDate: null,
+                visible: true,
+                refStartDate: sD,
+                refEndDate: eD,
+              },
+              {
+                title: this.getText("eventSplitItem", ["3"]),
+                startDate: null,
+                endDate: null,
+                visible: false,
+                refStartDate: sD,
+                refEndDate: eD,
+              },
+              {
+                title: this.getText("eventSplitItem", ["4"]),
+                startDate: null,
+                endDate: null,
+                visible: false,
+                refStartDate: sD,
+                refEndDate: eD,
+              },
+              {
+                title: this.getText("eventSplitItem", ["5"]),
+                startDate: null,
+                endDate: null,
+                visible: false,
+                refStartDate: sD,
+                refEndDate: eD,
+              },
+            ],
+            buttonState: new Date().getTime(), //For refreshing button states
           };
           this.setPageProperty("eventSplit", oEvent);
 
