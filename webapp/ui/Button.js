@@ -68,11 +68,21 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
             bindable: true,
             defaultValue: false
           },
-          // hidden: {
-          //   type: "boolean",
-          //   bindable: true,
-          //   defaultValue: false
-          // }
+          iconAlignEnd: {
+            type: "boolean",
+            bindable: true,
+            defaultValue: false
+          },
+          invisible: {
+            type: "boolean",
+            bindable: true,
+            defaultValue: false
+          },
+          floating:{
+            type: "boolean",
+            bindable: true,
+            defaultValue: false
+          }
         },
         aggregations: {},
         events: {
@@ -87,6 +97,7 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
         var sTooltip = oControl.getTooltip() || null;
         var bTool = oControl.getTool() || false;
         var bHasIcon = sIcon ? true : false;
+        var bAlignEnd = oControl.getIconAlignEnd() || false;
         var bIconButton = oControl.getIconButton();
         var bHasLabel = sLabel ? true : false;
         var bHasTooltip = sTooltip ? true : false;
@@ -99,16 +110,17 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
         var bLastChild = oControl.getLastChild() || false;
         var aClassList = oControl.getClassList() || [];
         var aAttributes = oControl.getAttributes() || [];
-        // var bHidden = oControl.getHidden();
+        var bInvisible = oControl.getInvisible();
+        var bFloating = oControl.getFloating();
         
         
 
         oRM.openStart("button", oControl); //Control
         oRM.class("spp-widget");
         
-        // if(bHidden){
-        //   oRM.class("spp-hidden");
-        // }
+        if(bInvisible){
+          oRM.class("spp-invisible");
+        }
         
         //--Conditional classes
         oRM.class(!bTool ? "spp-button" : "spp-tool");
@@ -135,7 +147,7 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
             oRM.class("spp-icon")
                .class(sIcon);
           }else{
-            oRM.class("spp-icon-align-start");
+            oRM.class(bAlignEnd ? "spp-icon-align-end" : "spp-icon-align-start");
           }
         }
         if (bSelected) {
@@ -160,6 +172,10 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
         $.each(aAttributes, function (i, oAttr) {
           oRM.attr(oAttr.name, oAttr.value);
         });
+
+        if(bFloating){
+          oRM.class("spp-floating-button");
+        }
 
         oRM.openEnd();
 

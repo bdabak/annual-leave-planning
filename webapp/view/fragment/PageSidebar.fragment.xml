@@ -1,6 +1,6 @@
 <core:FragmentDefinition xmlns="com.thy.ux.annualleaveplanning.ui"
     xmlns:core="sap.ui.core">
-    <PageSidebar id="LeaveManagementPageSidebar" hidden="false">
+    <PageSidebar id="LeaveManagementPageSidebar" hidden="{= !${device>/system/desktop} }">
         <items>
             <Legend id="LeaveManagementPageLegend" items="{planModel>legend}"
             legendSelectionChanged=".onLegendSelectionChanged">

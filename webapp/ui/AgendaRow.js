@@ -123,7 +123,7 @@ sap.ui.define(
 
         //--Date no
         oRM
-          .openStart("div") //Date
+          .openStart("div") 
           .class("spp-cal-agenda-date-date-number")
           .attr("role", "presentation")
           .openEnd();
@@ -133,7 +133,7 @@ sap.ui.define(
 
         //--Date text--//
         oRM
-          .openStart("div") //Date
+          .openStart("div") 
           .class("spp-cal-agenda-date-date-text")
           .attr("role", "presentation")
           .openEnd();
@@ -153,14 +153,21 @@ sap.ui.define(
         oRM.close("div");
         //--Date text--//
 
-        oRM.close("div");
+        // oRM.close("div");
 
-        oRM
-          .openStart("div") //Date
-          .class("spp-day-name")
-          .class("spp-cal-agenda-date")
-          .attr("role", "presentation")
-          .openEnd();
+        // oRM
+        //   .openStart("div") //Date
+        //   .class("spp-day-name")
+        //   .class("spp-cal-agenda-date")
+        //   .attr("role", "presentation")
+        //   .openEnd();
+
+        oRM.openStart("span")
+           .class("spp-icon")
+           .class("spp-fa-minus")
+           .class("sapUiSmallMarginBeginEnd")
+           .openEnd()
+           .close("span");
 
         //--Date no
         oRM

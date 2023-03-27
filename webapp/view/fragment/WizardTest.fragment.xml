@@ -1,0 +1,29 @@
+<c:FragmentDefinition xmlns="com.thy.ux.annualleaveplanning.ui"
+    xmlns:m="sap.m"
+    xmlns:c="sap.ui.core">
+    <m:VBox width="100%" height="90%" alignItems="Stretch" alignContent="Stretch">
+        <m:items>
+            <Wizard title=" Wizard Trial">
+                <steps>
+                    <WizardStep title="Step 1" active="true">
+                        <content>
+                            <m:Text text="Adım 1" />
+                        </content>
+                    </WizardStep>
+                    <WizardStep title="Step 2" active="false">
+                        <content>
+                            <m:Text text="Adım 2" />
+                        </content>
+                    </WizardStep>
+
+                    <WizardStep title="Step 3" active="false">
+                        <content>
+                            <m:Text text="Adım 3" />
+                        </content>
+                    </WizardStep>
+                </steps>
+            </Wizard>
+            <Button floating="true" icon="spp-fa-add" class="spp-indigo" solid="true" />
+        </m:items>
+    </m:VBox>
+</c:FragmentDefinition>

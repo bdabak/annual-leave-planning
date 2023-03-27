@@ -2,9 +2,12 @@ sap.ui.define(
   [
     "sap/ui/core/Control",
     "sap/m/ActionSheet",
+    "sap/m/ResponsivePopover",
+    "sap/ui/layout/VerticalLayout",
+    "com/thy/ux/annualleaveplanning/ui/Button",
     "com/thy/ux/annualleaveplanning/utils/event-utilities",
   ],
-  function (Control, ActionSheet, eventUtilities) {
+  function (Control, ActionSheet, Popover, VerticalLayout, Button, eventUtilities) {
     "use strict";
 
     return Control.extend("com.thy.ux.annualleaveplanning.ui.Event", {
@@ -132,7 +135,7 @@ sap.ui.define(
             oRM.style("top", `${((iRow + 1) * 22 + 3).toString() + "px"}`);
           }
         } else {
-          oRM.style("min-width", "150px");
+          oRM.style("min-width", "250px");
         }
         //--Render day class
         oRM.class(oControl.getColor());
@@ -241,7 +244,61 @@ sap.ui.define(
               that._actionSheet.destroy();
               that._actionSheet = null;
             },
-          });
+          }).addStyleClass("spp-actionsheet");
+
+          this._actionSheet = new Popover({
+            showHeader:false,
+            afterClose: function () {
+              that._actionSheet.destroy();
+              that._actionSheet = null;
+            },
+            showArrow: true,
+            content: new VerticalLayout({
+              width:"100%",
+              content: [
+                new Button({
+                  icon: "spp-fa-pen",
+                  label: that.getModel("i18n").getResourceBundle().getText("editAction"),
+                  solid: false,
+                  press: function () {
+                    that._actionSheet.close();
+                    eventUtilities.publishEvent("PlanningCalendar", "EditEvent", {
+                      eventId: eventId,
+                      eventType: eventType,
+                    });
+                  },
+                }),
+                new Button({
+                  icon: "spp-fa-arrows-turn-to-dots",
+                  label: that.getModel("i18n").getResourceBundle().getText("splitAction"),
+                  solid: false,
+                  press: function () {
+                    that._actionSheet.close();
+                    eventUtilities.publishEvent("PlanningCalendar", "SplitEvent", {
+                      eventId: eventId,
+                      eventType: eventType,
+                    });
+                  },
+                }).addStyleClass("spp-indigo"),
+                new Button({
+                  icon: "spp-fa-trash",
+                  label:that.getModel("i18n").getResourceBundle().getText("deleteAction"),
+                  solid: false,
+                  press: function () {
+                    that._actionSheet.close();
+                    eventUtilities.publishEvent(
+                      "PlanningCalendar",
+                      "DeleteEvent",
+                      {
+                        eventId: eventId,
+                        eventType: eventType,
+                      }
+                    );
+                  },
+                }).addStyleClass("spp-red"),
+              ]
+            })
+          }).addStyleClass("spp-actionsheet");
 
           this._actionSheet.openBy(this);
         }

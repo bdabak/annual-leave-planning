@@ -42,8 +42,8 @@
                     </FormField>
                      <Toolbar hasWrapper="false" class="spp-popup-toolbar sapUiTinyMarginTopBottom">
                         <items>
-                            <Button icon="spp-icon-add" label="Bölüm Ekle" firstChild="true" lastChild="true" raised="false" solid="true" press=".onAddSplit" class="sapUiTinyMarginEnd" visible="{parts:[{path: 'planModel>eventSplit/splits'}, {path: 'planModel>eventSplit/buttonState'}], formatter:'.checkAddSplitVisible'}"/>
-                            <Button icon="spp-icon-remove" class="spp-red" label="Bölüm Sil" firstChild="false" lastChild="true" raised="false" solid="true" press=".onRemoveSplit" visible="{parts:[{path: 'planModel>eventSplit/splits'}, {path: 'planModel>eventSplit/buttonState'}], formatter:'.checkRemoveSplitVisible'}"/>
+                            <Button icon="spp-icon-add" label="Bölüm Ekle" firstChild="true" lastChild="true" raised="false" solid="true" press=".onAddSplit" class="sapUiTinyMarginEnd spp-button-smaller" visible="{parts:[{path: 'planModel>eventSplit/splits'}, {path: 'planModel>eventSplit/buttonState'}], formatter:'.checkAddSplitVisible'}"/>
+                            <Button icon="spp-icon-remove"  label="Bölüm Sil" firstChild="false" lastChild="true" raised="false" solid="true" class="spp-button-smaller spp-red" press=".onRemoveSplit" visible="{parts:[{path: 'planModel>eventSplit/splits'}, {path: 'planModel>eventSplit/buttonState'}], formatter:'.checkRemoveSplitVisible'}"/>
                         </items>
                     </Toolbar>
                     <SplitRow id="Split0Panel" title="{planModel>eventSplit/splits/0/title}" visible="{planModel>eventSplit/splits/0/visible}">
