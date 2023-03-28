@@ -61,7 +61,6 @@ sap.ui.define(
 
           if(!this._firstRender){
             this._firstRender = true;
-            // this.setVisible(false);
           }
 
           if (!this.getFloating()) {
@@ -206,14 +205,6 @@ sap.ui.define(
 
           oRM.close("div");
           //--Datepicker Container--//
-
-          // if (oControl.getFloating()) {
-          //   oRM
-          //   .openStart("div")
-          //   .class("spp-dp-overlay")
-          //   .openEnd()
-          //   .close("div");
-          // }
 
           oRM.close("div"); //Main date picker
         },

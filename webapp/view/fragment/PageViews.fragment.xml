@@ -1,13 +1,17 @@
 <core:FragmentDefinition xmlns="com.thy.ux.annualleaveplanning.ui"
     xmlns:core="sap.ui.core"
-    xmlns:m="sap.m">
+    xmlns:m="sap.m"
+    xmlns:l="sap.ui.layout">
     <PageViewContainer id="LeaveManagementPageViewContainer">
         <views>
             <PageView id="LeaveManagementPageViewYear" hidden="false" tabIndex="0" navigationActive="true" viewType="year" rerender="{planModel>legendChanged}" class="spp-yearview spp-daycellrenderer">
                 <content>
-                    <PageViewYear id="LeaveManagementPageViewYearContent" year="{= parseInt(${planModel>period/year},10) }" entitlementDate="{planModel>header/entitlementDate}" />
-                   
-
+                    <l:VerticalLayout>
+                        <l:content>
+                            <PageViewYear id="LeaveManagementPageViewYearContent" year="{= parseInt(${planModel>period/year},10) }" entitlementDate="{planModel>header/entitlementDate}" />
+                            <Button floating="true" icon="spp-fa-add" class="spp-blue" raised="false" solid="true" />
+                        </l:content>
+                    </l:VerticalLayout>
                 </content>
             </PageView>
 
@@ -19,11 +23,7 @@
 
             <PageView id="LeaveManagementPageViewAgenda" hidden="true" tabIndex="2" navigationActive="true" viewType="agenda" rerender="{planModel>legendChanged}" class="spp-daterangeowner spp-eventlist spp-agendaview spp-slide-vertical spp-gridbase spp-grid spp-grid-position spp-enable-sticky spp-grid-notextselection spp-fill-last-column">
                 <content>
-                    <PageViewAgenda period="{planModel>period}" emptyText="{i18n>noEventsFound}">
-                        <rows>
-
-                        </rows>
-                    </PageViewAgenda>
+                    <PageViewAgenda id="LeaveManagementPageViewAgendaContent" period="{planModel>period}" emptyText="{i18n>noEventsFound}" />
                 </content>
             </PageView>
 

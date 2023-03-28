@@ -253,6 +253,7 @@ sap.ui.define(
               that._actionSheet = null;
             },
             showArrow: true,
+            placement: "Auto",
             content: new VerticalLayout({
               width:"100%",
               content: [

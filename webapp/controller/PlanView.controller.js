@@ -1,6 +1,6 @@
 sap.ui.define(
   [
-    "sap/ui/core/mvc/Controller",
+    "./BaseController",
     "sap/ui/model/json/JSONModel",
     "sap/ui/core/Fragment",
     "com/thy/ux/annualleaveplanning/ui/Dialog",
@@ -13,10 +13,10 @@ sap.ui.define(
     "com/thy/ux/annualleaveplanning/utils/event-utilities",
   ],
   /**
-   * @param {typeof sap.ui.core.mvc.Controller} Controller
+   * @param {BaseController} BaseController
    */
   function (
-    Controller,
+    BaseController,
     JSONModel,
     Fragment,
     Dialog,
@@ -30,7 +30,7 @@ sap.ui.define(
   ) {
     "use strict";
 
-    return Controller.extend(
+    return BaseController.extend(
       "com.thy.ux.annualleaveplanning.controller.PlanView",
       {
         onInit: function () {
@@ -341,6 +341,12 @@ sap.ui.define(
             this._handleDisplayEventWidget,
             this
           );
+
+          this.openBusyFragment("pleaseWait", []);
+
+          setTimeout(function(){
+            this.closeBusyFragment();
+          }.bind(this), 5000);
         },
 
         onPickLeaveType: function (e) {
@@ -715,13 +721,13 @@ sap.ui.define(
         getModal: function () {
           return this.getById("LeaveManagementPageModal");
         },
-        getById: function (id) {
-          return this.getView().byId(id);
-        },
+        // getById: function (id) {
+        //   return this.getView().byId(id);
+        // },
 
-        getModel: function (m) {
-          return this.getView().getModel(m);
-        },
+        // getModel: function (m) {
+        //   return this.getView().getModel(m);
+        // },
 
         getProperty: function (p) {
           return this.getModel("planModel").getProperty("/" + p);
@@ -763,12 +769,12 @@ sap.ui.define(
           this.setPageProperty("tabIndex", i);
         },
 
-        getText: function (t, a = []) {
-          return this.getOwnerComponent()
-            .getModel("i18n")
-            .getResourceBundle()
-            .getText(t, a);
-        },
+        // getText: function (t, a = []) {
+        //   return this.getOwnerComponent()
+        //     .getModel("i18n")
+        //     .getResourceBundle()
+        //     .getText(t, a);
+        // },
 
         /* Private methods */
         _closeEventDialog: function () {

@@ -1,0 +1,6 @@
+<c:FragmentDefinition
+	 xmlns="com.thy.ux.annualleaveplanning.ui"
+	xmlns:c="sap.ui.core"
+>
+    <BusyDialog id="GenericBusyDialog"/>
+</c:FragmentDefinition>
