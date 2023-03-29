@@ -721,9 +721,9 @@ sap.ui.define(
         getModal: function () {
           return this.getById("LeaveManagementPageModal");
         },
-        // getById: function (id) {
-        //   return this.getView().byId(id);
-        // },
+        getById: function (id) {
+          return this.getView().byId(id);
+        },
 
         // getModel: function (m) {
         //   return this.getView().getModel(m);
