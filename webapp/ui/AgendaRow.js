@@ -76,7 +76,7 @@ sap.ui.define(
 
         var n = new Event({
           eventId: r.eventId,
-          eventType: r.type,
+          eventType: r.eventType,
           color: r.color,
           text: r.text,
           height: "25px",
@@ -88,27 +88,11 @@ sap.ui.define(
           startDate: r.startDate,
           endDate: r.endDate,
           forAgenda: true,
-          editable: r.type === "planned"
+          editable: r.eventType === "planned"
         });
 
         eC.addAggregation("events", n);
 
-        // $.each(r.eventList, function(i,e){
-        //   var n = new Event({
-        //     eventType: e.type,
-        //     color: e.color,
-        //     text: e.text,
-        //     height: "25px",
-        //     hasPast: e.hasPast,
-        //     hasFuture: e.hasFuture,
-        //     hasOverflow: e.hasOverflow,
-        //     rowIndex: e.rowIndex,
-        //     rowSpan: 1,
-        //     endDate: e.endDate,
-        //     forAgenda: true
-        //   });
-        //   eC.addAggregation("events", n);
-        // });
 
         oControl.setAggregation("eventContainer", eC);
         oRM.renderControl(eC);

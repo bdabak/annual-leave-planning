@@ -17,7 +17,7 @@
 
             <PageView id="LeaveManagementPageViewMonth" hidden="true" tabIndex="1" navigationActive="true" viewType="month" rerender="{planModel>PageRenderChanged}" class="spp-monthview spp-daycellrenderer">
                 <content>
-                    <PageViewMonth id="LeaveManagementPageViewMonthContent" year="{= parseInt(${planModel>Period/year},10) }" month="{= parseInt(${planModel>Period/month},10) }" />
+                    <PageViewMonth id="LeaveManagementPageViewMonthContent" year="{= parseInt(${planModel>Period/year},10) }" month="{= parseInt(${planModel>Period/month},10) }" rerender="{planModel>PageRenderChanged}" />
                 </content>
             </PageView>
 

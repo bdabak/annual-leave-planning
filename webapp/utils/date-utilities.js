@@ -483,6 +483,10 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
       var that = this;
       var o = parseInt(m.format("E"), 10);
 
+      if(d === "20.04.2023"){
+        debugger;
+      }
+
       var calcSpan = function (i, s, sT) {
         if (a) {
           return 1;
@@ -530,10 +534,10 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
           }
 
           var e = moment(
-            sT[sT.length - 1].day + "." + sT[sT.length - 1].month + "." + y,
+            sT[sT.length - 1].Day + "." + sT[sT.length - 1].Month + "." + y,
             "DD.MM.YYYY"
           );
-          var b = moment(sT[0].day + "." + sT[0].month + "." + y, "DD.MM.YYYY");
+          var b = moment(sT[0].Day + "." + sT[0].Month + "." + y, "DD.MM.YYYY");
           var bW = b.week();
           var eW = e.week();
           if (bW === eW) {

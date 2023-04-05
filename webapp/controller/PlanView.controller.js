@@ -413,9 +413,17 @@ sap.ui.define(
           var p = $.Deferred();
           var that = this;
           var oModel = this.getModel();
+          var oHeader = this.getPageProperty("Header");
+          var oDefaultPeriod = dateUtilities.convertDateToPeriod(oHeader.QuotaAccrualBeginDate);
+
 
           //--Adjust period filters
-          var t = period || this.getPageProperty("Period");
+          var t = _.clone(period) || _.clone(this.getPageProperty("Period"));
+            
+          //--Make sure data is fetched for a year 
+          t.month = oDefaultPeriod.month;
+          t.day = oDefaultPeriod.day;
+
           var rD = dateUtilities.convertPeriodToDateObject(t);
 
           var eD = dateUtilities.calculateOffsetDate(rD, "+", 1);
@@ -647,17 +655,18 @@ sap.ui.define(
           if (oEvent.New) {
             this._createPlan(oEvent);
           } else {
-            var i = _.findIndex(eL, ["EventId", oEvent.EventId]);
-            if (!(i >= 0)) {
-              Swal.fire({
-                position: "bottom",
-                icon: "error",
-                html: "İzin bulunamadı",
-                toast: true,
-                showConfirmButton: false,
-                timer: 2000,
-              });
-            }
+            this._editPlan(oEvent);
+            // var i = _.findIndex(eL, ["EventId", oEvent.EventId]);
+            // if (!(i >= 0)) {
+            //   Swal.fire({
+            //     position: "bottom",
+            //     icon: "error",
+            //     html: "İzin bulunamadı",
+            //     toast: true,
+            //     showConfirmButton: false,
+            //     timer: 2000,
+            //   });
+            // }
             // eL[i] = {
             //   eventId: oEvent.eventId,
             //   startDate: dateUtilities.convertToDate(oEvent.startDate),
@@ -668,9 +677,47 @@ sap.ui.define(
           this._closeEventDialog();
         },
 
+        _editPlan: function (oEvent) {
+          var that = this;
+          var oHeader = this.getPageProperty("Header");
+          var aPL = this.getProperty("PlannedLeaves");
+          var oPlan = _.find(aPL, ["EventId", oEvent.EventId]);
+          var oOperation = {
+            Actio: "MOD",
+            PlanId: oHeader.PlanId,
+            PlannedLeaveId: oPlan.PlannedLeaveId,
+            PlannedLeaveSet: [
+              {
+                PlannedLeaveId: oPlan.PlannedLeaveId,
+                EmployeeNumber: oHeader.EmployeeNumber,
+                StartDate: dateUtilities.convertToDate(oEvent.StartDate),
+                EndDate: dateUtilities.convertToDate(oEvent.EndDate),
+                LeaveType: "PL",
+                PlanId: oHeader.PlanId,
+              },
+            ],
+          };
+
+          var fnCallback = function () {
+            Swal.fire({
+              position: "bottom",
+              icon: "success",
+              html: that.getText("eventEdited", [oEvent.LeaveType.Value]),
+              showConfirmButton: false,
+              toast: true,
+              timer: 2000,
+            });
+          };
+
+          this._callPlannedLeaveOperation(
+            "plannedLeaveBeingChanged",
+            oOperation,
+            fnCallback
+          );
+        },
+
         _createPlan: function (oPlan) {
           var that = this;
-          var oModel = this.getModel();
           var oHeader = this.getPageProperty("Header");
           var oOperation = {
             Actio: "INS",
@@ -688,25 +735,22 @@ sap.ui.define(
             ],
           };
 
-          this.openBusyFragment("newPlannedLeaveBeingCreated", []);
+          var fnCallback = function () {
+            Swal.fire({
+              position: "bottom",
+              icon: "success",
+              html: that.getText("eventCreated", [oPlan.LeaveType.Value]),
+              showConfirmButton: false,
+              toast: true,
+              timer: 2000,
+            });
+          };
 
-          oModel.create("/PlannedLeaveOperationSet", oOperation, {
-            success: function () {
-              that._refreshHeader().then(function () {
-                that._triggerRenderChanged(); //Page should be rerendered
-                that.closeBusyFragment();
-                Swal.fire({
-                  position: "bottom",
-                  icon: "success",
-                  html: that.getText("eventCreated", [oPlan.LeaveType.Value]),
-                  showConfirmButton: false,
-                  toast: true,
-                  timer: 2000,
-                });
-              });
-            },
-            error: function () {},
-          });
+          this._callPlannedLeaveOperation(
+            "plannedLeaveBeingCreated",
+            oOperation,
+            fnCallback
+          );
         },
 
         _deletePlan: function (oEvent) {
@@ -714,7 +758,6 @@ sap.ui.define(
           var oModel = this.getModel();
           var oHeader = this.getPageProperty("Header");
           var aPL = this.getProperty("PlannedLeaves");
-
           var oPlan = _.find(aPL, ["EventId", oEvent.EventId]);
 
           var oOperation = {
@@ -734,25 +777,54 @@ sap.ui.define(
             ReturnSet: [],
           };
 
-          this.openBusyFragment("plannedLeaveBeingDeleted", []);
+          var fnCallback = function () {
+            Swal.fire({
+              position: "bottom",
+              icon: "success",
+              html: that.getText("eventDeleted", [
+                oEvent.StartDate,
+                oEvent.EndDate,
+                oEvent.LeaveType.Value,
+              ]),
+              showConfirmButton: false,
+              toast: true,
+              timer: 2000,
+            });
+          };
 
-          oModel.create("/PlannedLeaveOperationSet", oOperation, {
+          this._callPlannedLeaveOperation(
+            "plannedLeaveBeingDeleted",
+            oOperation,
+            fnCallback
+          );
+
+          //   this.openBusyFragment("plannedLeaveBeingDeleted", []);
+
+          //   oModel.create("/PlannedLeaveOperationSet", oOperation, {
+          //     success: function () {
+          //       that._refreshHeader().then(function () {
+          //         that._triggerRenderChanged(); //Page should be rerendered
+          //         that.closeBusyFragment();
+
+          //       });
+          //     },
+          //     error: function () {},
+          //   });
+        },
+
+        _callPlannedLeaveOperation: function (b, o, f) {
+          var oModel = this.getModel();
+          var that = this;
+          this.openBusyFragment(b, []);
+
+          oModel.create("/PlannedLeaveOperationSet", o, {
             success: function () {
               that._refreshHeader().then(function () {
                 that._triggerRenderChanged(); //Page should be rerendered
                 that.closeBusyFragment();
-                Swal.fire({
-                  position: "bottom",
-                  icon: "success",
-                  html: that.getText("eventDeleted", [
-                    oEvent.StartDate,
-                    oEvent.EndDate,
-                    oEvent.LeaveType.Value,
-                  ]),
-                  showConfirmButton: false,
-                  toast: true,
-                  timer: 2000,
-                });
+                if (typeof f === "function") {
+                  f();
+                }
               });
             },
             error: function () {},

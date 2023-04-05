@@ -92,13 +92,14 @@ sap.ui.define(
         _renderEvents: function (oRM) {
           var c = this.getAggregation("eventContainer");
           var d = this.getDay();
-          var a = dateUtilities.getDayAttributes(d.date) || null;
+          var a = dateUtilities.getDayAttributes(d.date, false) || null;
 
           c.destroyAggregation("events");
 
           $.each(a, function (i, e) {
             var n = new Event({
-              eventType: e.type,
+              eventId: e.eventId,
+              eventType: e.eventType,
               color: e.color,
               text: e.text,
               height: "20px",
@@ -107,6 +108,7 @@ sap.ui.define(
               hasOverflow: e.hasOverflow,
               rowIndex: e.rowIndex,
               rowSpan: e.rowSpan,
+              editable: e.eventType === "planned"
             });
             c.addAggregation("events", n);
           });
@@ -163,6 +165,7 @@ sap.ui.define(
             };
 
             var n = new Event({
+              eventId: null,
               eventType: "newEvent",
               color: "spp-cal-new-event",
               text: "Yeni İzin",
@@ -172,6 +175,7 @@ sap.ui.define(
               hasOverflow: calcOverflow(i, o),
               rowIndex: 0,
               rowSpan: calcSpan(i, o, l),
+              editable:false
             });
             c.setAggregation("newEvent", n);
             this.setProperty("eventDuration",l, true);
