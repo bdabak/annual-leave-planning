@@ -48,15 +48,15 @@ sap.ui.define(
         onPostViewChange: function (c, e, o) {
           
           var r = false;
-          var bPeriodChanged = this.checkPeriodChanged(o.mode, o.period);
-          var bModeChanged = this.getMode() !== o.mode;
+          var bPeriodChanged = this.checkPeriodChanged(o.Mode, o.Period);
+          var bModeChanged = this.getMode() !== o.Mode;
           if(bModeChanged || bPeriodChanged){
-            if(o && o.hasOwnProperty("mode") && bModeChanged){
-              this.setProperty("mode",o.mode, true);
+            if(o && o.hasOwnProperty("Mode") && bModeChanged){
+              this.setProperty("mode",o.Mode, true);
               r = true;
             }
             if(o && o.hasOwnProperty("period") && bPeriodChanged){
-              this.setProperty("period", o.period, true)
+              this.setProperty("period", o.Period, true)
               r = true;
             }
             if(r){
@@ -66,14 +66,14 @@ sap.ui.define(
         },
 
         onPeriodChanged: function (c, e, o) {
-          var bPeriodChanged = this.checkPeriodChanged(o.mode, o.period);
-          var bModeChanged = this.getMode() !== o.mode;
+          var bPeriodChanged = this.checkPeriodChanged(o.Mode, o.Period);
+          var bModeChanged = this.getMode() !== o.Mode;
           if( bModeChanged || bPeriodChanged ){
-            if(bPeriodChanged && o.fnCallback){
-              o.fnCallback();
+            if(bPeriodChanged && o.FnCallback){
+              o.FnCallback();
             }
-            bModeChanged ? this.setProperty("mode",o.mode, true) : null;
-            bPeriodChanged ? this.setProperty("period", o.period, true) : null;
+            bModeChanged ? this.setProperty("mode",o.Mode, true) : null;
+            bPeriodChanged ? this.setProperty("period", o.Period, true) : null;
             this.setRefresh(new Date().getTime());
           }
         },

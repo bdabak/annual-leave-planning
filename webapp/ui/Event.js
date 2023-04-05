@@ -209,8 +209,8 @@ sap.ui.define(
                 icon: "sap-icon://edit",
                 press: function () {
                   eventUtilities.publishEvent("PlanningCalendar", "EditEvent", {
-                    eventId: eventId,
-                    eventType: eventType,
+                    EventId: eventId,
+                    EventType: eventType,
                   });
                 },
               }),
@@ -219,8 +219,8 @@ sap.ui.define(
                 icon: "sap-icon://screen-split-two",
                 press: function () {
                   eventUtilities.publishEvent("PlanningCalendar", "SplitEvent", {
-                    eventId: eventId,
-                    eventType: eventType,
+                    EventId: eventId,
+                    EventType: eventType,
                   });
                 },
               }),
@@ -233,8 +233,8 @@ sap.ui.define(
                     "PlanningCalendar",
                     "DeleteEvent",
                     {
-                      eventId: eventId,
-                      eventType: eventType,
+                      EventId: eventId,
+                      EventType: eventType,
                     }
                   );
                 },
@@ -264,8 +264,8 @@ sap.ui.define(
                   press: function () {
                     that._actionSheet.close();
                     eventUtilities.publishEvent("PlanningCalendar", "EditEvent", {
-                      eventId: eventId,
-                      eventType: eventType,
+                      EventId: eventId,
+                      EventType: eventType,
                     });
                   },
                 }),
@@ -276,8 +276,8 @@ sap.ui.define(
                   press: function () {
                     that._actionSheet.close();
                     eventUtilities.publishEvent("PlanningCalendar", "SplitEvent", {
-                      eventId: eventId,
-                      eventType: eventType,
+                      EventId: eventId,
+                      EventType: eventType,
                     });
                   },
                 }).addStyleClass("spp-indigo"),
@@ -291,8 +291,8 @@ sap.ui.define(
                       "PlanningCalendar",
                       "DeleteEvent",
                       {
-                        eventId: eventId,
-                        eventType: eventType,
+                        EventId: eventId,
+                        EventType: eventType,
                       }
                     );
                   },

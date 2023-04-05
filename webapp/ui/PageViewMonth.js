@@ -361,10 +361,10 @@ sap.ui.define(
           }
 
           eventUtilities.publishEvent("PlanningCalendar", "CreateEvent", {
-            element: r,
-            period: {
-              startDate: b.data("date"),
-              endDate: s.data("date"),
+            Element: r,
+            Period: {
+              StartDate: b.data("date"),
+              EndDate: s.data("date"),
             },
           });
 
@@ -419,7 +419,7 @@ sap.ui.define(
           Swal.fire({
             position: "bottom",
             icon: "info",
-            title: "İzin girişi iptal edildi",
+            title: "İşlem iptal edildi",
             showConfirmButton: false,
             toast: true,
             timer: 2000,

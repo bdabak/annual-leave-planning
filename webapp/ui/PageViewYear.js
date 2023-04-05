@@ -228,10 +228,10 @@ sap.ui.define(
           var startDate = d.first().data("date");
           var endDate = d.last().data("date");
           eventUtilities.publishEvent("PlanningCalendar", "CreateEvent", {
-            element: b,
-            period: {
-              startDate: startDate,
-              endDate: endDate,
+            Element: b,
+            Period: {
+              StartDate: startDate,
+              EndDate: endDate,
             },
           });
         } else {
@@ -262,10 +262,10 @@ sap.ui.define(
         Swal.fire({
           position: "bottom",
           icon: "info",
-          title: "İzin girişi iptal edildi",
+          title: "İşlem iptal edildi",
           showConfirmButton: false,
           toast: true,
-          timer: 2000,
+          timer: 2000,  
         });
       },
     });

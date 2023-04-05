@@ -4,26 +4,26 @@
     xmlns:l="sap.ui.layout">
     <PageViewContainer id="LeaveManagementPageViewContainer">
         <views>
-            <PageView id="LeaveManagementPageViewYear" hidden="false" tabIndex="0" navigationActive="true" viewType="year" rerender="{planModel>legendChanged}" class="spp-yearview spp-daycellrenderer">
+            <PageView id="LeaveManagementPageViewYear" hidden="false" tabIndex="0" navigationActive="true" viewType="year" rerender="{planModel>PageRenderChanged}" class="spp-yearview spp-daycellrenderer">
                 <content>
                     <l:VerticalLayout>
                         <l:content>
-                            <PageViewYear id="LeaveManagementPageViewYearContent" year="{= parseInt(${planModel>period/year},10) }" entitlementDate="{planModel>header/entitlementDate}" />
+                            <PageViewYear id="LeaveManagementPageViewYearContent" year="{= parseInt(${planModel>Period/year},10) }" entitlementDate="{planModel>Header/QuotaAccrualBeginDate}" />
                             <Button floating="true" icon="spp-fa-add" class="spp-blue" raised="false" solid="true" />
                         </l:content>
                     </l:VerticalLayout>
                 </content>
             </PageView>
 
-            <PageView id="LeaveManagementPageViewMonth" hidden="true" tabIndex="1" navigationActive="true" viewType="month" rerender="{planModel>legendChanged}" class="spp-monthview spp-daycellrenderer">
+            <PageView id="LeaveManagementPageViewMonth" hidden="true" tabIndex="1" navigationActive="true" viewType="month" rerender="{planModel>PageRenderChanged}" class="spp-monthview spp-daycellrenderer">
                 <content>
-                    <PageViewMonth id="LeaveManagementPageViewMonthContent" year="{= parseInt(${planModel>period/year},10) }" month="{= parseInt(${planModel>period/month},10) }" />
+                    <PageViewMonth id="LeaveManagementPageViewMonthContent" year="{= parseInt(${planModel>Period/year},10) }" month="{= parseInt(${planModel>Period/month},10) }" />
                 </content>
             </PageView>
 
-            <PageView id="LeaveManagementPageViewAgenda" hidden="true" tabIndex="2" navigationActive="true" viewType="agenda" rerender="{planModel>legendChanged}" class="spp-daterangeowner spp-eventlist spp-agendaview spp-slide-vertical spp-gridbase spp-grid spp-grid-position spp-enable-sticky spp-grid-notextselection spp-fill-last-column">
+            <PageView id="LeaveManagementPageViewAgenda" hidden="true" tabIndex="2" navigationActive="true" viewType="agenda" rerender="{planModel>PageRenderChanged}" class="spp-daterangeowner spp-eventlist spp-agendaview spp-slide-vertical spp-gridbase spp-grid spp-grid-position spp-enable-sticky spp-grid-notextselection spp-fill-last-column">
                 <content>
-                    <PageViewAgenda id="LeaveManagementPageViewAgendaContent" period="{planModel>period}" emptyText="{i18n>noEventsFound}" />
+                    <PageViewAgenda id="LeaveManagementPageViewAgendaContent" period="{planModel>Period}" emptyText="{i18n>noEventsFound}" />
                 </content>
             </PageView>
 

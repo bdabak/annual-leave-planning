@@ -4,12 +4,12 @@
 >
     <Menu id="MobileViewMenu"
         itemSelected=".onViewMenuItemSelected"
-        binding="{planModel>/page}"
+        binding="{planModel>/Page}"
     >
         <MenuItem id="MobileViewMenuYear"
             key="Y"
             value="{i18n>viewYear}"
-            selected="{= ${planModel>tabIndex} === '0' }"
+            selected="{= ${planModel>TabIndex} === '0' }"
             firstChild="true"
         >
             <customData>
@@ -21,7 +21,7 @@
          <MenuItem id="MobileViewMenuMonth"
             key="M"
             value="{i18n>viewMonth}"
-            selected="{= ${planModel>tabIndex} === '1' }"
+            selected="{= ${planModel>TabIndex} === '1' }"
             firstChild="false"
         >
             <customData>
@@ -33,7 +33,7 @@
         <MenuItem id="MobileViewMenuAgenda"
             key="A"
             value="{i18n>viewAgenda}"
-            selected="{= ${planModel>tabIndex} === '2' }"
+            selected="{= ${planModel>TabIndex} === '2' }"
             lastChild="true"
         >
             <customData>

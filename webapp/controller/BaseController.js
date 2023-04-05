@@ -63,7 +63,7 @@ sap.ui.define(
   
           setTimeout(function () {
             oDialog.open();
-          }, 200);
+          }, 100);
         },
   
         closeBusyFragment: function () {
@@ -72,7 +72,7 @@ sap.ui.define(
           var _close = function () {
             oDialog.close();
           };
-          setTimeout(_close, 300);
+          setTimeout(_close, 500);
         },
   
        /**

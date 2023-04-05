@@ -124,11 +124,14 @@ sap.ui.define(
         if (!h) {
           return null;
         }
+        // console.dir(h);
 
-        if (h.type === "1") {
+
+        if (h.DayClass === "1") {
           return "spp-holiday-all-day";
         }
-        if (h.type === "2") {
+        if (h.DayClass === "2" || h.DayClass === "5") {
+          // return "spp-holiday-all-day";
           return "spp-holiday-half-day";
         }
       },
@@ -143,8 +146,8 @@ sap.ui.define(
         }
         
         eventUtilities.publishEvent("PlanningCalendar", "DisplayEventWidget", {
-          element: this.$(),
-          day: a,
+          Element: this.$(),
+          Day: a,
         });
       },
     });

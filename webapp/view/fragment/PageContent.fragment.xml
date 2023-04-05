@@ -1,6 +1,6 @@
 <core:FragmentDefinition xmlns="com.thy.ux.annualleaveplanning.ui"
     xmlns:core="sap.ui.core">
-    <PageContent id="LeaveManagementPageContent" planningMode="{mode}">
+    <PageContent id="LeaveManagementPageContent" planningMode="{Mode}">
         <sidebar>
             <core:Fragment fragmentName="com.thy.ux.annualleaveplanning.view.fragment.PageSidebar" type="XML" />
         </sidebar>

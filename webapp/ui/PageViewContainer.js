@@ -42,16 +42,16 @@ sap.ui.define(
 
         onViewChanged: function (c, e, o) {
           this.setActiveView(
-            o.tabIndex,
-            o.fnCallback,
-            o.transitionEffect,
-            o.direction
+            o.TabIndex,
+            o.FnCallback,
+            o.TransitionEffect,
+            o.Direction
           );
         },
 
         onPeriodChanged: function (c, e, o) {
           
-          this.setActiveView(o.tabIndex, null, true, o.direction);
+          this.setActiveView(o.TabIndex, null, true, o.Direction);
 
         },
         renderer: function (oRM, oControl) {

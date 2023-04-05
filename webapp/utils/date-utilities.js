@@ -16,19 +16,19 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
     },
 
     getHolidayCalendar: function () {
-      return this.getProxyModelProperty("/holidayCalendar");
+      return this.getProxyModelProperty("/HolidayCalendar");
     },
 
     getPlannedLeaves: function () {
-      return this.getProxyModelProperty("/plannedLeaves");
+      return this.getProxyModelProperty("/PlannedLeaves");
     },
 
     getAnnualLeaves: function () {
-      return this.getProxyModelProperty("/annualLeaves");
+      return this.getProxyModelProperty("/AnnualLeaves");
     },
 
     formatDate: function (d) {
-      var m = moment(d, "DD.MM.YYYY");
+      var m = moment(d, "DD.MM.YYYY").hour(3);
 
       return m.format("DD.MM.YYYY");
     },
@@ -47,6 +47,22 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
 
       return m.format("DD.MM.YYYY");
     },
+
+    convertPeriodToDateObject: function(p){
+      var m = moment(p.day + "." + p.month + "." + p.year, "DD.MM.YYYY").hour(3);
+      var d = m.toDate();
+
+      return d;
+    },
+
+    calculateOffsetDate: function(d, o, y){
+      var m = moment(d);
+
+      o === "+" ? m.add(y, "y").subtract(1,"d") : m.subtract(y,"y");
+
+      return m.toDate();
+    },
+
     getMonthData: function (y, m) {
       var m = m.toString().padStart(2, "0") + "." + y.toString();
       var o = moment(m, "MM.YYYY"); // Get moment object of month
@@ -162,9 +178,10 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
     },
 
     convertToDate: function (d) {
-      var m = moment(d, "DD.MM.YYYY");
+      var m = moment(d, "DD.MM.YYYY").hour(3);
+      var d = m.toDate();
 
-      return m.toDate();
+      return d;
     },
 
     findDatesBetweenTwoDates: function (b, e) {
@@ -181,12 +198,12 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
 
     checkHolidaysVisible: function () {
       //var s = _.find(this._legendSettings, ["type", "holiday"]);
-      var s = _.find(this.getProxyModelProperty("/page/legend"), [
-        "type",
+      var s = _.find(this.getProxyModelProperty("/Page/Legend"), [
+        "Type",
         "holiday",
       ]);
 
-      if (s && s?.selected) {
+      if (s && s?.Selected) {
         return true;
       } else {
         return false;
@@ -195,24 +212,24 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
 
     checkPlannedVisible: function () {
       //var s = _.find(this._legendSettings, ["type", "holiday"]);
-      var s = _.find(this.getProxyModelProperty("/page/legend"), [
-        "type",
+      var s = _.find(this.getProxyModelProperty("/Page/Legend"), [
+        "Type",
         "planned",
       ]);
 
-      if (s && s?.selected) {
+      if (s && s?.Selected) {
         return true;
       } else {
         return false;
       }
     },
     checkAnnualVisible: function () {
-      var s = _.find(this.getProxyModelProperty("/page/legend"), [
-        "type",
+      var s = _.find(this.getProxyModelProperty("/Page/Legend"), [
+        "Type",
         "annual",
       ]);
 
-      if (s && s?.selected) {
+      if (s && s?.Selected) {
         return true;
       } else {
         return false;
@@ -220,10 +237,10 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
     },
 
     getEventColor: function (t) {
-      var s = _.find(this.getProxyModelProperty("/page/legend"), ["type", t]);
+      var s = _.find(this.getProxyModelProperty("/Page/Legend"), ["Type", t]);
 
-      if (s && s?.design) {
-        return s.design;
+      if (s && s?.Design) {
+        return s.Design;
       } else {
         return "spp-unknown";
       }
@@ -238,16 +255,16 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
       var y = m.format("YYYY");
 
       //--Search in variable holidays
-      var v = _.find(this.getHolidayCalendar()?.holidayList[y], {
-        month: m.format("MM"),
-        day: m.format("DD"),
+      var v = _.find(this.getHolidayCalendar()?.HolidayList[y], {
+        Month: m.format("MM"),
+        Day: m.format("DD"),
       });
       if (!v) {
         return null;
       }
       return {
-        text: v.text,
-        type: v.type,
+        HolidayName: v.HolidayName,
+        DayClass: v.DayClass,
       };
     },
     checkDatePlanned: function (d) {
@@ -256,12 +273,12 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
       }
 
       var m = moment(d, "DD.MM.YYYY");
-
+      m.hour(3);
+     
       //--Search in planned leaves
       var pL = _.find(this.getPlannedLeaves(), function (l, i) {
-        // console.log(m,l);
         if (
-          m.isBetween(moment(l.startDate), moment(l.endDate), undefined, "[]")
+          m.isBetween(moment(l.StartDate), moment(l.EndDate), undefined, "[]")
         ) {
           return true;
         }
@@ -278,12 +295,12 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
         return;
       }
 
-      var m = moment(d, "DD.MM.YYYY");
+      var m = moment(d, "DD.MM.YYYY").hour(3);
 
       //--Search in annual leaves
       var pL = _.find(this.getAnnualLeaves(), function (l, i) {
         if (
-          m.isBetween(moment(l.startDate), moment(l.endDate), undefined, "[]")
+          m.isBetween(moment(l.StartDate), moment(l.EndDate), undefined, "[]")
         ) {
           return true;
         }
@@ -297,15 +314,16 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
 
     checkDateIsSelectable: function (d) {
       var eSD =
-        this.getProxyModelProperty("/page/header/entitlementDate") || null;
+        this.getProxyModelProperty("/Page/Header/QuotaAccrualBeginDate") || null;
       if (eSD) {
         var s = moment(eSD);
         var e = s.clone().add(1, "y");
       }
-      var m = moment(d, "DD.MM.YYYY");
+      var m = moment(d, "DD.MM.YYYY").hour(3);
       var t = moment(new Date());
 
-      return m.isAfter(t, "day") && m.isBetween(s, e, undefined, "[)");
+      return m.isAfter(t, "day");
+      // return m.isAfter(t, "day") && m.isBetween(s, e, undefined, "[)");
     },
 
     getDayAttributesWithinPeriod: function (p, o) {
@@ -342,9 +360,9 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
 
     getEventsWithinPeriod: function () {
       var that = this;
-      var p = this.getProxyModelProperty("/page/period") || null;
+      var p = this.getProxyModelProperty("/Page/Period") || null;
       var eSD =
-        this.getProxyModelProperty("/page/header/entitlementDate") || null;
+        this.getProxyModelProperty("/Page/Header/QuotaAccrualBeginDate") || null;
       if (eSD) {
         var sP = moment(eSD);
         sP.year(p.year);
@@ -371,14 +389,6 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
           return true;
         }
 
-        // while (sM.isSameOrBefore(eM)) {
-        //   if(sM.isBetween(sP,eP, undefined, "[]")){
-        //     lwp = true;
-        //     break;
-        //   }
-        //   sM.add(1, "d");
-        // }
-
         return lwp;
       };
 
@@ -386,13 +396,13 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
       if (this.checkAnnualVisible()) {
         var aC = that.getEventColor("annual");
         $.each(this.getAnnualLeaves(), function (i, c) {
-          var l = _checkEventLiesWithinPeriod(c.startDate, c.endDate);
+          var l = _checkEventLiesWithinPeriod(c.StartDate, c.EndDate);
           if (l) {
-            var sD = moment(c.startDate);
-            var eD = moment(c.endDate);
+            var sD = moment(c.StartDate);
+            var eD = moment(c.EndDate);
             var e = {
-              eventId: c.eventId,
-              type: "annual",
+              eventId: c.EventId,
+              eventType: "annual",
               color: aC,
               text: "Yıllık izin",
               startDate: {
@@ -424,13 +434,13 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
       if (this.checkPlannedVisible()) {
         var pC = that.getEventColor("planned");
         $.each(this.getPlannedLeaves(), function (i, c) {
-          var l = _checkEventLiesWithinPeriod(c.startDate, c.endDate);
+          var l = _checkEventLiesWithinPeriod(c.StartDate, c.EndDate);
           if (l) {
-            var sD = moment(c.startDate);
-            var eD = moment(c.endDate);
+            var sD = moment(c.StartDate);
+            var eD = moment(c.EndDate);
             var e = {
-              eventId: c.eventId,
-              type: "planned",
+              eventId: c.EventId,
+              eventType: "planned",
               color: pC,
               text: "Planlı izin",
               startDate: {
@@ -466,7 +476,7 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
     },
 
     getDayAttributes: function (d, a = false) {
-      var m = moment.isMoment(d) ? d.clone() : moment(d, "DD.MM.YYYY");
+      var m = moment.isMoment(d) ? d.clone().hour(3) : moment(d, "DD.MM.YYYY").hour(3);
       var y = m.clone().format("YYYY");
       var l = [];
       var e = {};
@@ -568,9 +578,9 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
         var pC = that.getEventColor("planned");
         $.each(this.getPlannedLeaves(), function (i, c) {
           if (
-            m.isBetween(moment(c.startDate), moment(c.endDate), undefined, "[]")
+            m.isBetween(moment(c.StartDate), moment(c.EndDate), undefined, "[]")
           ) {
-            var pL = findDatesBetweenPeriod(c.startDate, c.endDate);
+            var pL = findDatesBetweenPeriod(c.StartDate, c.EndDate);
 
             var p = _.find(pL, ["date", m.toDate()]);
             if (!p) {
@@ -578,9 +588,9 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
             }
             e = {
               m: m,
-              eventId: c.eventId,
+              eventId: c.EventId,
+              eventType: "planned",
               title: m.format("MMMM, ddd DD"),
-              type: "planned",
               color: pC,
               text: "Planlı izin",
               hasPast: !p.start,
@@ -612,8 +622,8 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
                 : pL.length - p.index + p.day - 1 > 7
                 ? 7
                 : pL.length - p.index,
-              startDate: moment(c.startDate).format("DD MMM"),
-              endDate: moment(c.endDate).format("DD MMM"),
+              startDate: moment(c.StartDate).format("DD MMM"),
+              endDate: moment(c.EndDate).format("DD MMM"),
             };
             l.push(e);
           } else {
@@ -627,19 +637,19 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
         var pC = that.getEventColor("annual");
         $.each(this.getAnnualLeaves(), function (i, c) {
           if (
-            m.isBetween(moment(c.startDate), moment(c.endDate), undefined, "[]")
+            m.isBetween(moment(c.StartDate), moment(c.EndDate), undefined, "[]")
           ) {
-            var pL = findDatesBetweenPeriod(c.startDate, c.endDate);
+            var pL = findDatesBetweenPeriod(c.StartDate, c.EndDate);
 
             var p = _.find(pL, ["date", m.toDate()]);
             if (!p) {
               return true;
             }
             e = {
-              eventId: c.eventId,
               m: m,
+              eventId: c.eventId,
+              eventType: "annual",
               title: m.format("MMMM, ddd DD"),
-              type: "annual",
               color: pC,
               text: "Yıllık izin",
               hasPast: !p.start,
@@ -686,42 +696,42 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
         var hC = that.getEventColor("holiday");
 
         var hL =
-          _.filter(this.getHolidayCalendar()?.holidayList[y], {
-            month: m.format("MM"),
-            day: m.format("DD"),
+          _.filter(this.getHolidayCalendar()?.HolidayList[y], {
+            Month: m.format("MM"),
+            Day: m.format("DD"),
           }) || [];
         if (hL.length > 0) {
           $.each(hL, function (i, h) {
-            var s = _.find(that.getHolidayCalendar().holidayInfo, [
-              "id",
-              h.belongsTo,
+            var s = _.find(that.getHolidayCalendar().HolidayInfo, [
+              "HolidayGroupId",
+              h.HolidayGroupId,
             ]);
             if (s) {
-              var sT = _.filter(that.getHolidayCalendar().holidayList[y], [
-                "belongsTo",
-                h.belongsTo,
+              var sT = _.filter(that.getHolidayCalendar().HolidayList[y], [
+                "HolidayGroupId",
+                h.HolidayGroupId,
               ]);
               var sI = _.findIndex(sT, {
-                month: m.format("MM"),
-                day: m.format("DD"),
-                belongsTo: h.belongsTo,
+                Month: m.format("MM"),
+                Day: m.format("DD"),
+                HolidayGroupId: h.HolidayGroupId,
               });
 
-              var aT = _.filter(that.getHolidayCalendar().holidayList[y], {
-                month: m.format("MM"),
-                day: m.format("DD"),
+              var aT = _.filter(that.getHolidayCalendar().HolidayList[y], {
+                Month: m.format("MM"),
+                Day: m.format("DD"),
               });
               var aI = _.findIndex(aT, {
-                id: h.id,
+                HolidayId: h.HolidayId,
               });
 
               e = {
-                eventId: null,
                 m: m,
+                eventId: null,
+                eventType: "holiday",
                 title: m.format("MMMM, ddd DD"),
-                type: "holiday",
                 color: hC,
-                text: s.text,
+                text: s.HolidayGroupText,
                 hasPast: sI > 0,
                 hasFuture: calcHasFuture(sI, sT, y),
                 hasOverflow: calcOverflow(sI, o, sT),

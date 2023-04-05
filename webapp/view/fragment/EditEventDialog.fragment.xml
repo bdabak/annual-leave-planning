@@ -3,23 +3,23 @@
     <Dialog id="CreateEditEventDialog" closed=".onAfterEventDialogClosed" cancelled=".onEventCancelled" class="spp-eventeditor"
     showPointer="false" alignment="center" animate="true">
         <header>
-            <DialogHeader id="CreateEditEventDialogHeader" title="{planModel>eventEdit/title}" closed=".onEventDialogClosed" />
+            <DialogHeader id="CreateEditEventDialogHeader" title="{planModel>EventEdit/Title}" closed=".onEventDialogClosed" />
         </header>
         <content>
             <EventEditor id="CreateEditEventEditor">
                 <items>
-                    <FormField id="FormFieldLeaveType" firstChild="true" empty="{= ${planModel>eventEdit/leaveType/key} === '' || ${planModel>eventEdit/leaveType/key} === null }"
+                    <FormField id="FormFieldLeaveType" firstChild="true" empty="{= ${planModel>EventEdit/LeaveType/Key} === '' || ${planModel>EventEdit/LeaveType/Key} === null }"
                     fieldType="combo">
                         <label>
                             <FormLabel id="FormLabelLeaveType" text="{i18n>leaveType}" for="FormComboLeaveType" />
                         </label>
                         <field>
-                            <FormComboBox id="FormComboLeaveType" key="{planModel>eventEdit/leaveType/key}" value="{planModel>eventEdit/leaveType/value}" name="LeaveType" icon="{planModel>eventEdit/leaveType/icon}" 
-                            editable="{planModel>eventEdit/new}">
+                            <FormComboBox id="FormComboLeaveType" key="{planModel>EventEdit/LeaveType/Key}" value="{planModel>EventEdit/LeaveType/Value}" name="LeaveType" icon="{planModel>EventEdit/LeaveType/Icon}" 
+                            editable="{planModel>EventEdit/New}">
                                 <comboPicker>
-                                    <PickerListWidget id="FormPickerLeaveType" multiselect="false" items="{planModel>leaveTypes}">
+                                    <PickerListWidget id="FormPickerLeaveType" multiselect="false" items="{planModel>LeaveTypes}">
                                         <items>
-                                            <PickerListWidgetItem id="FormPickerItemLeaveType" icon="{planModel>color}" key="{planModel>type}" value="{planModel>description}" selected="{= ${planModel>eventEdit/leaveType/key} === ${planModel>type} }" />
+                                            <PickerListWidgetItem id="FormPickerItemLeaveType" icon="{planModel>Color}" key="{planModel>Type}" value="{planModel>Description}" selected="{= ${planModel>EventEdit/LeaveType/Key} === ${planModel>Type} }" />
                                         </items>
                                     </PickerListWidget>
                                 </comboPicker>
@@ -29,25 +29,25 @@
 
 
 
-                    <FormField id="FormFieldStartDate" containsFocus="true" empty="{= ${planModel>eventEdit/startDate} === null }"
+                    <FormField id="FormFieldStartDate" containsFocus="true" empty="{= ${planModel>EventEdit/StartDate} === null }"
                     fieldType="datefield">
                         <label>
                             <FormLabel id="FormLabelStartDate" text="{i18n>leaveStartDate}" for="FormInputStartDate" />
 
                         </label>
                         <field>
-                            <FormDatePicker id="FormInputStartDate" value="{planModel>eventEdit/startDate}" selectDate=".onCallDatePicker" />
+                            <FormDatePicker id="FormInputStartDate" value="{planModel>EventEdit/StartDate}" selectDate=".onCallDatePicker" />
                         </field>
                     </FormField>
 
-                    <FormField id="FormFieldEndDate" lastChild="true" containsFocus="true" empty="{= ${planModel>eventEdit/endDate} === null }"
+                    <FormField id="FormFieldEndDate" lastChild="true" containsFocus="true" empty="{= ${planModel>EventEdit/EndDate} === null }"
                     fieldType="datefield">
                         <label>
                             <FormLabel id="FormLabelEndDate" text="{i18n>leaveEndDate}" for="FormInputEndDate" />
 
                         </label>
                         <field>
-                            <FormDatePicker id="FormInputEndDate" value="{planModel>eventEdit/endDate}" selectDate=".onCallDatePicker" />
+                            <FormDatePicker id="FormInputEndDate" value="{planModel>EventEdit/EndDate}" selectDate=".onCallDatePicker" />
                         </field>
                     </FormField>
                 </items>
@@ -57,7 +57,7 @@
                             <Button id="CreateEditEventDialogSaveAction" label="{i18n>saveAction}" raised="true" firstChild="true" class="spp-blue" press=".onEventSave" />
                             <Button id="CreateEditEventDialogDeleteAction"
                                 icon="spp-icon-trash"
-                             label="{i18n>deleteAction}" raised="true" firstChild="false" class="spp-red" press=".onEventDelete" visible="{= !${planModel>eventEdit/new} }"/>
+                             label="{i18n>deleteAction}" raised="true" firstChild="false" class="spp-red" press=".onEventDelete" visible="{= !${planModel>EventEdit/New} }"/>
                             <Button id="CreateEditEventDialogCancelAction" label="{i18n>cancelAction}" lastChild="true" press=".onEventCancelled" />
                         </items>
                     </Toolbar>

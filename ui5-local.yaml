@@ -6,7 +6,7 @@ metadata:
 type: application
 framework:
   name: SAPUI5
-  version: 1.76.0
+  version: 1.71.55
   libraries:
     - name: sap.m
     - name: sap.ui.core
@@ -30,8 +30,12 @@ server:
       configuration:
         ignoreCertError: false # If set to true, certificate errors will be ignored. E.g. self-signed certificates will be accepted
         backend:
-          - path: /sap
-            url: http://localhost
+          - path: null
+            url: null
+            client: null
+          - path: /sap/opu/odata/sap/ZHCM_UX_ALPL_SRV
+            url: http://tks0154.thy.com:8000
+            client: '300'
     - name: fiori-tools-preview
       afterMiddleware: fiori-tools-appreload
       configuration:

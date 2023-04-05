@@ -28,3 +28,12 @@
   border-radius: 20px;
   border: 3px solid var(--scroll-bar-bg-color);
 }
+
+.swal2-container{
+  z-index: 20 !important;
+} 
+
+body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) .swal2-container.swal2-backdrop-show, .swal2-container.swal2-noanimation {
+  background: rgba(0,0,0,.75)!important;
+  backdrop-filter: blur(3px);
+}

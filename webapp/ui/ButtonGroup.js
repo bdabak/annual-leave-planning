@@ -28,8 +28,8 @@ sap.ui.define(["sap/ui/core/Control",
       },
 
       onPostViewChange: function (c, e, o) {
-        if(o && o.hasOwnProperty("tabIndex")){
-          this.setActiveButton(o.tabIndex);
+        if(o && o.hasOwnProperty("TabIndex")){
+          this.setActiveButton(o.TabIndex);
         }
       },
 
