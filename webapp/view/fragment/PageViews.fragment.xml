@@ -6,12 +6,13 @@
         <views>
             <PageView id="LeaveManagementPageViewYear" hidden="false" tabIndex="0" navigationActive="true" viewType="year" rerender="{planModel>PageRenderChanged}" class="spp-yearview spp-daycellrenderer">
                 <content>
-                    <l:VerticalLayout>
+                <PageViewYear id="LeaveManagementPageViewYearContent" year="{= parseInt(${planModel>Period/year},10) }" entitlementDate="{planModel>Header/QuotaAccrualBeginDate}" />
+                    <!-- <l:VerticalLayout>
                         <l:content>
-                            <PageViewYear id="LeaveManagementPageViewYearContent" year="{= parseInt(${planModel>Period/year},10) }" entitlementDate="{planModel>Header/QuotaAccrualBeginDate}" />
+                            
                             <Button floating="true" icon="spp-fa-add" class="spp-blue" raised="false" solid="true" />
                         </l:content>
-                    </l:VerticalLayout>
+                    </l:VerticalLayout> -->
                 </content>
             </PageView>
 

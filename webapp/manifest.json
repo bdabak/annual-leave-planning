@@ -22,7 +22,16 @@
                 "settings": {
                     "odataVersion": "2.0",
                     "annotations": [],
-                    "localUri": "localService/metadata.xml"
+                    "localUri": "localService/mainService/metadata.xml"
+                }
+            },
+            "leaveRequestService": {
+                "uri": "/sap/opu/odata/sap/ZHCM_LEAVE_REQ_CREATE_SRV",
+                "type": "OData",
+                "settings": {
+                    "odataVersion": "2.0",
+                    "annotations": [],
+                    "localUri": "localService/leaveRequestService/metadata.xml"
                 }
             }
         }
@@ -45,11 +54,11 @@
     },
     "sap.ui5": {
         "flexEnabled": false,
-        "config":{
+        "config": {
             "fullWidth": true
         },
         "dependencies": {
-            "minUI5Version": "1.71.55",
+            "minUI5Version": "1.71.46",
             "libs": {
                 "sap.m": {},
                 "sap.ui.core": {},
@@ -75,6 +84,15 @@
             "": {
                 "preload": true,
                 "dataSource": "mainService",
+                "settings": {
+                    "defaultBindingMode": "TwoWay",
+                    "defaultCountMode": "None",
+                    "refreshAfterChange": false
+                }
+            },
+            "leaveRequest": {
+                "dataSource": "leaveRequestService",
+                "preload": true,
                 "settings": {
                     "defaultBindingMode": "TwoWay",
                     "defaultCountMode": "None",

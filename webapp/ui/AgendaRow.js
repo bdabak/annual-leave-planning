@@ -3,8 +3,12 @@ sap.ui.define(
     "sap/ui/core/Control",
     "com/thy/ux/annualleaveplanning/ui/AgendaEventContainer",
     "com/thy/ux/annualleaveplanning/ui/Event",
+    "com/thy/ux/annualleaveplanning/model/formatter"
   ],
-  function (Control, AgendaEventContainer, Event) {
+  function (Control,
+	AgendaEventContainer,
+	Event,
+	formatter) {
     "use strict";
 
     return Control.extend("com.thy.ux.annualleaveplanning.ui.AgendaRow", {
@@ -42,7 +46,7 @@ sap.ui.define(
           .attr("role", "row");
 
         oRM.style("height", h + "px");
-        t > 0 ? oRM.style("top", t + "px") : null;
+        //t > 0 ? oRM.style("top", t + "px") : null;
         oRM
           .openEnd()
           .openStart("div")
@@ -88,7 +92,8 @@ sap.ui.define(
           startDate: r.startDate,
           endDate: r.endDate,
           forAgenda: true,
-          editable: r.eventType === "planned"
+          editable: r.eventType === "planned",
+          duration: formatter.suppressZeroDecimal(r.duration) + " " + this.getModel("i18n").getResourceBundle().getText("days")
         });
 
         eC.addAggregation("events", n);

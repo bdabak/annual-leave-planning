@@ -1,68 +1,162 @@
-<core:FragmentDefinition xmlns="com.thy.ux.annualleaveplanning.ui"
-    xmlns:core="sap.ui.core">
-    <Dialog id="CreateEditEventDialog" closed=".onAfterEventDialogClosed" cancelled=".onEventCancelled" class="spp-eventeditor"
-    showPointer="false" alignment="center" animate="true">
-        <header>
-            <DialogHeader id="CreateEditEventDialogHeader" title="{planModel>EventEdit/Title}" closed=".onEventDialogClosed" />
-        </header>
-        <content>
-            <EventEditor id="CreateEditEventEditor">
-                <items>
-                    <FormField id="FormFieldLeaveType" firstChild="true" empty="{= ${planModel>EventEdit/LeaveType/Key} === '' || ${planModel>EventEdit/LeaveType/Key} === null }"
-                    fieldType="combo">
-                        <label>
-                            <FormLabel id="FormLabelLeaveType" text="{i18n>leaveType}" for="FormComboLeaveType" />
-                        </label>
-                        <field>
-                            <FormComboBox id="FormComboLeaveType" key="{planModel>EventEdit/LeaveType/Key}" value="{planModel>EventEdit/LeaveType/Value}" name="LeaveType" icon="{planModel>EventEdit/LeaveType/Icon}" 
-                            editable="{planModel>EventEdit/New}">
-                                <comboPicker>
-                                    <PickerListWidget id="FormPickerLeaveType" multiselect="false" items="{planModel>LeaveTypes}">
-                                        <items>
-                                            <PickerListWidgetItem id="FormPickerItemLeaveType" icon="{planModel>Color}" key="{planModel>Type}" value="{planModel>Description}" selected="{= ${planModel>EventEdit/LeaveType/Key} === ${planModel>Type} }" />
-                                        </items>
-                                    </PickerListWidget>
-                                </comboPicker>
-                            </FormComboBox>
-                        </field>
-                    </FormField>
-
-
-
-                    <FormField id="FormFieldStartDate" containsFocus="true" empty="{= ${planModel>EventEdit/StartDate} === null }"
-                    fieldType="datefield">
-                        <label>
-                            <FormLabel id="FormLabelStartDate" text="{i18n>leaveStartDate}" for="FormInputStartDate" />
-
-                        </label>
-                        <field>
-                            <FormDatePicker id="FormInputStartDate" value="{planModel>EventEdit/StartDate}" selectDate=".onCallDatePicker" />
-                        </field>
-                    </FormField>
-
-                    <FormField id="FormFieldEndDate" lastChild="true" containsFocus="true" empty="{= ${planModel>EventEdit/EndDate} === null }"
-                    fieldType="datefield">
-                        <label>
-                            <FormLabel id="FormLabelEndDate" text="{i18n>leaveEndDate}" for="FormInputEndDate" />
-
-                        </label>
-                        <field>
-                            <FormDatePicker id="FormInputEndDate" value="{planModel>EventEdit/EndDate}" selectDate=".onCallDatePicker" />
-                        </field>
-                    </FormField>
-                </items>
-                <toolbar>
-                    <Toolbar id="CreateEditEventDialogToolbar">
-                        <items>
-                            <Button id="CreateEditEventDialogSaveAction" label="{i18n>saveAction}" raised="true" firstChild="true" class="spp-blue" press=".onEventSave" />
-                            <Button id="CreateEditEventDialogDeleteAction"
-                                icon="spp-icon-trash"
-                             label="{i18n>deleteAction}" raised="true" firstChild="false" class="spp-red" press=".onEventDelete" visible="{= !${planModel>EventEdit/New} }"/>
-                            <Button id="CreateEditEventDialogCancelAction" label="{i18n>cancelAction}" lastChild="true" press=".onEventCancelled" />
-                        </items>
-                    </Toolbar>
-                </toolbar>
-            </EventEditor>
-        </content>
-    </Dialog>
+<core:FragmentDefinition
+	xmlns="com.thy.ux.annualleaveplanning.ui"
+	xmlns:core="sap.ui.core"
+>
+	<Dialog
+		id="CreateEditEventDialog"
+		closed=".onAfterEventDialogClosed"
+		cancelled=".onEventCancelled"
+		class="spp-eventeditor"
+		showPointer="false"
+		alignment="center"
+		animate="true"
+	>
+		<header>
+			<DialogHeader
+				id="CreateEditEventDialogHeader"
+				title="{planModel>EventEdit/Title}"
+				closed=".onEventDialogClosed"
+			/>
+		</header>
+		<content>
+			<EventEditor id="CreateEditEventEditor">
+				<items>
+					<FormField
+						id="FormFieldLeaveType"
+						firstChild="true"
+						empty="{= ${planModel>EventEdit/LeaveType/Key} === '' || ${planModel>EventEdit/LeaveType/Key} === null }"
+						fieldType="combo"
+					>
+						<label>
+							<FormLabel
+								id="FormLabelLeaveType"
+								text="{i18n>leaveType}"
+								for="FormComboLeaveType"
+							/>
+						</label>
+						<field>
+							<FormComboBox
+								id="FormComboLeaveType"
+								key="{planModel>EventEdit/LeaveType/Key}"
+								value="{planModel>EventEdit/LeaveType/Value}"
+								name="LeaveType"
+								icon="{planModel>EventEdit/LeaveType/Icon}"
+								editable="{planModel>EventEdit/New}"
+							>
+								<comboPicker>
+									<PickerListWidget
+										id="FormPickerLeaveType"
+										multiselect="false"
+										items="{planModel>LeaveTypes}"
+									>
+										<items>
+											<PickerListWidgetItem
+												id="FormPickerItemLeaveType"
+												icon="{planModel>Color}"
+												key="{planModel>Type}"
+												value="{planModel>Description}"
+												selected="{= ${planModel>EventEdit/LeaveType/Key} === ${planModel>Type} }"
+											/>
+										</items>
+									</PickerListWidget>
+								</comboPicker>
+							</FormComboBox>
+						</field>
+					</FormField>
+					<FormField
+						id="FormFieldStartDate"
+						containsFocus="true"
+						empty="{= ${planModel>EventEdit/StartDate} === null }"
+						fieldType="datefield"
+					>
+						<label>
+							<FormLabel
+								id="FormLabelStartDate"
+								text="{i18n>leaveStartDate}"
+								for="FormInputStartDate"
+							/>
+						</label>
+						<field>
+							<FormDatePicker
+								id="FormInputStartDate"
+								value="{planModel>EventEdit/StartDate}"
+								changed=".onEventDateChanged"
+							/>
+						</field>
+					</FormField>
+					<FormField
+						id="FormFieldEndDate"
+						lastChild="false"
+						containsFocus="true"
+						empty="{= ${planModel>EventEdit/EndDate} === null }"
+						fieldType="datefield"
+					>
+						<label>
+							<FormLabel
+								id="FormLabelEndDate"
+								text="{i18n>leaveEndDate}"
+								for="FormInputEndDate"
+							/>
+						</label>
+						<field>
+							<FormDatePicker
+								id="FormInputEndDate"
+								value="{planModel>EventEdit/EndDate}"
+								changed=".onEventDateChanged"
+							/>
+						</field>
+					</FormField>
+					<FormIndicator
+						id="FormFieldQuotaUsed"
+						label="{i18n>leaveQuotaUsed}"
+						value="{
+							path: 'planModel>EventEdit/UsedQuota',
+							type: 'sap.ui.model.odata.type.Decimal',
+							formatOptions: {
+								minFractionDigits: 0,
+								maxFractionDigits: 2,
+								groupingEnabled: false,
+								decimalSeparator: ','
+							}
+						}"
+						unit="{i18n>days}"
+						busy="{
+							path: 'planModel>EventEdit/QuotaCalculating'
+						}"
+						busyIndicatorDelay="0"
+					/>
+				</items>
+				<toolbar>
+					<Toolbar id="CreateEditEventDialogToolbar">
+						<items>
+							<Button
+								id="CreateEditEventDialogSaveAction"
+								label="{i18n>saveAction}"
+								raised="true"
+								firstChild="true"
+								class="spp-blue"
+								press=".onEventSave"
+							/>
+							<Button
+								id="CreateEditEventDialogDeleteAction"
+								icon="spp-icon-trash"
+								label="{i18n>deleteAction}"
+								raised="true"
+								firstChild="false"
+								class="spp-red"
+								press=".onEventDelete"
+								visible="{= !${planModel>EventEdit/New} }"
+							/>
+							<Button
+								id="CreateEditEventDialogCancelAction"
+								label="{i18n>cancelAction}"
+								lastChild="true"
+								press=".onEventCancelled"
+							/>
+						</items>
+					</Toolbar>
+				</toolbar>
+			</EventEditor>
+		</content>
+	</Dialog>
 </core:FragmentDefinition>

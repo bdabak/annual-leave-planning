@@ -178,6 +178,11 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
     },
 
     convertToDate: function (d) {
+
+      if(!d){
+        return null;
+      }
+
       var m = moment(d, "DD.MM.YYYY").hour(3);
       var d = m.toDate();
 
@@ -423,6 +428,7 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
                 monthText: eD.format("MMM"),
                 year: eD.format("YYYY"),
               },
+              duration: c.UsedQuota
             };
 
             eL.push(e);
@@ -461,6 +467,7 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
                 monthText: eD.format("MMM"),
                 year: eD.format("YYYY"),
               },
+              duration: c.UsedQuota
             };
 
             eL.push(e);
@@ -482,10 +489,6 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
       var e = {};
       var that = this;
       var o = parseInt(m.format("E"), 10);
-
-      if(d === "20.04.2023"){
-        debugger;
-      }
 
       var calcSpan = function (i, s, sT) {
         if (a) {
@@ -602,8 +605,8 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
                 ? p.index < pL.length - 1
                   ? true
                   : false
-                : p.index === 0
-                ? pL.length === 1
+                : ( p.index === 0 || p.day === 1 )
+                ? pL.length === 1 
                   ? false
                   : p.week === pL[pL.length - 1].week
                   ? false
@@ -628,6 +631,7 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
                 : pL.length - p.index,
               startDate: moment(c.StartDate).format("DD MMM"),
               endDate: moment(c.EndDate).format("DD MMM"),
+              duration: c.UsedQuota
             };
             l.push(e);
           } else {
@@ -687,6 +691,7 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
                 : pL.length - p.index,
               startDate: moment(c.startDate).format("DD MMM"),
               endDate: moment(c.endDate).format("DD MMM"),
+              duration: c.UsedQuota
             };
             l.push(e);
           } else {
@@ -753,6 +758,7 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
                     y,
                   "DD.MM.YYYY"
                 ).format("DD MMM"),
+                duration: null
               };
               l.push(e);
             }

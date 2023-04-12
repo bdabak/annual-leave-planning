@@ -39,6 +39,7 @@ sap.ui.define(
     return BaseController.extend(
       "com.thy.ux.annualleaveplanning.controller.PlanView",
       {
+        formatter: formatter,
         onInit: function () {
           var legend = [
             {
@@ -64,178 +65,6 @@ sap.ui.define(
             },
           ];
 
-          // var holidayCalendar = {
-          //   holidayList: {
-          //     2023: [
-          //       {
-          //         id: 1,
-          //         month: "01",
-          //         day: "01",
-          //         text: "Yılbaşı tatili",
-          //         type: "1",
-          //         belongsTo: "JAN01",
-          //       },
-          //       {
-          //         id: 2,
-          //         month: "04",
-          //         day: "20",
-          //         text: "Ramazan Bayram Arefesi",
-          //         type: "2",
-          //         belongsTo: "RAM",
-          //       },
-          //       {
-          //         id: 3,
-          //         month: "04",
-          //         day: "21",
-          //         text: "Ramazan Bayramı",
-          //         type: "1",
-          //         belongsTo: "RAM",
-          //       },
-          //       {
-          //         id: 4,
-          //         month: "04",
-          //         day: "22",
-          //         text: "Ramazan Bayramı",
-          //         type: "1",
-          //         belongsTo: "RAM",
-          //       },
-          //       {
-          //         id: 5,
-          //         month: "04",
-          //         day: "23",
-          //         text: "Ramazan Bayramı",
-          //         type: "1",
-          //         belongsTo: "RAM",
-          //       },
-          //       {
-          //         id: 51,
-          //         month: "04",
-          //         day: "24",
-          //         text: "Ramazan Bayramı",
-          //         type: "1",
-          //         belongsTo: "RAM",
-          //       },
-          //       {
-          //         id: 6,
-          //         month: "04",
-          //         day: "23",
-          //         text: "Ulusal Egemenlik ve Çocuk Bayramı",
-          //         type: "1",
-          //         belongsTo: "APR23",
-          //       },
-          //       {
-          //         id: 61,
-          //         month: "05",
-          //         day: "01",
-          //         type: "1",
-          //         text: "Emek ve Dayanışma Günü",
-          //         belongsTo: "MAY01",
-          //       },
-          //       {
-          //         id: 7,
-          //         month: "05",
-          //         day: "19",
-          //         text: "Atatürk'ü Anma Gençlik ve Spor Bayramı",
-          //         type: "1",
-          //         belongsTo: "MAY19",
-          //       },
-          //       {
-          //         id: 8,
-          //         month: "07",
-          //         day: "15",
-          //         text: "Demokrasi ve Millî Birlik Günü",
-          //         type: "1",
-          //         belongsTo: "JUL15",
-          //       },
-          //       {
-          //         id: 9,
-          //         month: "06",
-          //         day: "27",
-          //         text: "Kurban Bayram Arefesi",
-          //         type: "2",
-          //         belongsTo: "SAC",
-          //       },
-          //       {
-          //         id: 10,
-          //         month: "06",
-          //         day: "28",
-          //         text: "Kurban Bayramı",
-          //         type: "1",
-          //         belongsTo: "SAC",
-          //       },
-          //       {
-          //         id: 11,
-          //         month: "06",
-          //         day: "29",
-          //         text: "Kurban Bayramı",
-          //         type: "1",
-          //         belongsTo: "SAC",
-          //       },
-          //       {
-          //         id: 12,
-          //         month: "06",
-          //         day: "30",
-          //         text: "Kurban Bayramı",
-          //         type: "1",
-          //         belongsTo: "SAC",
-          //       },
-          //       {
-          //         id: 13,
-          //         month: "07",
-          //         day: "01",
-          //         text: "Kurban Bayramı",
-          //         type: "1",
-          //         belongsTo: "SAC",
-          //       },
-          //       {
-          //         id: 14,
-          //         month: "08",
-          //         day: "30",
-          //         text: "Zafer Bayramı",
-          //         type: "1",
-          //         belongsTo: "AUG30",
-          //       },
-          //       {
-          //         id: 15,
-          //         month: "10",
-          //         day: "28",
-          //         text: "Cumhuriyet Bayramı Arefesi",
-          //         type: "2",
-          //         belongsTo: "OCT28",
-          //       },
-          //       {
-          //         id: 16,
-          //         month: "10",
-          //         day: "29",
-          //         text: "Cumhuriyet Bayramı",
-          //         type: "1",
-          //         belongsTo: "OCT29",
-          //       },
-          //       {
-          //         id: 17,
-          //         month: "12",
-          //         day: "31",
-          //         text: "Yılbaşı Arefesi",
-          //         type: "2",
-          //         belongsTo: "DEC31",
-          //       },
-          //     ],
-          //   },
-
-          //   holidayInfo: [
-          //     { id: "RAM", text: "Ramazan Bayramı" },
-          //     { id: "SAC", text: "Kurban Bayramı" },
-          //     { id: "JAN01", text: "Yılbaşı Tatili" },
-          //     { id: "APR23", text: "Ulusal Egemenlik ve Çocuk Bayramı" },
-          //     { id: "MAY01", text: "Emek ve Dayanışma Günü" },
-          //     { id: "MAY19", text: "Atatürk'ü Anma Gençlik ve Spor Bayramı" },
-          //     { id: "JUL15", text: "Demokrasi ve Millî Birlik Günü" },
-          //     { id: "AUG30", text: "Zafer Bayramı" },
-          //     { id: "OCT28", text: "Cumhuriyet Bayramı Arefesi" },
-          //     { id: "OCT29", text: "Cumhuriyet Bayramı" },
-          //     { id: "DEC31", text: "Yılbaşı Arefesi" },
-          //   ],
-          // };
           var oViewModel = new JSONModel({
             Page: {
               Visible: false,
@@ -250,7 +79,9 @@ sap.ui.define(
                 StartDate: null,
                 EndDate: null,
                 New: false,
+                UsedQuota: null,
                 Title: "",
+                QuotaCalculating: false,
               },
               EventSplit: {
                 LeaveType: null,
@@ -344,6 +175,83 @@ sap.ui.define(
           );
         },
 
+        onSplitEventDateChanged: function (e) {
+          var that = this;
+          var s = e.getSource() || null;
+          if (!s) {
+            return;
+          }
+
+          var i = s.data("targetIndex") || null;
+
+          if (i === null) {
+            return;
+          }
+
+          var p = "EventSplit/Splits/" + i;
+
+          var oEvent = this.getPageProperty(p) || null;
+
+          if (oEvent === null) {
+            return;
+          }
+
+          var sD = dateUtilities.convertToDate(oEvent.StartDate);
+          var eD = dateUtilities.convertToDate(oEvent.EndDate);
+          if (!sD || !eD) {
+            return;
+          }
+
+          oEvent.QuotaCalculating = true;
+          oEvent.UsedQuota = null;
+
+          this._countUsedQuota(sD, eD).then(function (response) {
+            oEvent.QuotaCalculating = false;
+            oEvent.UsedQuota = response.UsedQuota;
+            console.log("Done");
+            that.setPageProperty(p, oEvent);
+          });
+        },
+
+        onEventDateChanged: function (e) {
+          var oEvent = this.getPageProperty("EventEdit");
+          var that = this;
+
+          oEvent.QuotaCalculating = true;
+          oEvent.UsedQuota = null;
+
+          this.setPageProperty("EventEdit", oEvent);
+
+          this._countUsedQuota(
+            dateUtilities.convertToDate(oEvent.StartDate),
+            dateUtilities.convertToDate(oEvent.EndDate)
+          ).then(function (response) {
+            oEvent.QuotaCalculating = false;
+            oEvent.UsedQuota = response.UsedQuota;
+            that.setPageProperty("EventEdit", oEvent);
+          });
+        },
+
+        _countUsedQuota: function (b, e) {
+          var oModel = this.getModel();
+          var p = $.Deferred();
+
+          oModel.callFunction("/CalculateQuota", {
+            urlParameters: {
+              StartDate: b,
+              EndDate: e,
+            },
+            success: function (d, r) {
+              p.resolve(d);
+            },
+            error: function (e) {
+              p.reject(e);
+            },
+          });
+
+          return p;
+        },
+
         _showPlanningInfo: function () {
           var h = this.getPageProperty("Header");
           var t, m;
@@ -363,7 +271,7 @@ sap.ui.define(
 
             Swal.fire({
               title: t,
-              icon: "warning",
+              icon: "info",
               html: m,
               showCloseButton: false,
               showCancelButton: false,
@@ -414,13 +322,14 @@ sap.ui.define(
           var that = this;
           var oModel = this.getModel();
           var oHeader = this.getPageProperty("Header");
-          var oDefaultPeriod = dateUtilities.convertDateToPeriod(oHeader.QuotaAccrualBeginDate);
-
+          var oDefaultPeriod = dateUtilities.convertDateToPeriod(
+            oHeader.QuotaAccrualBeginDate
+          );
 
           //--Adjust period filters
           var t = _.clone(period) || _.clone(this.getPageProperty("Period"));
-            
-          //--Make sure data is fetched for a year 
+
+          //--Make sure data is fetched for a year
           t.month = oDefaultPeriod.month;
           t.day = oDefaultPeriod.day;
 
@@ -656,25 +565,53 @@ sap.ui.define(
             this._createPlan(oEvent);
           } else {
             this._editPlan(oEvent);
-            // var i = _.findIndex(eL, ["EventId", oEvent.EventId]);
-            // if (!(i >= 0)) {
-            //   Swal.fire({
-            //     position: "bottom",
-            //     icon: "error",
-            //     html: "İzin bulunamadı",
-            //     toast: true,
-            //     showConfirmButton: false,
-            //     timer: 2000,
-            //   });
-            // }
-            // eL[i] = {
-            //   eventId: oEvent.eventId,
-            //   startDate: dateUtilities.convertToDate(oEvent.startDate),
-            //   endDate: dateUtilities.convertToDate(oEvent.endDate),
-            // };
           }
 
           this._closeEventDialog();
+        },
+        onSendPlanForApproval: function () {
+          var that = this;
+          var oHeader = this.getPageProperty("Header");
+          var oOperation = {
+            Actio: "PLC",
+            PlanId: oHeader.PlanId,
+            PlannedLeaveId: null,
+            PlannedLeaveSet: [],
+            ReturnSet: [],
+          };
+
+          var fnCallback = function () {
+            Swal.fire({
+              position: "bottom",
+              icon: "success",
+              html: that.getText("planSentForApproval", []),
+              showConfirmButton: false,
+              toast: true,
+              timer: 2000,
+            });
+          };
+
+          Swal.fire({
+            title: this.getText("planSendConfirmationTitle", []),
+            html: this.getText("planSendConfirmationText", [
+              oHeader.QuotaPlanned,
+            ]),
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3f51b5",
+            cancelButtonColor: "#3085d6",
+            backdrop: true,
+            confirmButtonText: this.getText("approveAction", []),
+            cancelButtonText: this.getText("cancelAction", []),
+          }).then((a) => {
+            if (a.isConfirmed) {
+              that._callPlannedLeaveOperation(
+                "planBeingSentForApproval",
+                oOperation,
+                fnCallback
+              );
+            }
+          });
         },
 
         _editPlan: function (oEvent) {
@@ -716,6 +653,44 @@ sap.ui.define(
           );
         },
 
+        onSplitSave: function () {
+          var oEvent = this.getPageProperty("EventSplit");
+          var eL = this.getProperty("PlannedLeaves");
+
+          var i = _.findIndex(eL, ["EventId", oEvent.EventId]);
+          if (!(i >= 0)) {
+            Swal.fire({
+              position: "bottom",
+              icon: "error",
+              html: "İzin bulunamadı",
+              toast: true,
+              showConfirmButton: false,
+              timer: 2000,
+            });
+            return;
+          }
+
+          //TODO: Add additional split checks
+          //TODO: Add additional split checks
+
+          var vS = _.filter(oEvent.Splits, ["Visible", true]);
+
+          if (vS.length < 2) {
+            Swal.fire({
+              position: "bottom",
+              icon: "error",
+              html: "İzni en az 2 parçaya bölmelisiniz",
+              toast: true,
+              showConfirmButton: true,
+              timer: 2000,
+            });
+            return;
+          }
+
+          this._splitPlan(oEvent);
+
+          this._closeEventDialog();
+        },
         _createPlan: function (oPlan) {
           var that = this;
           var oHeader = this.getPageProperty("Header");
@@ -733,6 +708,7 @@ sap.ui.define(
                 PlanId: oHeader.PlanId,
               },
             ],
+            ReturnSet: [],
           };
 
           var fnCallback = function () {
@@ -797,105 +773,82 @@ sap.ui.define(
             oOperation,
             fnCallback
           );
-
-          //   this.openBusyFragment("plannedLeaveBeingDeleted", []);
-
-          //   oModel.create("/PlannedLeaveOperationSet", oOperation, {
-          //     success: function () {
-          //       that._refreshHeader().then(function () {
-          //         that._triggerRenderChanged(); //Page should be rerendered
-          //         that.closeBusyFragment();
-
-          //       });
-          //     },
-          //     error: function () {},
-          //   });
         },
 
+        _splitPlan: function (oEvent) {
+          var that = this;
+          var oHeader = this.getPageProperty("Header");
+          var aPL = this.getProperty("PlannedLeaves");
+          var oPlan = _.find(aPL, ["EventId", oEvent.EventId]);
+
+          var oOperation = {
+            Actio: "DIV",
+            PlanId: oHeader.PlanId,
+            PlannedLeaveId: oPlan.PlannedLeaveId,
+            PlannedLeaveSet: [],
+            ReturnSet: [],
+          };
+          var vS = _.filter(oEvent.Splits, ["Visible", true]);
+          $.each(vS, function (i, s) {
+            oOperation.PlannedLeaveSet.push({
+              PlannedLeaveId: eventUtilities.createEventId(),
+              EmployeeNumber: oHeader.EmployeeNumber,
+              StartDate: dateUtilities.convertToDate(s.StartDate),
+              EndDate: dateUtilities.convertToDate(s.EndDate),
+              LeaveType: "PL",
+              PlanId: oHeader.PlanId,
+            });
+          });
+
+          var fnCallback = function () {
+            Swal.fire({
+              position: "bottom",
+              icon: "success",
+              html: that.getText("eventSplitted", [
+                oEvent.StartDate,
+                oEvent.EndDate,
+                oEvent.LeaveType.Value,
+              ]),
+              showConfirmButton: false,
+              toast: true,
+              timer: 2000,
+            });
+          };
+
+          this._callPlannedLeaveOperation(
+            "plannedLeaveBeingSplitted",
+            oOperation,
+            fnCallback
+          );
+        },
         _callPlannedLeaveOperation: function (b, o, f) {
           var oModel = this.getModel();
           var that = this;
           this.openBusyFragment(b, []);
 
           oModel.create("/PlannedLeaveOperationSet", o, {
-            success: function () {
-              that._refreshHeader().then(function () {
-                that._triggerRenderChanged(); //Page should be rerendered
+            success: function (oData, oResponse) {
+              var aErrors =
+                _.filter(oData.ReturnSet.results, ["Type", "E"]) || [];
+
+              if (aErrors.length > 0) {
                 that.closeBusyFragment();
-                if (typeof f === "function") {
-                  f();
-                }
-              });
+                that._showErrorMessages(aErrors, "plannedLeaveOperationError");
+              } else {
+                that._refreshHeader().then(function () {
+                  that._triggerRenderChanged(); //Page should be rerendered
+                  that.closeBusyFragment();
+                  if (typeof f === "function") {
+                    f();
+                  }
+                });
+              }
             },
-            error: function () {},
+            error: function (oError) {
+              that.closeBusyFragment();
+              that._showServiceError(oError);
+            },
           });
-        },
-
-        onSplitSave: function () {
-          var oEvent = this.getPageProperty("EventSplit");
-
-          var sPath =
-            oEvent.LeaveType.Key === "0010" ? "PlannedLeaves" : "AnnualLeaves";
-          var eL = this.getProperty(sPath);
-
-          var i = _.findIndex(eL, ["EventId", oEvent.EventId]);
-          if (!(i >= 0)) {
-            Swal.fire({
-              position: "bottom",
-              icon: "error",
-              html: "İzin bulunamadı",
-              toast: true,
-              showConfirmButton: false,
-              timer: 2000,
-            });
-            return;
-          }
-
-          //TODO: Add split checks
-          //TODO: Add split checks
-
-          var vS = _.filter(oEvent.splits, ["visible", true]);
-
-          if (vS.length < 2) {
-            Swal.fire({
-              position: "bottom",
-              icon: "error",
-              html: "İzni en az 2 parçaya bölmelisiniz",
-              toast: true,
-              showConfirmButton: true,
-              timer: 2000,
-            });
-            return;
-          }
-
-          eL.splice(i, 1);
-
-          $.each(vS, function (i, s) {
-            eL.push({
-              eventId: eventUtilities.createEventId(),
-              startDate: dateUtilities.convertToDate(s.startDate),
-              endDate: dateUtilities.convertToDate(s.endDate),
-            });
-          });
-
-          this.setProperty(sPath, eL);
-
-          this.setPageProperty("PageRenderChanged", new Date().getTime());
-
-          Swal.fire({
-            position: "bottom",
-            icon: "success",
-            html: this.getText("eventSplitted", [
-              oEvent.StartDate,
-              oEvent.EndDate,
-              oEvent.LeaveType.Value,
-            ]),
-            showConfirmButton: false,
-            toast: true,
-            timer: 2000,
-          });
-
-          this._closeEventDialog();
         },
 
         onCallDatePicker: function (e) {
@@ -1155,17 +1108,17 @@ sap.ui.define(
             return;
           }
 
-          var l = this.getPageProperty("leaveTypes") || [];
-          var t = _.find(l, ["value", o.EventType]);
+          var l = this.getPageProperty("LeaveTypes") || [];
+          var t = _.find(l, ["Value", o.EventType]);
 
-          var o = {
+          var z = {
             ...c,
-            leaveType: {
+            LeaveType: {
               ...t,
             },
           };
 
-          this._openSplitEventDialog(null, o);
+          this._openSplitEventDialog(null, z);
         },
         _handleDeleteEvent: function (c, e, o) {
           var s = o.EventType === "planned" ? "PlannedLeaves" : "AnnualLeaves";
@@ -1279,6 +1232,7 @@ sap.ui.define(
 
         _createDisplayEventWidget: function (l) {
           var eventList = [];
+          var that = this;
 
           $.each(l, function (i, e) {
             eventList.push(
@@ -1294,6 +1248,11 @@ sap.ui.define(
                 rowIndex: e.rowIndex,
                 rowSpan: 7,
                 editable: e.eventType === "planned",
+                duration: e?.duration
+                  ? formatter.suppressZeroDecimal(e.duration) +
+                    " " +
+                    that.getText("days", [])
+                  : null,
               }).addStyleClass("sapUiTinyMarginBottom")
             );
           });
@@ -1305,110 +1264,134 @@ sap.ui.define(
             }),
           });
         },
-        _openEditEventDialog: function (r, p, n) {
-          var oEvent = {
-            LeaveType: {
-              Key: n ? null : p.LeaveType.Type,
-              Value: n ? null : p.LeaveType.Description,
-              Icon: n ? null : p.LeaveType.Color,
-            },
-            EventId: p.EventId,
-            StartDate: dateUtilities.formatDate(p.StartDate),
-            EndDate: dateUtilities.formatDate(p.EndDate),
-            New: n,
-            Title: this.getText(n ? "newEventTitle" : "editEventTitle", []),
-          };
-          this.setPageProperty("EventEdit", oEvent);
+
+        _getEditDialogStyles: function () {
+          var bPhone = this.getModel("device").getProperty("/system/phone");
 
           var aStyles = new Map([
-            // ["transform", `matrix(1, 0, 0, 1, ${eO.left}, -100%)`],
-            ["--date-time-length", "14em"],
-            ["--date-width-difference", "1em"],
+            ["--date-time-length", bPhone ? "10em" : "14em"],
+            ["--date-width-difference", bPhone ? "0.5em" : "1em"],
+            ["--textfield-width", bPhone ? "10.5em" : "12.5em"],
           ]);
 
-          var oDialog = Fragment.load({
-            id: this.getView().getId(),
-            name: "com.thy.ux.annualleaveplanning.view.fragment.EditEventDialog",
-            controller: this,
-          }).then(
-            function (d) {
-              d.setStyles(aStyles);
-              // d.setElementPosition({
-              //   offset: { ...eO },
-              //   outerHeight: eH,
-              //   outerWidth: eW,
-              // });
-              this._oEventDialog = d;
-              this.getModal().open(this._oEventDialog);
-            }.bind(this)
-          );
+          return aStyles;
+        },
+
+        _openEditEventDialog: function (r, p, n) {
+          var that = this;
+
+          var openDialog = function () {
+            var oEvent = {
+              LeaveType: {
+                Key: n ? null : p.LeaveType.Type,
+                Value: n ? null : p.LeaveType.Description,
+                Icon: n ? null : p.LeaveType.Color,
+              },
+              EventId: p.EventId,
+              StartDate: dateUtilities.formatDate(p.StartDate),
+              EndDate: dateUtilities.formatDate(p.EndDate),
+              UsedQuota: p.UsedQuota,
+              New: n,
+              Title: that.getText(n ? "newEventTitle" : "editEventTitle", []),
+              QuotaCalculating: false,
+            };
+            that.setPageProperty("EventEdit", oEvent);
+
+            var oDialog = Fragment.load({
+              id: that.getView().getId(),
+              name: "com.thy.ux.annualleaveplanning.view.fragment.EditEventDialog",
+              controller: that,
+            }).then(
+              function (d) {
+                d.setStyles(that._getEditDialogStyles());
+                that._oEventDialog = d;
+                that.getModal().open(that._oEventDialog);
+              }.bind(that)
+            );
+          };
+
+          if (n) {
+            this._countUsedQuota(
+              dateUtilities.convertToDate(p.StartDate),
+              dateUtilities.convertToDate(p.EndDate)
+            ).then(function (response) {
+              p.UsedQuota = response.UsedQuota;
+              openDialog();
+            });
+          } else {
+            openDialog();
+          }
         },
 
         _openSplitEventDialog: function (r, p) {
-          var sD = dateUtilities.formatDate(p.startDate);
-          var eD = dateUtilities.formatDate(p.endDate);
+          var sD = dateUtilities.formatDate(p.StartDate);
+          var eD = dateUtilities.formatDate(p.EndDate);
           var oEvent = {
-            leaveType: {
-              key: p.leaveType.type,
-              value: p.leaveType.description,
-              icon: p.leaveType.color,
+            LeaveType: {
+              Key: p.LeaveType.Type,
+              Value: p.LeaveType.Description,
+              Icon: p.LeaveType.Color,
             },
-            eventId: p.eventId,
-            startDate: sD,
-            endDate: eD,
-            new: false,
-            title: this.getText("splitEventTitle", []),
-            splits: [
+            EventId: p.EventId,
+            StartDate: sD,
+            EndDate: eD,
+            New: false,
+            Title: this.getText("splitEventTitle", []),
+            Splits: [
               {
-                title: this.getText("eventSplitItem", ["1"]),
-                startDate: null,
-                endDate: null,
-                visible: true,
-                refStartDate: sD,
-                refEndDate: eD,
+                Title: this.getText("eventSplitItem", ["1"]),
+                StartDate: null,
+                EndDate: null,
+                Visible: true,
+                UsedQuota: null,
+                RefStartDate: sD,
+                RefEndDate: eD,
+                QuotaCalculating: false,
               },
               {
-                title: this.getText("eventSplitItem", ["2"]),
-                startDate: null,
-                endDate: null,
-                visible: true,
-                refStartDate: sD,
-                refEndDate: eD,
+                Title: this.getText("eventSplitItem", ["2"]),
+                StartDate: null,
+                EndDate: null,
+                Visible: true,
+                UsedQuota: null,
+                RefStartDate: sD,
+                RefEndDate: eD,
+                QuotaCalculating: false,
               },
               {
-                title: this.getText("eventSplitItem", ["3"]),
-                startDate: null,
-                endDate: null,
-                visible: false,
-                refStartDate: sD,
-                refEndDate: eD,
+                Title: this.getText("eventSplitItem", ["3"]),
+                StartDate: null,
+                EndDate: null,
+                Visible: false,
+                UsedQuota: null,
+                RefStartDate: sD,
+                RefEndDate: eD,
+                QuotaCalculating: false,
               },
               {
-                title: this.getText("eventSplitItem", ["4"]),
-                startDate: null,
-                endDate: null,
-                visible: false,
-                refStartDate: sD,
-                refEndDate: eD,
+                Title: this.getText("eventSplitItem", ["4"]),
+                StartDate: null,
+                EndDate: null,
+                Visible: false,
+                UsedQuota: null,
+                RefStartDate: sD,
+                RefEndDate: eD,
+                QuotaCalculating: false,
               },
               {
-                title: this.getText("eventSplitItem", ["5"]),
-                startDate: null,
-                endDate: null,
-                visible: false,
-                refStartDate: sD,
-                refEndDate: eD,
+                Title: this.getText("eventSplitItem", ["5"]),
+                StartDate: null,
+                EndDate: null,
+                Visible: false,
+                UsedQuota: null,
+                RefStartDate: sD,
+                RefEndDate: eD,
+                QuotaCalculating: false,
               },
             ],
-            buttonState: new Date().getTime(), //For refreshing button states
+            ButtonState: new Date().getTime(), //For refreshing button states
           };
           this.setPageProperty("EventSplit", oEvent);
-
-          var aStyles = new Map([
-            // ["transform", `matrix(1, 0, 0, 1, ${eO.left}, -100%)`],
-            ["--date-time-length", "14em"],
-            ["--date-width-difference", "1em"],
-          ]);
 
           var oDialog = Fragment.load({
             id: this.getView().getId(),
@@ -1416,7 +1399,7 @@ sap.ui.define(
             controller: this,
           }).then(
             function (d) {
-              d.setStyles(aStyles);
+              d.setStyles(this._getEditDialogStyles());
               // d.setElementPosition({
               //   offset: { ...eO },
               //   outerHeight: eH,
@@ -1440,6 +1423,61 @@ sap.ui.define(
           );
         },
 
+        _showServiceError: function (oError) {
+          Swal.fire({
+            icon: "error",
+            title: this.getText("serviceErrorTitle", []),
+            html: JSON.parse(oError?.responseText).error.message.value,
+            position: "center",
+            showConfirmButton: false,
+            showCloseButton: true,
+          });
+        },
+        _showErrorMessages: function (aError, titleText) {
+          try {
+            if (aError?.length > 0) {
+              var html =
+                "<div style='display:flex; justify-content:center; flex-direction:column; overflow-y:auto; max-height:400px;'>";
+
+              $.each(aError, function (i, e) {
+                html =
+                  html +
+                  `<span><i class='spp-icon spp-fa-xmark spp-error'></i> ${e?.Message}</span>`;
+              });
+
+              html = html + "</div>";
+
+              Swal.fire({
+                customClass: {
+                  popup: "spp-error-pane",
+                },
+                icon: "error",
+                title: titleText
+                  ? this.getText(titleText, [])
+                  : this.getText("errorPaneTitle", []),
+                html: html,
+                position: "bottom",
+                showClass: {
+                  popup: `
+                  animate__animated
+                  animate__fadeInUp
+                  animate__faster
+                  `,
+                },
+                hideClass: {
+                  popup: `
+                animate__animated
+                animate__fadeOutDown
+                animate__faster
+                `,
+                },
+                grow: "row",
+                showConfirmButton: false,
+                showCloseButton: true,
+              });
+            }
+          } catch (e) {}
+        },
         _callDatePicker: function (e) {
           var s = e.getParameter("sourceField");
           var t = e.getParameter("targetField");

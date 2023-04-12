@@ -16,7 +16,7 @@ server:
             - /test-resources
           url: https://ui5.sap.com
         backend:
-          - path: /sap/opu/odata/sap/ZHCM_UX_ALPL_SRV
+          - path: /sap
             url: http://tks0154.thy.com:8000
             client: '300'
     - name: fiori-tools-appreload

@@ -4,11 +4,7 @@ sap.ui.define(
     "com/thy/ux/annualleaveplanning/utils/date-utilities",
     "com/thy/ux/annualleaveplanning/utils/sweetalert",
   ],
-  function (
-    Control,
-    dateUtilities,
-    SwalJS
-  ) {
+  function (Control, dateUtilities, SwalJS) {
     "use strict";
 
     return Control.extend("com.thy.ux.annualleaveplanning.ui.Page", {
@@ -19,7 +15,7 @@ sap.ui.define(
             bindable: true,
             defaultValue: "Y",
           },
-          tabIndex:{
+          tabIndex: {
             type: "string",
             bindable: true,
             defaultValue: "0",
@@ -36,6 +32,10 @@ sap.ui.define(
           },
           content: {
             type: "com.thy.ux.annualleaveplanning.ui.PageContent",
+            multiple: false,
+          },
+          footer: {
+            type: "com.thy.ux.annualleaveplanning.ui.PageFooter",
             multiple: false,
           },
           modal: {
@@ -57,9 +57,7 @@ sap.ui.define(
           // sLibraryPath + "/ui/css/ThemeIstanbul.css"
         );
 
-        jQuery.sap.includeStyleSheet(
-          sLibraryPath + "/ui/css/Animate.css"
-        );
+        jQuery.sap.includeStyleSheet(sLibraryPath + "/ui/css/Animate.css");
 
         //--Initialize moment locale
         dateUtilities.initializeMoment();
@@ -133,6 +131,12 @@ sap.ui.define(
         oRM.renderControl(oControl.getAggregation("content"));
         //--RenderContent
 
+        //--RenderContent
+        if (oControl.getAggregation("footer")) {
+          oRM.renderControl(oControl.getAggregation("footer"));
+        }
+        //--RenderContent
+
         oRM.close("div"); //Panel
 
         oRM.close("div"); //Container
@@ -143,7 +147,6 @@ sap.ui.define(
 
         oRM.close("div"); //Control
       },
-
     });
   }
 );

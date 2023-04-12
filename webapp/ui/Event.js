@@ -81,6 +81,11 @@ sap.ui.define(
             bindable: true,
             defaultValue: false,
           },
+          duration: {
+            type: "string",
+            bindable: true,
+            defaultValue: null,
+          }
         },
         aggregations: {},
         events: {
@@ -182,6 +187,16 @@ sap.ui.define(
         oRM.openEnd();
 
         oRM.text(oControl.getText());
+
+        if(oControl.getDuration()){
+          oRM
+          .openStart("span")
+          .class("spp-cal-event-duration")
+          .openEnd()
+          .text(`(${oControl.getDuration()})`)
+          .close("span");
+        }
+
         oRM.close("div");
         //--Render event description--//
 

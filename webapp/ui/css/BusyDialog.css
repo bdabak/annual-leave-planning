@@ -52,8 +52,9 @@
   }
 
   .sppBusyDialog>.sapMDialogSection {
-    background: rgba(47, 49, 56, 0.15) !important;
+    background: rgba(35, 39, 54, 0.473) !important;
     padding: 2rem 1rem;
+    border-radius: 5px;
   }
 
   .sppBusyDialog .sapMLabel {

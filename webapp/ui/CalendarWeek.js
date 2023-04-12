@@ -71,6 +71,8 @@ sap.ui.define(
         oRM.class("spp-calendar-days");
         oRM.openEnd();
 
+        oControl.destroyAggregation("cells"); //Clear cells  
+
         $.each(days, function (i, d) {
           if (m === "M") {
             var y = new MonthDay({

@@ -54,24 +54,10 @@ sap.ui.define(
             multiple: false,
           },
         },
-
-        associations: {
-          // datePickerWidget: {
-          //   type: "com.thy.ux.annualleaveplanning.ui.DatePickerWidget",
-          //   multiple: false,
-          // },
-        },
-
         events: {
-          selectDate: {
-            sourceField: {
-              type: "object",
-            },
-            handleSelection: {
-              type: "function",
-            },
-            period: {
-              type: "object",
+          changed: {
+            date: {
+              type: "string",
             },
           },
         },
@@ -105,6 +91,9 @@ sap.ui.define(
           select: function (e) {
             var d = e.getParameter("selectedDate");
             that.setValue(d);
+            that.fireChanged({
+              date: d
+            });
             dP.setVisible(false);
           },
           selectedDate: d,
@@ -139,18 +128,7 @@ sap.ui.define(
 
         if (dP.getVisible()) {
           dP.setVisible(false);
-          // this.getParent().setProperty("opened", false);
         }
-        // var a = this.getAssociation("datePickerWidget", null);
-        // if (a) {
-        //   var c = $("#" + a).control();
-        //   if (c && c.length > 0) {
-        //     c[0].destroy();
-        //     this._dateSelectionActive = false;
-        //     this.removeAssociation("datePickerWidget", a, true);
-        //   }
-        // }
-        // this._dateSelectionActive = false;
       },
 
       openDatePicker: function () {
@@ -158,19 +136,7 @@ sap.ui.define(
 
         if (!dP.getVisible()) {
           dP.setVisible(true);
-          // this.getParent().setProperty("opened", true);
         }
-
-        
-        // if (!this._dateSelectionActive) {
-        //   this.closeDatePicker();
-        //   this._dateSelectionActive = true;
-        //   this.fireSelectDate({
-        //     targetField: this.getParent(),
-        //     sourceField: this,
-        //     period: dateUtilities.convertDateToPeriod(this.getValue()),
-        //   });
-        // }
       },
 
       toggleDatePicker: function () {
@@ -224,13 +190,14 @@ sap.ui.define(
 
         oRM.close("div"); //Main
       },
-      onfocusin: function (e) {
+      ontap:function(e){
         if ($(e.target).hasClass("spp-input-focus")) {
           if (this.getEditable()) {
-            this.openDatePicker();
+            this.toggleDatePicker();
           }
         }
       },
+     
     });
   }
 );
