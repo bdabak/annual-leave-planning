@@ -17,11 +17,12 @@ sap.ui.define([], function () {
     },
 
     decidePlanApproveStatus: function (e, p, t) {
-      if (!e || !p || !t) {
+      if (!e || p === null || p === undefined || t === null || t === undefined) {
         return false;
       }
       try {
-        if (p < t) {
+        
+        if (parseFloat(p) < parseFloat(t)) {
           return false;
         } else {
           return true;

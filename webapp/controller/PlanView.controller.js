@@ -96,14 +96,14 @@ sap.ui.define(
               Header: {},
               LeaveTypes: [
                 {
-                  Type: "0010",
+                  Type: "9999",
                   Value: "planned",
                   Description: "Planlanan İzin",
                   Color: "spp-sch-foreground-blue",
                   Selected: false,
                 },
                 {
-                  Type: "0100",
+                  Type: "0010",
                   Value: "annual",
                   Description: "Yıllık İzin",
                   Color: "spp-sch-foreground-green",
@@ -166,13 +166,20 @@ sap.ui.define(
           this.setPageProperty("Visible", false);
           this.openBusyFragment("pleaseWait", []);
 
-          this._refreshHeader().done(
-            function () {
-              this.closeBusyFragment();
-              this.setPageProperty("Visible", true);
-              this._showPlanningInfo();
-            }.bind(this)
-          );
+          this._refreshHeader()
+            .done(
+              function () {
+                this.closeBusyFragment();
+                this.setPageProperty("Visible", true);
+                this._showPlanningInfo();
+              }.bind(this)
+            )
+            .fail(
+              function (e) {
+                this.closeBusyFragment();
+                this._showServiceError(e);
+              }.bind(this)
+            );
         },
 
         onSplitEventDateChanged: function (e) {
@@ -201,14 +208,26 @@ sap.ui.define(
           if (!sD || !eD) {
             return;
           }
+          oEvent.UsedQuota = null;
+
+          if (moment(sD).isAfter(moment(eD))) {
+            Swal.fire({
+              position: "bottom",
+              icon: "error",
+              html: "Bitiş tarihi, başlangıç tarihinden önce olamaz",
+              toast: true,
+              showConfirmButton: false,
+              timer: 5000,
+              timerProgressBar: true,
+            });
+            return;
+          }
 
           oEvent.QuotaCalculating = true;
-          oEvent.UsedQuota = null;
 
           this._countUsedQuota(sD, eD).then(function (response) {
             oEvent.QuotaCalculating = false;
             oEvent.UsedQuota = response.UsedQuota;
-            console.log("Done");
             that.setPageProperty(p, oEvent);
           });
         },
@@ -406,6 +425,19 @@ sap.ui.define(
           });
 
           this.setProperty("PlannedLeaves", pL);
+
+
+          var aL = [];
+          var a = o.LeaveRequestSet.results;
+          $.each(a, function (i, l) {
+            var e = _.cloneDeep(_.omit(l, ["__metadata"]));
+            aL.push({
+              EventId: eventUtilities.createEventId(),
+              ...e,
+            });
+          });
+
+          this.setProperty("AnnualLeaves", aL);
           /* Leaves */
 
           p.resolve(true);
@@ -507,7 +539,7 @@ sap.ui.define(
           var that = this;
           var oEvent = this.getPageProperty("EventEdit");
           var sPath =
-            oEvent.LeaveType.Key === "0010" ? "PlannedLeaves" : "AnnualLeaves";
+            oEvent.LeaveType.Key === "9999" ? "PlannedLeaves" : "AnnualLeaves";
           var eL = this.getProperty(sPath) || [];
 
           if (eL.length === 0) {
@@ -534,7 +566,7 @@ sap.ui.define(
           }).then((a) => {
             that._closeEventDialog();
             if (a.isConfirmed) {
-              if (oEvent.LeaveType.Key === "0010") that._deletePlan(oEvent);
+              if (oEvent.LeaveType.Key === "9999") that._deletePlan(oEvent);
             }
           });
         },
@@ -558,13 +590,24 @@ sap.ui.define(
           }
 
           var sPath =
-            oEvent.LeaveType.Key === "0010" ? "PlannedLeaves" : "AnnualLeaves";
+            oEvent.LeaveType.Key === "9999" ? "PlannedLeaves" : "AnnualLeaves";
           var eL = this.getProperty(sPath);
 
-          if (oEvent.New) {
-            this._createPlan(oEvent);
-          } else {
-            this._editPlan(oEvent);
+          switch (oEvent.LeaveType.Key) {
+            case "9999":
+              if (oEvent.New) {
+                this._createPlan(oEvent);
+              } else {
+                this._editPlan(oEvent);
+              }
+              break;
+            case "0010":
+              if (oEvent.New) {
+                this._createAnnualLeave(oEvent);
+              } else {
+                //Not implemented
+              }
+              break;
           }
 
           this._closeEventDialog();
@@ -691,6 +734,76 @@ sap.ui.define(
 
           this._closeEventDialog();
         },
+
+        _getAbsenceTypeCustomizing: function () {
+          var oLeaveModel = this.getModel("leaveRequest");
+          var oHeader = this.getPageProperty("Header");
+          var aFilters = [];
+          var p = $.Deferred();
+
+          aFilters.push(
+            new Filter("EmployeeID", FilterOperator.EQ, oHeader.EmployeeNumber)
+          );
+          aFilters.push(
+            new Filter("AbsenceTypeCode", FilterOperator.EQ, "0010")
+          );
+          aFilters.push(new Filter("InfoType", FilterOperator.EQ, "2001"));
+
+          oLeaveModel.read("/AbsenceTypeCollection", {
+            urlParameters: {
+              $expand: "MultipleApprovers,AdditionalFields",
+            },
+            filters: aFilters,
+            success: function (o, r) {
+              console.log(o);
+              p.resolve(o);
+            },
+            error: function (e) {
+              p.reject(e);
+            },
+          });
+
+          return p;
+        },
+        _createAnnualLeave: function (oAnnual) {
+          var that = this;
+          var oHeader = this.getPageProperty("Header");
+          var oLeaveModel = this.getModel("leaveRequest");
+
+          this._getAbsenceTypeCustomizing().then(function (aAbsence) {
+            var oAbsence = _.find(aAbsence.results, ["AbsenceTypeCode", "0010"]);
+
+            if (!oAbsence) {
+              return;
+            }
+
+            var oLeaveRequest = {
+              EmployeeID: oHeader.EmployeeNumber,
+              AbsenceTypeCode: "0010",
+              InfoType: "2001",
+              StartDate: dateUtilities.convertToDate(oAnnual.StartDate),
+              EndDate: dateUtilities.convertToDate(oAnnual.EndDate),
+              Attachments: [],
+              ActionCode: 1,
+              AdditionalFields: {},
+              ProcessCheckOnlyInd: false,
+              ApproverEmployeeID: oAbsence.ApproverName,
+              ApproverEmployeeName: oAbsence.ApproverPernr,
+              MultipleApprovers: _.clone(oAbsence.MultipleApprovers.results),
+            };
+            oLeaveModel.create("/LeaveRequestCollection", oLeaveRequest, {
+              success: function (o, r) {
+                console.dir(o);
+              },
+              error: function (e) {
+                console.dir(e);
+                that.closeBusyFragment();
+                that._showServiceError(e);
+              },
+            });
+          });
+        },
+
         _createPlan: function (oPlan) {
           var that = this;
           var oHeader = this.getPageProperty("Header");
@@ -1436,13 +1549,12 @@ sap.ui.define(
         _showErrorMessages: function (aError, titleText) {
           try {
             if (aError?.length > 0) {
-              var html =
-                "<div style='display:flex; justify-content:center; flex-direction:column; overflow-y:auto; max-height:400px;'>";
+              var html = "<div class='spp-error-container'>";
 
               $.each(aError, function (i, e) {
                 html =
                   html +
-                  `<span><i class='spp-icon spp-fa-xmark spp-error'></i> ${e?.Message}</span>`;
+                  `<span class='spp-error-line'><i class='spp-icon spp-fa-circle-exclamation spp-error'></i> ${e?.Message}</span>`;
               });
 
               html = html + "</div>";

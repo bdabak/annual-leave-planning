@@ -21195,7 +21195,7 @@ button.spp-button.spp-recurrencelegendbutton {
   color: #fdfdfd;
 }
 
-.spp-cal-event-duration{
+.spp-cal-event-duration {
   margin-left: 0.3em;
 }
 
@@ -24697,11 +24697,10 @@ button.spp-button.spp-recurrencelegendbutton {
   animation: bounceHide 0.3s ease-in-out;
 }
 
-.spp-responsive-small .spp-page-footer{
+.spp-responsive-small .spp-page-footer {
   justify-content: center !important;
   background-color: rgb(0 0 0 / 15%) !important;
 }
-
 
 @keyframes bounceShow {
   0% {
@@ -24763,8 +24762,26 @@ button.spp-button.spp-recurrencelegendbutton {
   font-weight: 300;
 }
 
-.spp-error{
-  color: var(--color-red);
+.spp-error {
+  color: #f27474;
 }
 
-.spp-error-pane{}
+.spp-error-pane .swal2-icon {
+  margin: 1em auto 0.6em;
+}
+.spp-error-pane .swal2-title {
+  padding: 0.2em 1em 0;
+}
+
+.spp-error-pane .spp-error-line {
+  font-size: 1.5em;
+  margin-bottom: 0.2em;
+}
+
+.spp-error-container {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  overflow-y: auto;
+  max-height: 400px;
+}

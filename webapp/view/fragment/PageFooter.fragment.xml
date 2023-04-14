@@ -1,0 +1,28 @@
+<core:FragmentDefinition
+	xmlns="com.thy.ux.annualleaveplanning.ui"
+	xmlns:core="sap.ui.core"
+>
+	<PageFooter active="{
+		parts: [{
+			path: 'planModel>Header/PlanningEnabled'
+		}, {
+			path: 'planModel>Header/QuotaPlanned'
+		}, {
+			path: 'planModel>Header/QuotaToBePlanned'
+		}],
+		formatter: '.formatter.decidePlanApproveStatus'
+	}">
+		<buttons>
+			<Button
+				icon="spp-fa-calendar-check"
+				class="spp-indigo"
+				label="{i18n>sendForApproval}"
+				raised="true"
+				firstChild="true"
+				lastChild="true"
+				solid="true"
+				press=".onSendPlanForApproval"
+			/>
+		</buttons>
+	</PageFooter>
+</core:FragmentDefinition>

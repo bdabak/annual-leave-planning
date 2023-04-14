@@ -23,20 +23,10 @@
 			/>
 		</content>
 		<footer>
-			<PageFooter active="{parts:[{path:'planModel>Header/PlanningEnabled'},{path:'planModel>Header/QuotaPlanned'}, {path:'planModel>Header/QuotaToBePlanned'}], formatter:'.formatter.decidePlanApproveStatus'}">
-				<buttons>
-					<Button
-						icon="spp-fa-calendar-check"
-                        class="spp-indigo"
-						label="{i18n>sendForApproval}"
-						raised="true"
-						firstChild="true"
-						lastChild="true"
-						solid="true"
-                        press=".onSendPlanForApproval"
-					/>
-				</buttons>
-			</PageFooter>
+			<core:Fragment
+				fragmentName="com.thy.ux.annualleaveplanning.view.fragment.PageFooter"
+				type="XML"
+			/>
 		</footer>
 		<modal>
 			<Modal id="LeaveManagementPageModal"/>
