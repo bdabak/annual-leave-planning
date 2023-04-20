@@ -1,23 +1,122 @@
-<core:FragmentDefinition xmlns="com.thy.ux.annualleaveplanning.ui"
-    xmlns:core="sap.ui.core">
-    <PageSidebar id="LeaveManagementPageSidebar" hidden="{= !${device>/system/desktop} }">
-        <items>
-            <Legend id="LeaveManagementPageLegend" items="{planModel>Legend}"
-            legendSelectionChanged=".onLegendSelectionChanged">
-                <items>
-                    <LegendItem id="LeaveManagementPageLegendItem"
-                        color="{planModel>Color}"
-                        text="{planModel>Text}" 
-                        selected="{planModel>Selected}"/>
-                </items>
-            </Legend>
-
-            <StatisticCard id="LeaveManagementPageStats0" title="Planlama Durumu" theme="emphasize" value="{= ${path:'planModel>Header/PlanningEnabled'} ? ${i18n>planningActive} : ${i18n>planningInactive} }"  />
-            <StatisticCard id="LeaveManagementPageStats1" title="İzin Hakediş Tarihi"  value="{path:'planModel>Header/QuotaAccrualBeginDate', type: 'sap.ui.model.type.Date', formatOptions:{pattern: 'dd MMMM YYYY'}}"  />
-            <StatisticCard id="LeaveManagementPageStats2" title="Planlama Kotası" theme="success" value="{path:'planModel>Header/QuotaAtPlanning', type: 'sap.ui.model.odata.type.Decimal', formatOptions:{minFractionDigits:0, maxFractionDigits:2, groupingEnabled: false, decimalSeparator:','}}"  />
-            <StatisticCard id="LeaveManagementPageStats3" title="Planlanacak İzin" theme="secondary" value="{path:'planModel>Header/QuotaToBePlanned', type: 'sap.ui.model.odata.type.Decimal',formatOptions:{minFractionDigits:0, maxFractionDigits:2, groupingEnabled: false, decimalSeparator:','}}"  />
-            <StatisticCard id="LeaveManagementPageStats4" title="Planlanan İzin" theme="primary" value="{path:'planModel>Header/QuotaPlanned', type: 'sap.ui.model.odata.type.Decimal',formatOptions:{minFractionDigits:0, maxFractionDigits:2, groupingEnabled: false, decimalSeparator:','}}"  />
-            <!-- <StatisticCard id="LeaveManagementPageStats5"  title="Kullanılan İzin" theme="emphasize" value="{path:'planModel>Header/leaveUsed', type: 'sap.ui.model.odata.type.Decimal', formatOptions:{minFractionDigits:0,maxFractionDigits:2, groupingEnabled: false, decimalSeparator:','}}"  /> -->
-        </items>
-    </PageSidebar>
+<core:FragmentDefinition
+	xmlns="com.thy.ux.annualleaveplanning.ui"
+	xmlns:core="sap.ui.core"
+>
+	<PageSidebar
+		id="LeaveManagementPageSidebar"
+		hidden="{= !${device>/system/desktop} }"
+	>
+		<items>
+			<!-- <Legend
+				id="LeaveManagementPageLegend"
+				items="{planModel>Legend}"
+				legendSelectionChanged=".onLegendSelectionChanged"
+			>
+				<items>
+					<LegendItem
+						id="LeaveManagementPageLegendItem"
+						color="{planModel>Color}"
+						text="{planModel>Text}"
+						selected="{planModel>Selected}"
+					/>
+				</items>
+			</Legend> -->
+			
+			<StatisticCard
+				id="LeaveManagementPageStats0"
+				title="Planlama Durumu"
+				theme="emphasize"
+				value="{= ${
+						path: 'planModel>Header/PlanningEnabled'
+					} ? ${i18n>planningActive} : ${i18n>planningInactive} }"
+			/>
+			<StatisticCard
+				id="LeaveManagementPageStats1"
+				title="İzin Hakediş Tarihi"
+				value="{
+					path: 'planModel>Header/QuotaAccrualBeginDate',
+					type: 'sap.ui.model.type.Date',
+					formatOptions: {
+						pattern: 'dd MMMM YYYY'
+					}
+				}"
+			/>
+			<StatisticCard
+				id="LeaveManagementPageStats2"
+				title="Planlama Kotası"
+				theme="success"
+				value="{
+					path: 'planModel>Header/QuotaAtPlanning',
+					type: 'sap.ui.model.odata.type.Decimal',
+					formatOptions: {
+						minFractionDigits: 0,
+						maxFractionDigits: 2,
+						groupingEnabled: false,
+						decimalSeparator: ','
+					}
+				}"
+			/>
+			<StatisticCard
+				id="LeaveManagementPageStats3"
+				title="Planlanacak İzin"
+				theme="secondary"
+				value="{
+					path: 'planModel>Header/QuotaToBePlanned',
+					type: 'sap.ui.model.odata.type.Decimal',
+					formatOptions: {
+						minFractionDigits: 0,
+						maxFractionDigits: 2,
+						groupingEnabled: false,
+						decimalSeparator: ','
+					}
+				}"
+			/>
+			<StatisticCard
+				id="LeaveManagementPageStats4"
+				title="Planlanan İzin"
+				theme="primary"
+				value="{
+					path: 'planModel>Header/QuotaPlanned',
+					type: 'sap.ui.model.odata.type.Decimal',
+					formatOptions: {
+						minFractionDigits: 0,
+						maxFractionDigits: 2,
+						groupingEnabled: false,
+						decimalSeparator: ','
+					}
+				}"
+			/>
+            <LegendGroup
+				id="LeaveManagementPageLegendGroup"
+				items="{path:'planModel>LegendGroup', templateShareable: false}"
+                legendSelectionChanged=".onLegendSelectionChanged"
+			>
+				<items>
+					<LegendGroupItem
+						color="{planModel>LegendGroupColor}"
+						text="{planModel>LegendGroupName}"
+						selected="{planModel>Selected}"
+                        items="{planModel>LegendItemSet}"
+					>
+						<legend>
+							<Legend
+								id="LeaveManagementPageLegendGroupItem"
+								items="{path:'planModel>LegendItemSet', templateShareable: false}"
+								legendSelectionChanged=".onLegendSelectionChanged">
+								<items>
+									<LegendItem
+										id="LeaveManagementPageLegendSubItem"
+										color="{planModel>LegendItemColor}"
+										text="{planModel>LegendItemName}"
+										selected="{planModel>Selected}"
+									/>
+								</items>
+							</Legend>
+						</legend>
+					</LegendGroupItem>
+				</items>
+			</LegendGroup>
+			<!-- <StatisticCard id="LeaveManagementPageStats5"  title="Kullanılan İzin" theme="emphasize" value="{path:'planModel>Header/leaveUsed', type: 'sap.ui.model.odata.type.Decimal', formatOptions:{minFractionDigits:0,maxFractionDigits:2, groupingEnabled: false, decimalSeparator:','}}"  /> -->
+		</items>
+	</PageSidebar>
 </core:FragmentDefinition>

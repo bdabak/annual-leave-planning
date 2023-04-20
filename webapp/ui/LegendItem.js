@@ -30,9 +30,9 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
         var c = oControl.getColor();
         var l = oControl.getText();
         oRM.openStart("li", oControl); //Item
-        oRM.class("spp-list-item");
+        oRM.class("spp-list-item").class("spp-list-item-row");
         if(oControl.getSelected()){
-          oRM.class("spp-selected");
+          oRM.class("spp-selected").class("spp-selected-full");
         }
         oRM.attr("role", "option");
         oRM.openEnd();
@@ -52,9 +52,11 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
       },
 
       ontap: function(e){
+        e.stopPropagation();
         if($(e.target).hasClass("spp-list-item") || $(e.target).hasClass("spp-icon") ){
           this.setSelected(!this.getSelected());
-          this.getParent().fireLegendSelectionChanged();
+          //this.getParent().fireLegendSelectionChanged();
+          this.getParent().getParent().setItemsSelection();
         }
       }
     }

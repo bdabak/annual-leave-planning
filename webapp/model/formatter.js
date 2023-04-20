@@ -21,6 +21,9 @@ sap.ui.define([], function () {
         return false;
       }
       try {
+        if(parseFloat(p) <= 0){
+          return false;
+        }
         
         if (parseFloat(p) < parseFloat(t)) {
           return false;
@@ -31,5 +34,19 @@ sap.ui.define([], function () {
         return false;
       }
     },
+
+    getLeaveTypeVisible: function(t,e,h){
+      if(t && t === '0010'){
+        return true;
+      }
+
+
+
+      if(e?.New && h?.PlanningEnabled){
+        return true;
+      }
+
+      return false;
+    }
   };
 });

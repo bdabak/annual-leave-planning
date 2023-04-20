@@ -166,7 +166,7 @@ sap.ui.define(
           this.setPageProperty("Visible", false);
           this.openBusyFragment("pleaseWait", []);
 
-          this._refreshHeader()
+          $.when(this._refreshLegend(), this._refreshHeader())
             .done(
               function () {
                 this.closeBusyFragment();
@@ -308,6 +308,42 @@ sap.ui.define(
           }
         },
 
+        _refreshLegend: function () {
+          var p = $.Deferred();
+          var that = this;
+          var oModel = this.getModel();
+
+          oModel.read("/LegendSet", {
+            urlParameters: {
+              $expand: "LegendItemSet",
+            },
+            success: function (o, r) {
+              var lg = [];
+
+              $.each(o.results, function (i, r) {
+                var lgr = _.clone(_.omit(r, ["__metadata", "LegendItemSet"]));
+
+                lgr["LegendItemSet"] = [];
+                lgr.Selected = true;
+                $.each(r.LegendItemSet?.results, function (j, e) {
+                  var li = _.clone(_.omit(e, ["__metadata"]));
+                  li.Selected = true;
+                  lgr["LegendItemSet"].push(li);
+                });
+
+                lg.push(lgr);
+              });
+
+              that.setPageProperty("LegendGroup", lg);
+              // console.log(lg);
+              p.resolve(true);
+            },
+            error: function (e) {
+              p.reject(e);
+            },
+          });
+          return p;
+        },
         _refreshHeader: function () {
           var p = $.Deferred();
           var that = this;
@@ -323,7 +359,10 @@ sap.ui.define(
                   dateUtilities.convertDateToPeriod(o.QuotaAccrualBeginDate)
                 );
               }
-              that.setPageProperty("Header", _.clone(o));
+              that.setPageProperty(
+                "Header",
+                _.clone(_.omit(o, ["__metadata"]))
+              );
               that._refreshCalendar(null).then(function () {
                 p.resolve(true);
               });
@@ -381,6 +420,7 @@ sap.ui.define(
 
         _setCalendarData: function (o) {
           var p = $.Deferred();
+          var that = this;
 
           /* Holiday calendar */
           var r = o.HolidayCalendarSet.results;
@@ -388,6 +428,7 @@ sap.ui.define(
             HolidayList: {},
             HolidayInfo: [],
           };
+          var a = that._getLegendAttributes("HL", null);
           $.each(r, function (i, l) {
             if (!hC.HolidayList.hasOwnProperty(l.Year)) {
               hC.HolidayList[l.Year] = [];
@@ -405,7 +446,10 @@ sap.ui.define(
               }
 
               $.each(h?.HolidayDateSet?.results, function (k, d) {
-                hC.HolidayList[l.Year].push(_.clone(_.omit(d, ["__metadata"])));
+                hC.HolidayList[l.Year].push({
+                  ..._.clone(_.omit(d, ["__metadata"])),
+                  LegendAttributes: a,
+                });
               });
             });
           });
@@ -418,22 +462,27 @@ sap.ui.define(
           var b = o.PlannedLeaveSet.results;
           $.each(b, function (i, l) {
             var e = _.clone(_.omit(l, ["__metadata"]));
+
+            var a = that._getLegendAttributes("PL", e);
+
             pL.push({
               EventId: eventUtilities.createEventId(),
               ...e,
+              LegendAttributes: { ...a },
             });
           });
 
           this.setProperty("PlannedLeaves", pL);
 
-
           var aL = [];
           var a = o.LeaveRequestSet.results;
           $.each(a, function (i, l) {
             var e = _.cloneDeep(_.omit(l, ["__metadata"]));
+            var a = that._getLegendAttributes("AL", e);
             aL.push({
               EventId: eventUtilities.createEventId(),
               ...e,
+              LegendAttributes: { ...a },
             });
           });
 
@@ -755,7 +804,7 @@ sap.ui.define(
             },
             filters: aFilters,
             success: function (o, r) {
-              console.log(o);
+              // console.log(o);
               p.resolve(o);
             },
             error: function (e) {
@@ -771,7 +820,10 @@ sap.ui.define(
           var oLeaveModel = this.getModel("leaveRequest");
 
           this._getAbsenceTypeCustomizing().then(function (aAbsence) {
-            var oAbsence = _.find(aAbsence.results, ["AbsenceTypeCode", "0010"]);
+            var oAbsence = _.find(aAbsence.results, [
+              "AbsenceTypeCode",
+              "0010",
+            ]);
 
             if (!oAbsence) {
               return;
@@ -793,10 +845,11 @@ sap.ui.define(
             };
             oLeaveModel.create("/LeaveRequestCollection", oLeaveRequest, {
               success: function (o, r) {
-                console.dir(o);
+                // console.dir(o);
+                //TODO: Success messages
               },
               error: function (e) {
-                console.dir(e);
+                // console.dir(e);
                 that.closeBusyFragment();
                 that._showServiceError(e);
               },
@@ -962,6 +1015,75 @@ sap.ui.define(
               that._showServiceError(oError);
             },
           });
+        },
+
+        _getLegendAttributes: function (s, e) {
+          var g = this.getPageProperty("LegendGroup") || [];
+
+          if (g.length === 0) {
+            return null;
+          }
+
+          var r = _.filter(g, ["DataSource", s]) || [];
+
+          if (r.length === 0) {
+            return null;
+          }
+
+          var f;
+          var g;
+
+          switch (s) {
+            case "HL":
+              return {
+                LegendGroupName: r[0].LegendGroupName,
+                LegendItemCount: 1,
+                ...r[0].LegendItemSet[0]
+              };
+            case "PL":
+              $.each(r, function (i, l) {
+                g = l;
+                f =
+                  _.find(l.LegendItemSet, {
+                    EventType: e.LeaveType,
+                    EventStatus: e.LeaveStatus,
+                  }) || null;
+                if (f !== null) {
+                  return false;
+                }
+              });
+
+              return {
+                LegendGroupName: g.LegendGroupName,
+                LegendItemCount: g.LegendItemSet.length,
+                ...f
+              };
+            case "AL":
+              $.each(r, function (i, l) {
+                g = l;
+                f =
+                  _.find(l.LegendItemSet, function (y) {
+                    if (y.EventStatus.includes(";")) {
+                      var z = y.EventStatus.split(";");
+                      return z.includes(e.StatusCode);
+                    } else {
+                      return y.EventStatus === e.StatusCode;
+                    }
+                  }) || null;
+                if (f !== null) {
+                  return false;
+                }
+              });
+
+              return {
+                LegendGroupName: g.LegendGroupName,
+                LegendItemCount: g.LegendItemSet.length,
+                ...f
+              };
+
+            default:
+              return null;
+          }
         },
 
         onCallDatePicker: function (e) {
@@ -1348,6 +1470,7 @@ sap.ui.define(
           var that = this;
 
           $.each(l, function (i, e) {
+            // console.log(e);
             eventList.push(
               new Event({
                 eventId: e.eventId,

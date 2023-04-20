@@ -49,13 +49,15 @@
 										multiselect="false"
 										items="{planModel>LeaveTypes}"
 									>
-										<items>
+										<items> 
 											<PickerListWidgetItem
 												id="FormPickerItemLeaveType"
 												icon="{planModel>Color}"
 												key="{planModel>Type}"
 												value="{planModel>Description}"
 												selected="{= ${planModel>EventEdit/LeaveType/Key} === ${planModel>Type} }"
+				
+												visible="{parts:[{path:'planModel>Type'},{path:'planModel>EventEdit'}, {path:'planModel>Header'}], formatter:'.formatter.getLeaveTypeVisible'}"
 											/>
 										</items>
 									</PickerListWidget>

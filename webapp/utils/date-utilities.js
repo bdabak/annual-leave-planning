@@ -34,10 +34,10 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
     },
     convertDateToPeriod: function (d) {
       var m;
-      if(d === null || d === undefined){
-         m = moment(new Date());
-      }else{
-         m = moment(d, "DD.MM.YYYY");
+      if (d === null || d === undefined) {
+        m = moment(new Date());
+      } else {
+        m = moment(d, "DD.MM.YYYY");
       }
 
       return this.getPeriod(m);
@@ -48,17 +48,19 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
       return m.format("DD.MM.YYYY");
     },
 
-    convertPeriodToDateObject: function(p){
-      var m = moment(p.day + "." + p.month + "." + p.year, "DD.MM.YYYY").hour(3);
+    convertPeriodToDateObject: function (p) {
+      var m = moment(p.day + "." + p.month + "." + p.year, "DD.MM.YYYY").hour(
+        3
+      );
       var d = m.toDate();
 
       return d;
     },
 
-    calculateOffsetDate: function(d, o, y){
+    calculateOffsetDate: function (d, o, y) {
       var m = moment(d);
 
-      o === "+" ? m.add(y, "y").subtract(1,"d") : m.subtract(y,"y");
+      o === "+" ? m.add(y, "y").subtract(1, "d") : m.subtract(y, "y");
 
       return m.toDate();
     },
@@ -178,8 +180,7 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
     },
 
     convertToDate: function (d) {
-
-      if(!d){
+      if (!d) {
         return null;
       }
 
@@ -203,9 +204,9 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
 
     checkHolidaysVisible: function () {
       //var s = _.find(this._legendSettings, ["type", "holiday"]);
-      var s = _.find(this.getProxyModelProperty("/Page/Legend"), [
-        "Type",
-        "holiday",
+      var s = _.find(this.getProxyModelProperty("/Page/LegendGroup"), [
+        "DataSource",
+        "HL",
       ]);
 
       if (s && s?.Selected) {
@@ -217,9 +218,9 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
 
     checkPlannedVisible: function () {
       //var s = _.find(this._legendSettings, ["type", "holiday"]);
-      var s = _.find(this.getProxyModelProperty("/Page/Legend"), [
-        "Type",
-        "planned",
+      var s = _.find(this.getProxyModelProperty("/Page/LegendGroup"), [
+        "DataSource",
+        "PL",
       ]);
 
       if (s && s?.Selected) {
@@ -229,9 +230,9 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
       }
     },
     checkAnnualVisible: function () {
-      var s = _.find(this.getProxyModelProperty("/Page/Legend"), [
-        "Type",
-        "annual",
+      var s = _.find(this.getProxyModelProperty("/Page/LegendGroup"), [
+        "DataSource",
+        "AL",
       ]);
 
       if (s && s?.Selected) {
@@ -267,10 +268,7 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
       if (!v) {
         return null;
       }
-      return {
-        HolidayName: v.HolidayName,
-        DayClass: v.DayClass,
-      };
+      return v;
     },
     checkDatePlanned: function (d) {
       if (!this.checkPlannedVisible()) {
@@ -279,7 +277,7 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
 
       var m = moment(d, "DD.MM.YYYY");
       m.hour(3);
-     
+
       //--Search in planned leaves
       var pL = _.find(this.getPlannedLeaves(), function (l, i) {
         if (
@@ -292,8 +290,62 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
       if (!pL) {
         return null;
       }
-      return true;
+      return pL;
     },
+
+    // getLegendAttributes: function (s, e) {
+    //   var g = this.getProxyModelProperty("/Page/LegendGroup") || [];
+
+    //   if (g.length === 0) {
+    //     return null;
+    //   }
+
+    //   var r = _.filter(g, ["DataSource", s]) || [];
+
+    //   if (r.length === 0) {
+    //     return null;
+    //   }
+
+    //   var f;
+
+    //   switch (s) {
+    //     case "HL":
+    //       return r[0].LegendItemSet[0];
+    //     case "PL":
+    //       $.each(r, function (i, l) {
+    //         f =
+    //           _.find(l.LegendItemSet, {
+    //             EventType: e.LeaveType,
+    //             EventStatus: e.LeaveStatus,
+    //           }) || null;
+    //         if (f !== null) {
+    //           return false;
+    //         }
+    //       });
+
+    //       return f;
+    //     case "AL":
+    //       $.each(r, function (i, l) {
+    //         f =
+    //           _.find(l.LegendItemSet, function(y){
+    //             if(y.EventStatus.includes(";")){
+    //               var z = y.EventStatus.split(";") ;
+    //               return z.includes(e.StatusCode);
+    //             }else{
+    //               return y.EventStatus === e.StatusCode;
+    //             }
+    //           }) || null;
+    //         if (f !== null) {
+    //           return false;
+    //         }
+    //       });
+
+    //       return f;
+
+    //     default:
+    //       return null;
+    //   }
+    // },
 
     checkDateAnnual: function (d) {
       if (!this.checkAnnualVisible()) {
@@ -314,12 +366,13 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
       if (!pL) {
         return null;
       }
-      return true;
+      return pL;
     },
 
     checkDateIsSelectable: function (d) {
       var eSD =
-        this.getProxyModelProperty("/Page/Header/QuotaAccrualBeginDate") || null;
+        this.getProxyModelProperty("/Page/Header/QuotaAccrualBeginDate") ||
+        null;
       if (eSD) {
         var s = moment(eSD);
         var e = s.clone().add(1, "y");
@@ -367,7 +420,8 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
       var that = this;
       var p = this.getProxyModelProperty("/Page/Period") || null;
       var eSD =
-        this.getProxyModelProperty("/Page/Header/QuotaAccrualBeginDate") || null;
+        this.getProxyModelProperty("/Page/Header/QuotaAccrualBeginDate") ||
+        null;
       if (eSD) {
         var sP = moment(eSD);
         sP.year(p.year);
@@ -405,6 +459,7 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
           if (l) {
             var sD = moment(c.StartDate);
             var eD = moment(c.EndDate);
+
             var e = {
               eventId: c.EventId,
               eventType: "annual",
@@ -428,7 +483,7 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
                 monthText: eD.format("MMM"),
                 year: eD.format("YYYY"),
               },
-              duration: c.UsedQuota
+              duration: c.Kaltg,
             };
 
             eL.push(e);
@@ -467,7 +522,7 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
                 monthText: eD.format("MMM"),
                 year: eD.format("YYYY"),
               },
-              duration: c.UsedQuota
+              duration: c.UsedQuota,
             };
 
             eL.push(e);
@@ -483,7 +538,9 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
     },
 
     getDayAttributes: function (d, a = false) {
-      var m = moment.isMoment(d) ? d.clone().hour(3) : moment(d, "DD.MM.YYYY").hour(3);
+      var m = moment.isMoment(d)
+        ? d.clone().hour(3)
+        : moment(d, "DD.MM.YYYY").hour(3);
       var y = m.clone().format("YYYY");
       var l = [];
       var e = {};
@@ -580,69 +637,9 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
         return d;
       };
 
-      //--Search in plans
-      if (this.checkPlannedVisible()) {
-        var pC = that.getEventColor("planned");
-        $.each(this.getPlannedLeaves(), function (i, c) {
-          if (
-            m.isBetween(moment(c.StartDate), moment(c.EndDate), undefined, "[]")
-          ) {
-            var pL = findDatesBetweenPeriod(c.StartDate, c.EndDate);
-
-            var p = _.find(pL, ["date", m.toDate()]);
-            if (!p) {
-              return true;
-            }
-            e = {
-              m: m,
-              eventId: c.EventId,
-              eventType: "planned",
-              title: m.format("MMMM, ddd DD"),
-              color: pC,
-              text: "Planlı izin",
-              hasPast: !p.start,
-              hasFuture: a
-                ? p.index < pL.length - 1
-                  ? true
-                  : false
-                : ( p.index === 0 || p.day === 1 )
-                ? pL.length === 1 
-                  ? false
-                  : p.week === pL[pL.length - 1].week
-                  ? false
-                  : true
-                : p.index === pL.length - 1
-                ? false
-                : true,
-              hasOverflow: a
-                ? false
-                : p.index === 0 || p.day === 1
-                ? false
-                : true,
-              rowIndex: 0,
-              rowSpan: a
-                ? 1
-                : p.index !== 0 && p.day !== 1
-                ? 1
-                : p.day === 7 || p.index === pL.length - 1
-                ? 1
-                : pL.length - p.index + p.day - 1 > 7
-                ? 7
-                : pL.length - p.index,
-              startDate: moment(c.StartDate).format("DD MMM"),
-              endDate: moment(c.EndDate).format("DD MMM"),
-              duration: c.UsedQuota
-            };
-            l.push(e);
-          } else {
-            return true;
-          }
-        });
-      }
-
       //--Search in annual leaves
       if (this.checkAnnualVisible()) {
-        var pC = that.getEventColor("annual");
+        // var pC = that.getEventColor("annual");
         $.each(this.getAnnualLeaves(), function (i, c) {
           if (
             m.isBetween(moment(c.StartDate), moment(c.EndDate), undefined, "[]")
@@ -655,11 +652,12 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
             }
             e = {
               m: m,
-              eventId: c.eventId,
-              eventType: "annual",
+              eventId: c.EventId,
+              // eventType: "annual",
+              eventType: c.LegendAttributes.LegendGroupKey + "_" + c.LegendAttributes.LegendItemKey,
               title: m.format("MMMM, ddd DD"),
-              color: pC,
-              text: "Yıllık izin",
+              color: c.LegendAttributes.EventColor,
+              text: c.LegendAttributes.LegendItemCount > 1 ? c.LegendAttributes.LegendGroupName + "-" + c.LegendAttributes.LegendItemName : c.LegendAttributes.LegendGroupName,
               hasPast: !p.start,
               hasFuture: a
                 ? p.index < pL.length - 1
@@ -691,7 +689,68 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
                 : pL.length - p.index,
               startDate: moment(c.startDate).format("DD MMM"),
               endDate: moment(c.endDate).format("DD MMM"),
-              duration: c.UsedQuota
+              duration: c.Kaltg,
+            };
+            l.push(e);
+          } else {
+            return true;
+          }
+        });
+      }
+
+      //--Search in plans
+      if (this.checkPlannedVisible()) {
+        // var pC = that.getEventColor("planned");
+        $.each(this.getPlannedLeaves(), function (i, c) {
+          if (
+            m.isBetween(moment(c.StartDate), moment(c.EndDate), undefined, "[]")
+          ) {
+            var pL = findDatesBetweenPeriod(c.StartDate, c.EndDate);
+
+            var p = _.find(pL, ["date", m.toDate()]);
+            if (!p) {
+              return true;
+            }
+            e = {
+              m: m,
+              eventId: c.EventId,
+              // eventType: "planned",
+              eventType: c.LegendAttributes.LegendGroupKey + "_" + c.LegendAttributes.LegendItemKey,
+              title: m.format("MMMM, ddd DD"),
+              color: c.LegendAttributes.EventColor,
+              text: c.LegendAttributes.LegendItemCount > 1 ? c.LegendAttributes.LegendGroupName + "-" + c.LegendAttributes.LegendItemName : c.LegendAttributes.LegendGroupName,
+              hasPast: !p.start,
+              hasFuture: a
+                ? p.index < pL.length - 1
+                  ? true
+                  : false
+                : p.index === 0 || p.day === 1
+                ? pL.length === 1
+                  ? false
+                  : p.week === pL[pL.length - 1].week
+                  ? false
+                  : true
+                : p.index === pL.length - 1
+                ? false
+                : true,
+              hasOverflow: a
+                ? false
+                : p.index === 0 || p.day === 1
+                ? false
+                : true,
+              rowIndex: 0,
+              rowSpan: a
+                ? 1
+                : p.index !== 0 && p.day !== 1
+                ? 1
+                : p.day === 7 || p.index === pL.length - 1
+                ? 1
+                : pL.length - p.index + p.day - 1 > 7
+                ? 7
+                : pL.length - p.index,
+              startDate: moment(c.StartDate).format("DD MMM"),
+              endDate: moment(c.EndDate).format("DD MMM"),
+              duration: c.UsedQuota,
             };
             l.push(e);
           } else {
@@ -702,7 +761,7 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
 
       //--Search in holidays
       if (this.checkHolidaysVisible()) {
-        var hC = that.getEventColor("holiday");
+        // var hC = that.getEventColor("holiday");
 
         var hL =
           _.filter(this.getHolidayCalendar()?.HolidayList[y], {
@@ -737,9 +796,10 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
               e = {
                 m: m,
                 eventId: null,
-                eventType: "holiday",
+                // eventType: "holiday",
+                eventType: h.LegendAttributes.LegendGroupKey,
                 title: m.format("MMMM, ddd DD"),
-                color: hC,
+                color: h.LegendAttributes.EventColor,
                 text: s.HolidayGroupText,
                 hasPast: sI > 0,
                 hasFuture: calcHasFuture(sI, sT, y),
@@ -758,7 +818,7 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
                     y,
                   "DD.MM.YYYY"
                 ).format("DD MMM"),
-                duration: null
+                duration: null,
               };
               l.push(e);
             }

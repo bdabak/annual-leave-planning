@@ -27,10 +27,10 @@ sap.ui.define(
             bindable: true,
             defaultValue: false,
           },
-          selectedDate:{
+          selectedDate: {
             type: "string",
             bindable: true,
-          }
+          },
         },
         aggregations: {
           _cell: {
@@ -55,7 +55,7 @@ sap.ui.define(
           .setDatePicker(dP);
         oRM.openStart("div", oControl); //Main
 
-        if(!bSelectable){
+        if (!bSelectable) {
           oRM.class("spp-past-date");
         }
 
@@ -67,7 +67,7 @@ sap.ui.define(
           oRM.class("spp-other-month");
         }
 
-        if( s && s === e.date ){
+        if (s && s === e.date) {
           oRM.class("spp-active-day").class("spp-selected-date");
         }
 
@@ -105,38 +105,37 @@ sap.ui.define(
         return (p && p.$()) || null;
       },
       _getDayClass: function (d) {
-
         var p = dateUtilities.checkDateAnnual(d);
 
-        if(p){
-          return "spp-annual-leave";
+        if (p) {
+          return p?.LegendAttributes?.EventColor;
         }
 
         p = dateUtilities.checkDatePlanned(d);
 
-        if(p){
-          return "spp-planned-leave";
+        if (p) {
+          return p?.LegendAttributes?.EventColor;
         }
-
 
         var h = dateUtilities.checkDateHoliday(d);
 
         if (!h) {
           return null;
+        } else {
+          return h?.LegendAttributes?.EventColor;
         }
         // console.dir(h);
 
-
-        if (h.DayClass === "1") {
-          return "spp-holiday-all-day";
-        }
-        if (h.DayClass === "2" || h.DayClass === "5") {
-          // return "spp-holiday-all-day";
-          return "spp-holiday-half-day";
-        }
+        // if (h.DayClass === "1") {
+        //   return "spp-holiday-all-day";
+        // }
+        // if (h.DayClass === "2" || h.DayClass === "5") {
+        //   // return "spp-holiday-all-day";
+        //   return "spp-holiday-half-day";
+        // }
       },
       ontap: function () {
-        if(this.getDatePicker()){
+        if (this.getDatePicker()) {
           return;
         }
         var d = this.getDay().date;
@@ -144,7 +143,7 @@ sap.ui.define(
         if (!a) {
           return;
         }
-        
+
         eventUtilities.publishEvent("PlanningCalendar", "DisplayEventWidget", {
           Element: this.$(),
           Day: a,

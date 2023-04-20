@@ -1,5 +1,5 @@
 .spp-stat-card{
-    margin-bottom: clamp(0.5rem, 0.2289rem + 1.2048vw, 1rem);;
+    margin-bottom: clamp(0.5rem, 0.4474rem + 0.2807vw, 0.7rem);
     width: 70%;
 }
 
@@ -41,7 +41,7 @@
 .spp-stat-card-value{
     font-weight: 500;
     font-size: clamp(0.7rem, 0.6065rem + 0.4156vw, 1.1rem);
-    line-height: clamp(2rem, 1.4578rem + 2.4096vw, 3rem);;
+    line-height: clamp(2rem, 1.4578rem + 2.4096vw, 2.5rem);;
     color: #323c43;
 }
 

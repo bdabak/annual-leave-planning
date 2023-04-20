@@ -2,13 +2,13 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
   "use strict";
 
   return Control.extend(
-    "com.thy.ux.annualleaveplanning.ui.Legend",
+    "com.thy.ux.annualleaveplanning.ui.LegendGroup",
     {
       metadata: {
         properties: {},
         aggregations: {
           items: {
-            type: "com.thy.ux.annualleaveplanning.ui.LegendItem",
+            type: "com.thy.ux.annualleaveplanning.ui.LegendGroupItem",
             multiple: true,
             singularName: "item",
           },
@@ -18,8 +18,10 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
         },
       },
       renderer: function (oRM, oControl) {
-        oRM.openStart("ul", oControl)
+        oRM.openStart("ul", oControl); //Main
+        oRM
           .class("spp-widget")
+          .class("spp-list-group")
           .class("spp-list")
           .class("spp-resourcefilter")
           .class("spp-multiselect")
@@ -31,8 +33,6 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
           // .style("flex", "1 1 auto")
              .style("min-height","50px")
              .style("overflow","hidden auto");
-
-
         oRM.openEnd();
         $.each(oControl.getItems(), function(i,l){
             oRM.renderControl(l);

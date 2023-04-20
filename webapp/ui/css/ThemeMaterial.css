@@ -11192,6 +11192,7 @@ body.spp-container.spp-outer {
   margin: 0;
   -webkit-user-select: none;
   user-select: none;
+  font-size: clamp(0.6rem, 0.5474rem + 0.2807vw, 0.8rem);
 }
 
 .spp-list.spp-floating {
@@ -11248,11 +11249,41 @@ body.spp-container.spp-outer {
   overflow: hidden;
   white-space: nowrap;
   display: flex;
+}
+
+.spp-group-list-item .spp-list{
+  margin-left:2em !important;
+}
+
+.spp-list-item-row {
   flex-direction: row;
   align-items: center;
 }
 
-.spp-list-item.spp-hidden {
+.spp-list-item-col {
+  flex-direction: column;
+  justify-content: center;
+}
+
+.spp-list-item-header{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.spp-list-item-header-title{
+  display: flex;
+  align-items: center;
+}
+
+.spp-list-caret{
+  margin-left:0.5rem;
+  font-size: 1.5em;
+  color: var(--color-list-caret);
+}
+
+.spp-list-item.spp-hidden
+{
   display: none;
 }
 
@@ -14250,14 +14281,14 @@ a.spp-menuitem:hover .spp-menu-text {
   --b-fa-font-solid: normal 900 1em/1 "Font Awesome 6 Free";
 }
 
-@font-face {
+/* @font-face {
   font-family: "Font Awesome 6 Free";
   font-style: normal;
   font-weight: 900;
   font-display: block;
   src: url(fonts/fa-solid-900.woff2) format("woff2"),
     url(fonts/fa-solid-900.ttf) format("truetype");
-}
+} */
 
 .fas,
 .spp-fa-solid {
@@ -16769,14 +16800,14 @@ body.spp-using-keyboard .spp-grid-header:focus-within,
   --b-fa-font-solid: normal 900 1em/1 "Font Awesome 6 Free";
 }
 
-@font-face {
+/* @font-face {
   font-family: "Font Awesome 6 Free";
   font-style: normal;
   font-weight: 900;
   font-display: block;
   src: url(fonts/fa-solid-900.woff2) format("woff2"),
     url(fonts/fa-solid-900.ttf) format("truetype");
-}
+} */
 
 .fas,
 .spp-fa-solid {
@@ -19888,138 +19919,21 @@ button.spp-button.spp-recurrencelegendbutton {
   opacity: 0.6;
 }
 
-.spp-resourcefilter .spp-selected .spp-icon:before {
+.spp-selected-full > .spp-icon:before {
   content: "\f14a";
   opacity: 1;
 }
 
-.spp-sch-red {
-  background-color: #ef5350;
+.spp-selected-partial > .spp-list-item-header > .spp-list-item-header-title > .spp-icon:before {
+  content: "\f146";
+  opacity: 1;
 }
 
-.spp-sch-foreground-red {
-  color: #ef5350;
+.spp-selected-full > .spp-list-item-header > .spp-list-item-header-title > .spp-icon:before {
+  content: "\f14a";
+  opacity: 1;
 }
 
-.spp-sch-pink {
-  background-color: #ec407a;
-}
-
-.spp-sch-foreground-pink {
-  color: #ec407a;
-}
-
-.spp-sch-purple {
-  background-color: #ab47bc;
-}
-
-.spp-sch-foreground-purple {
-  color: #ab47bc;
-}
-
-.spp-sch-violet {
-  background-color: #7e57c2;
-}
-
-.spp-sch-foreground-violet {
-  color: #7e57c2;
-}
-
-.spp-sch-indigo {
-  background-color: #5c6bc0;
-}
-
-.spp-sch-foreground-indigo {
-  color: #5c6bc0;
-}
-
-.spp-sch-blue {
-  background-color: #42a5f5;
-}
-
-.spp-sch-foreground-blue {
-  color: #42a5f5;
-}
-
-.spp-sch-cyan {
-  background-color: #26c6da;
-}
-
-.spp-sch-foreground-cyan {
-  color: #26c6da;
-}
-
-.spp-sch-magenta {
-  background-color: #f0f;
-}
-
-.spp-sch-foreground-magenta {
-  color: #f0f;
-}
-
-.spp-sch-teal {
-  background-color: #26a69a;
-}
-
-.spp-sch-foreground-teal {
-  color: #26a69a;
-}
-
-.spp-sch-green {
-  background-color: #66bb6a;
-}
-
-.spp-sch-foreground-green {
-  color: #66bb6a;
-}
-
-.spp-sch-lime {
-  background-color: #d4e157;
-}
-
-.spp-sch-foreground-lime {
-  color: #d4e157;
-}
-
-.spp-sch-yellow {
-  background-color: #fdd835;
-}
-
-.spp-sch-foreground-yellow {
-  color: #fdd835;
-}
-
-.spp-sch-orange {
-  background-color: #ffa726;
-}
-
-.spp-sch-foreground-orange {
-  color: #ffa726;
-}
-
-.spp-sch-deep-orange {
-  background-color: #ff7043;
-}
-
-.spp-sch-foreground-deep-orange {
-  color: #ff7043;
-}
-
-.spp-sch-gray {
-  background-color: #a0a0a0;
-}
-
-.spp-sch-foreground-gray {
-  color: #a0a0a0;
-}
-
-.spp-sch-gantt-green {
-  background-color: #a5d8a7;
-}
-
-.spp-sch-foreground-gantt-green {
-  color: #a5d8a7;
-}
 
 .spp-sch-color-red {
   --event-primary-color-h: 1.1320754717deg;
@@ -21136,14 +21050,14 @@ button.spp-button.spp-recurrencelegendbutton {
   --b-fa-font-solid: normal 900 1em/1 "Font Awesome 6 Free";
 }
 
-@font-face {
+/* @font-face {
   font-family: "Font Awesome 6 Free";
   font-style: normal;
   font-weight: 900;
   font-display: block;
   src: url(fonts/fa-solid-900.woff2) format("woff2"),
     url(fonts/fa-solid-900.ttf) format("truetype");
-}
+} */
 
 .fas,
 .spp-fa-solid {
@@ -21190,10 +21104,7 @@ button.spp-button.spp-recurrencelegendbutton {
   gap: 0.3em;
 }
 
-.spp-cal-event-bar-container .spp-solid-bar .spp-event-time,
-.spp-cal-event-bar-container .spp-solid-bar .spp-cal-event-desc {
-  color: #fdfdfd;
-}
+
 
 .spp-cal-event-duration {
   margin-left: 0.3em;
@@ -21274,7 +21185,7 @@ button.spp-button.spp-recurrencelegendbutton {
 .spp-cal-event-bar-container
   .spp-cal-event-wrap:not(.spp-allday)
   .spp-cal-event {
-  color: var(--cal-event-color);
+  color: var(--cal-event-color-set);
 }
 
 .spp-cal-color-red {
@@ -22279,7 +22190,7 @@ button.spp-button.spp-recurrencelegendbutton {
 
 .spp-dayview-day-container .spp-calendar-cell .spp-cal-event {
   align-items: stretch;
-  background-color: var(--cal-event-color);
+  background-color: var(--cal-event-color-set);
   color: #606060;
   border-radius: 0;
   position: relative;
@@ -22987,12 +22898,10 @@ button.spp-button.spp-recurrencelegendbutton {
 
 .spp-cal-minimal-event-container .spp-cal-event {
   padding: 0;
-  background-color: var(--cal-event-color);
+  background-color: var(--cal-event-color-set);
 }
 
-.spp-solid-bar .spp-cal-event {
-  background-color: var(--cal-event-color);
-}
+
 
 .spp-cal-event-desc-complex {
   display: flex;
@@ -23476,7 +23385,7 @@ button.spp-button.spp-recurrencelegendbutton {
 }
 
 .spp-calendar .spp-sidebar-content .spp-resourcefilter .spp-list-item {
-  padding: 0.5em 0.5em 0.5em 0;
+  padding: 0.3em 0.3em 0.3em 0;
 }
 
 .spp-calendar .spp-sidebar-content .spp-resourcefilter .spp-icon {
@@ -23689,9 +23598,10 @@ button.spp-button.spp-recurrencelegendbutton {
 
 .spp-yearview-content .spp-calendar-cell.spp-today .spp-calendar-cell-inner {
   border-radius: 50%;
-  background-color: #5fa2dd;
+  /* background-color: #5fa2dd; */
   color: #fff;
   font-weight: 700;
+  border:2px solid #324e66;
 }
 
 .spp-yearview-content
@@ -23875,7 +23785,7 @@ button.spp-button.spp-recurrencelegendbutton {
   overflow: hidden;
   left: 0;
   right: 0;
-  --timerange-color: var(--cal-event-color);
+  --timerange-color: var(--cal-event-color-set);
   --timerange-footer-color: rgba(205, 220, 57, 0.5);
   --timerange-border-size: 0.15em;
   --timerange-line-size: 0.2em;
@@ -24454,75 +24364,7 @@ button.spp-button.spp-recurrencelegendbutton {
   display: block;
 }
 
-.spp-planned-leave:not(.spp-other-month) {
-  background-color: var(--color-blue);
-  color: #1a1a1a !important;
-}
 
-.spp-planned-leave-event:not(.spp-other-month) .spp-cal-event {
-  background-color: var(--color-blue) !important;
-}
-
-.spp-planned-leave:not(.spp-other-month):hover .spp-cal-event {
-  background-color: var(--color-blue-hover) !important;
-}
-
-.spp-annual-leave:not(.spp-other-month) {
-  background-color: var(--color-green);
-  color: #1a1a1a !important;
-}
-
-.spp-annual-leave-event:not(.spp-other-month) .spp-cal-event {
-  background-color: var(--color-green) !important;
-}
-
-.spp-annual-leave:not(.spp-other-month):hover .spp-cal-event {
-  background-color: var(--color-green-hover) !important;
-}
-
-.spp-holiday-half-day:not(.spp-other-month) {
-  background-color: var(--color-orange);
-  color: #1a1a1a !important;
-}
-
-.spp-holiday-all-day:not(.spp-other-month) {
-  background-color: var(--color-orange);
-  color: #1a1a1a !important;
-}
-
-.spp-holiday-all-day-event:not(.spp-other-month) .spp-cal-event {
-  background-color: var(--color-orange) !important;
-}
-
-.spp-holiday-half-day:not(.spp-other-month):hover .spp-calendar-cell-inner {
-  background-color: var(--color-orange-hover) !important;
-}
-.spp-holiday-all-day:not(.spp-other-month):hover .spp-calendar-cell-inner {
-  background-color: var(--color-orange-hover) !important;
-}
-
-.spp-planned-leave:not(.spp-other-month):hover .spp-calendar-cell-inner {
-  background-color: var(--color-blue-hover) !important;
-}
-
-.spp-annual-leave:not(.spp-other-month):hover .spp-calendar-cell-inner {
-  background-color: var(--color-green-hover) !important;
-}
-
-.spp-holiday-half-day.spp-other-month {
-  background-color: rgb(219, 219, 219);
-}
-
-.spp-holiday-all-day.spp-other-month {
-  background-color: rgb(219, 219, 219);
-}
-
-.spp-planned-leave.spp-other-month {
-  background-color: #ccdcf4;
-}
-.spp-annual-leave.spp-other-month {
-  background-color: #b3ceb6;
-}
 
 .spp-past-date:hover .spp-calendar-cell-inner {
   cursor: not-allowed !important;
@@ -24784,4 +24626,296 @@ button.spp-button.spp-recurrencelegendbutton {
   flex-direction: column;
   overflow-y: auto;
   max-height: 400px;
+}
+
+
+
+.spp-planned-leave:not(.spp-other-month) {
+  background-color: var(--color-blue);
+  color: #1a1a1a !important;
+}
+
+.spp-planned-leave-event:not(.spp-other-month) .spp-cal-event {
+  background-color: var(--color-blue) !important;
+}
+
+.spp-planned-leave:not(.spp-other-month):hover .spp-cal-event {
+  background-color: var(--color-blue-hover) !important;
+}
+
+.spp-annual-leave:not(.spp-other-month) {
+  background-color: var(--color-green);
+  color: #1a1a1a !important;
+}
+
+.spp-annual-leave-event:not(.spp-other-month) .spp-cal-event {
+  background-color: var(--color-green) !important;
+}
+
+.spp-annual-leave:not(.spp-other-month):hover .spp-cal-event {
+  background-color: var(--color-green-hover) !important;
+}
+
+.spp-holiday-half-day:not(.spp-other-month) {
+  background-color: var(--color-orange);
+  color: #1a1a1a !important;
+}
+
+.spp-holiday-all-day:not(.spp-other-month) {
+  background-color: var(--color-orange);
+  color: #1a1a1a !important;
+}
+
+.spp-holiday-all-day-event:not(.spp-other-month) .spp-cal-event {
+  background-color: var(--color-orange) !important;
+}
+
+.spp-holiday-half-day:not(.spp-other-month):hover .spp-calendar-cell-inner {
+  background-color: var(--color-orange-hover) !important;
+}
+.spp-holiday-all-day:not(.spp-other-month):hover .spp-calendar-cell-inner {
+  background-color: var(--color-orange-hover) !important;
+}
+
+.spp-planned-leave:not(.spp-other-month):hover .spp-calendar-cell-inner {
+  background-color: var(--color-blue-hover) !important;
+}
+
+.spp-annual-leave:not(.spp-other-month):hover .spp-calendar-cell-inner {
+  background-color: var(--color-green-hover) !important;
+}
+
+.spp-holiday-half-day.spp-other-month {
+  background-color: rgb(219, 219, 219);
+}
+
+.spp-holiday-all-day.spp-other-month {
+  background-color: rgb(219, 219, 219);
+}
+
+.spp-planned-leave.spp-other-month {
+  background-color: #ccdcf4;
+}
+.spp-annual-leave.spp-other-month {
+  background-color: #b3ceb6;
+}
+
+.spp-sch-red {
+  background-color: var(--cal-event-color-red);
+}
+
+.spp-sch-foreground-red {
+  color: var(--cal-event-color-red);
+}
+
+.spp-sch-pink {
+  background-color: var(--cal-event-color-pink);
+}
+
+.spp-sch-foreground-pink {
+  color: var(--cal-event-color-pink);
+}
+
+.spp-sch-purple {
+  background-color: var(--cal-event-color-purple);
+}
+
+.spp-sch-foreground-purple {
+  color: var(--cal-event-color-purple);
+}
+
+.spp-sch-violet {
+  background-color: var(--cal-event-color-violet);
+}
+
+.spp-sch-foreground-violet {
+  color: var(--cal-event-color-violet);
+}
+
+.spp-sch-indigo {
+  background-color: var(--cal-event-color-indigo);
+}
+
+.spp-sch-foreground-indigo {
+  color: var(--cal-event-color-indigo);
+}
+
+.spp-sch-blue {
+  background-color: var(--cal-event-color-blue);
+}
+
+.spp-sch-foreground-blue {
+  color: var(--cal-event-color-blue);
+}
+
+.spp-sch-cyan {
+  background-color: var(--cal-event-color-cyan);
+}
+
+.spp-sch-foreground-cyan {
+  color: var(--cal-event-color-cyan);
+}
+
+.spp-sch-magenta {
+  background-color: var(--cal-event-color-magenta);
+}
+
+.spp-sch-foreground-magenta {
+  color: var(--cal-event-color-magenta);
+}
+
+.spp-sch-teal {
+  background-color: var(--cal-event-color-teal);
+}
+
+.spp-sch-foreground-teal {
+  color: var(--cal-event-color-teal);
+}
+
+.spp-sch-green {
+  background-color: var(--cal-event-color-green);
+}
+
+.spp-sch-foreground-green {
+  color: var(--cal-event-color-green);
+}
+
+.spp-sch-lime {
+  background-color: var(--cal-event-color-lime);
+}
+
+.spp-sch-foreground-lime {
+  color:var(--cal-event-color-lime);
+}
+
+.spp-sch-yellow {
+  background-color: var(--cal-event-color-yellow);
+}
+
+.spp-sch-foreground-yellow {
+  color: var(--cal-event-color-yellow);
+}
+
+.spp-sch-orange {
+  background-color: var(--cal-event-color-orange);
+}
+
+.spp-sch-foreground-orange {
+  color: var(--cal-event-color-orange);
+}
+
+.spp-sch-deep-orange {
+  background-color:  var(--cal-event-color-deep-orange);
+}
+
+.spp-sch-foreground-deep-orange {
+  color: var(--cal-event-color-deep-orange);
+}
+
+.spp-sch-gray {
+  background-color: var(--cal-event-color-gray);
+}
+
+.spp-sch-foreground-gray {
+  color:var(--cal-event-color-gray);
+}
+
+.spp-sch-gantt-green {
+  background-color: var(--cal-event-color-gantt-green);
+}
+
+.spp-sch-foreground-gantt-green {
+  color:var(--cal-event-color-gantt-green);
+}
+
+.spp-event-color-red{
+  --cal-event-color-set: var(--cal-event-color-red);
+  --cal-event-text-color-set: var(--cal-event-desc-color);
+} 
+.spp-event-color-pink{
+  --cal-event-color-set: var(--cal-event-color-pink);
+  --cal-event-text-color-set: var(--cal-event-desc-color);
+} 
+.spp-event-color-purple{
+  --cal-event-color-set: var(--cal-event-color-purple);
+  --cal-event-text-color-set: var(--cal-event-desc-color);
+} 
+.spp-event-color-violet{
+  --cal-event-color-set: var(--cal-event-color-violet);
+  --cal-event-text-color-set: var(--cal-event-desc-color);
+} 
+.spp-event-color-indigo{
+  --cal-event-color-set: var(--cal-event-color-indigo);
+  --cal-event-text-color-set: var(--cal-event-desc-color);
+} 
+.spp-event-color-blue{
+  --cal-event-color-set: var(--cal-event-color-blue);
+  --cal-event-text-color-set: var(--cal-event-desc-color);
+} 
+.spp-event-color-cyan{
+  --cal-event-color-set: var(--cal-event-color-cyan);
+  --cal-event-text-color-set: var(--cal-event-desc-color);
+} 
+.spp-event-color-magenta{
+  --cal-event-color-set: var(--cal-event-color-magenta);
+  --cal-event-text-color-set: var(--cal-event-desc-color);
+} 
+.spp-event-color-teal{
+  --cal-event-color-set: var(--cal-event-color-teal);
+  --cal-event-text-color-set: var(--cal-event-desc-color);
+} 
+.spp-event-color-green{
+  --cal-event-color-set: var(--cal-event-color-green);
+  --cal-event-text-color-set: var(--cal-event-desc-color);
+}
+.spp-event-color-gantt-green{
+  --cal-event-color-set: var(--cal-event-color-gantt-green);
+  --cal-event-text-color-set: var(--cal-event-desc-color);
+} 
+.spp-event-color-lime{
+  --cal-event-color-set: var(--cal-event-color-lime);
+  --cal-event-text-color-set: var(--cal-event-desc-color);
+} 
+.spp-event-color-yellow{
+  --cal-event-color-set: var(--cal-event-color-yellow);
+  --cal-event-text-color-set: var(--cal-event-desc-color);
+} 
+.spp-event-color-orange{
+  --cal-event-color-set: var(--cal-event-color-orange);
+  --cal-event-text-color-set: var(--cal-event-desc-color);
+} 
+.spp-event-color-deep-orange{
+  --cal-event-color-set: var(--cal-event-color-deep-orange);
+  --cal-event-text-color-set: var(--cal-event-desc-color);
+}
+.spp-event-color-gray{
+  --cal-event-color-set: var(--cal-event-color-gray);
+  --cal-event-text-color-set: var(--cal-event-desc-color);
+} 
+
+.spp-cal-event-bar-container .spp-solid-bar .spp-event-time,
+.spp-cal-event-bar-container .spp-solid-bar .spp-cal-event-desc {
+  color: var(--cal-event-desc-color);
+}
+
+.spp-solid-bar .spp-cal-event ,
+.spp-yearview-content .spp-calendar-cell:not(.spp-other-month) {
+  background-color: var(--cal-event-color-set);
+  color:  var(--cal-event-text-color-set);
+}
+
+.spp-yearview-content .spp-calendar-cell.spp-other-month:not(.spp-cal-empty-cell) {
+  background-color: var(--cal-event-other-month);
+  color: inherit;
+}
+
+.spp-yearview-content .spp-calendar-cell.spp-other-month.spp-cal-empty-cell {
+  background-color: var(--cal-event-other-month-empty);
+  color: inherit;
+  opacity: 0.7;
+}
+
+.spp-yearview-content .spp-calendar-cell:not(.spp-other-month):hover .spp-calendar-cell-inner {
+  background-color: var(--cal-event-color-set);
+  filter: brightness(85%);
 }
