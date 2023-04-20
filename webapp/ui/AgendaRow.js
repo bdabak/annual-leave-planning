@@ -92,12 +92,13 @@ sap.ui.define(
           startDate: r.startDate,
           endDate: r.endDate,
           forAgenda: true,
-          editable: r.eventType === "planned",
+          editable: r.editable,
+          splittable: r.splittable,
+          deletable: r.deletable,
           duration: formatter.suppressZeroDecimal(r.duration) + " " + this.getModel("i18n").getResourceBundle().getText("days")
         });
 
         eC.addAggregation("events", n);
-
 
         oControl.setAggregation("eventContainer", eC);
         oRM.renderControl(eC);

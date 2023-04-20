@@ -214,7 +214,8 @@ sap.ui.define(
 
         $(".spp-cal-tentative-event")
           .not(".spp-other-month")
-          .addClass("spp-datepicker-1-to-3-events");
+          .addClass("spp-create-event-active");
+          // .addClass("spp-create-event-active");
         $(".spp-cal-tentative-event").removeClass("spp-cal-tentative-event");
 
         var b = $(".spp-editing");
@@ -222,7 +223,8 @@ sap.ui.define(
           this._refreshCellStates();
           return;
         }
-        var d = $(".spp-datepicker-1-to-3-events");
+        var d = $(".spp-create-event-active");
+        // var d = $(".spp-datepicker-1-to-3-events");
 
         if (d && d?.length > 0) {
           var startDate = d.first().data("date");
@@ -243,6 +245,7 @@ sap.ui.define(
         $(".spp-calendar-cell")
           .removeClass("spp-editing")
           .removeClass("spp-cal-tentative-event")
+          .removeClass("spp-create-event-active")
           .removeClass("spp-datepicker-1-to-3-events");
         this._unbindTouchEvents();
       },

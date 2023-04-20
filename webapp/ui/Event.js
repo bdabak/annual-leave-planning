@@ -7,7 +7,14 @@ sap.ui.define(
     "com/thy/ux/annualleaveplanning/ui/Button",
     "com/thy/ux/annualleaveplanning/utils/event-utilities",
   ],
-  function (Control, ActionSheet, Popover, VerticalLayout, Button, eventUtilities) {
+  function (
+    Control,
+    ActionSheet,
+    Popover,
+    VerticalLayout,
+    Button,
+    eventUtilities
+  ) {
     "use strict";
 
     return Control.extend("com.thy.ux.annualleaveplanning.ui.Event", {
@@ -81,15 +88,24 @@ sap.ui.define(
             bindable: true,
             defaultValue: false,
           },
+          splittable: {
+            type: "boolean",
+            bindable: true,
+            defaultValue: false,
+          },
+          deletable: {
+            type: "boolean",
+            bindable: true,
+            defaultValue: false,
+          },
           duration: {
             type: "string",
             bindable: true,
             defaultValue: null,
-          }
+          },
         },
         aggregations: {},
-        events: {
-        },
+        events: {},
       },
       renderer: function (oRM, oControl) {
         var bPast = oControl.getHasPast();
@@ -188,13 +204,13 @@ sap.ui.define(
 
         oRM.text(oControl.getText());
 
-        if(oControl.getDuration()){
+        if (oControl.getDuration()) {
           oRM
-          .openStart("span")
-          .class("spp-cal-event-duration")
-          .openEnd()
-          .text(`(${oControl.getDuration()})`)
-          .close("span");
+            .openStart("span")
+            .class("spp-cal-event-duration")
+            .openEnd()
+            .text(`(${oControl.getDuration()})`)
+            .close("span");
         }
 
         oRM.close("div");
@@ -209,7 +225,11 @@ sap.ui.define(
         oRM.close("div");
       },
       ontap: function () {
-        if (!this.getEditable()) {
+        var bEditable = this.getEditable();
+        var bSplittable = this.getSplittable();
+        var bDeletable = this.getDeletable();
+
+        if (!bEditable && !bDeletable && !bSplittable) {
           return;
         }
         var that = this;
@@ -217,10 +237,16 @@ sap.ui.define(
         var eventType = this.getProperty("eventType");
 
         if (!this._actionSheet) {
-          this._actionSheet = new ActionSheet({
-            buttons: [
+          var b = [];
+          var c = [];
+
+          if (bEditable) {
+            b.push(
               new sap.m.Button({
-                text: that.getModel("i18n").getResourceBundle().getText("editAction"),
+                text: that
+                  .getModel("i18n")
+                  .getResourceBundle()
+                  .getText("editAction"),
                 icon: "sap-icon://edit",
                 press: function () {
                   eventUtilities.publishEvent("PlanningCalendar", "EditEvent", {
@@ -228,19 +254,78 @@ sap.ui.define(
                     EventType: eventType,
                   });
                 },
-              }),
-              new sap.m.Button({
-                text: that.getModel("i18n").getResourceBundle().getText("splitAction"),
-                icon: "sap-icon://screen-split-two",
+              })
+            );
+
+            c.push(
+              new Button({
+                icon: "spp-fa-pen",
+                label: that
+                  .getModel("i18n")
+                  .getResourceBundle()
+                  .getText("editAction"),
+                solid: false,
                 press: function () {
-                  eventUtilities.publishEvent("PlanningCalendar", "SplitEvent", {
+                  that._actionSheet.close();
+                  eventUtilities.publishEvent("PlanningCalendar", "EditEvent", {
                     EventId: eventId,
                     EventType: eventType,
                   });
                 },
-              }),
+              })
+            );
+          }
+
+          if (bSplittable) {
+            b.push(
               new sap.m.Button({
-                text: that.getModel("i18n").getResourceBundle().getText("deleteAction"),
+                text: that
+                  .getModel("i18n")
+                  .getResourceBundle()
+                  .getText("splitAction"),
+                icon: "sap-icon://screen-split-two",
+                press: function () {
+                  eventUtilities.publishEvent(
+                    "PlanningCalendar",
+                    "SplitEvent",
+                    {
+                      EventId: eventId,
+                      EventType: eventType,
+                    }
+                  );
+                },
+              })
+            );
+            c.push(
+              new Button({
+                icon: "spp-fa-arrows-turn-to-dots",
+                label: that
+                  .getModel("i18n")
+                  .getResourceBundle()
+                  .getText("splitAction"),
+                solid: false,
+                press: function () {
+                  that._actionSheet.close();
+                  eventUtilities.publishEvent(
+                    "PlanningCalendar",
+                    "SplitEvent",
+                    {
+                      EventId: eventId,
+                      EventType: eventType,
+                    }
+                  );
+                },
+              }).addStyleClass("spp-indigo")
+            );
+          }
+
+          if (bDeletable) {
+            b.push(
+              new sap.m.Button({
+                text: that
+                  .getModel("i18n")
+                  .getResourceBundle()
+                  .getText("deleteAction"),
                 icon: "sap-icon://delete",
                 type: "Reject",
                 press: function () {
@@ -253,8 +338,33 @@ sap.ui.define(
                     }
                   );
                 },
-              }),
-            ],
+              })
+            );
+            c.push(
+              new Button({
+                icon: "spp-fa-trash",
+                label: that
+                  .getModel("i18n")
+                  .getResourceBundle()
+                  .getText("deleteAction"),
+                solid: false,
+                press: function () {
+                  that._actionSheet.close();
+                  eventUtilities.publishEvent(
+                    "PlanningCalendar",
+                    "DeleteEvent",
+                    {
+                      EventId: eventId,
+                      EventType: eventType,
+                    }
+                  );
+                },
+              }).addStyleClass("spp-red")
+            );
+          }
+
+          this._actionSheet = new ActionSheet({
+            buttons: b,
             afterClose: function () {
               that._actionSheet.destroy();
               that._actionSheet = null;
@@ -262,7 +372,7 @@ sap.ui.define(
           }).addStyleClass("spp-actionsheet");
 
           this._actionSheet = new Popover({
-            showHeader:false,
+            showHeader: false,
             afterClose: function () {
               that._actionSheet.destroy();
               that._actionSheet = null;
@@ -270,50 +380,9 @@ sap.ui.define(
             showArrow: true,
             placement: "Auto",
             content: new VerticalLayout({
-              width:"100%",
-              content: [
-                new Button({
-                  icon: "spp-fa-pen",
-                  label: that.getModel("i18n").getResourceBundle().getText("editAction"),
-                  solid: false,
-                  press: function () {
-                    that._actionSheet.close();
-                    eventUtilities.publishEvent("PlanningCalendar", "EditEvent", {
-                      EventId: eventId,
-                      EventType: eventType,
-                    });
-                  },
-                }),
-                new Button({
-                  icon: "spp-fa-arrows-turn-to-dots",
-                  label: that.getModel("i18n").getResourceBundle().getText("splitAction"),
-                  solid: false,
-                  press: function () {
-                    that._actionSheet.close();
-                    eventUtilities.publishEvent("PlanningCalendar", "SplitEvent", {
-                      EventId: eventId,
-                      EventType: eventType,
-                    });
-                  },
-                }).addStyleClass("spp-indigo"),
-                new Button({
-                  icon: "spp-fa-trash",
-                  label:that.getModel("i18n").getResourceBundle().getText("deleteAction"),
-                  solid: false,
-                  press: function () {
-                    that._actionSheet.close();
-                    eventUtilities.publishEvent(
-                      "PlanningCalendar",
-                      "DeleteEvent",
-                      {
-                        EventId: eventId,
-                        EventType: eventType,
-                      }
-                    );
-                  },
-                }).addStyleClass("spp-red"),
-              ]
-            })
+              width: "100%",
+              content: c,
+            }),
           }).addStyleClass("spp-actionsheet");
 
           this._actionSheet.openBy(this);

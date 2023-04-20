@@ -108,12 +108,23 @@ sap.ui.define(
         var p = dateUtilities.checkDateAnnual(d);
 
         if (p) {
+          var v = dateUtilities.getEventTypeVisible(p.LegendAttributes.LegendGroupKey, p.LegendAttributes.LegendItemKey);
+
+          if(!v){
+            return null;
+          }
+
           return p?.LegendAttributes?.EventColor;
         }
 
         p = dateUtilities.checkDatePlanned(d);
 
         if (p) {
+          var y = dateUtilities.getEventTypeVisible(p.LegendAttributes.LegendGroupKey, p.LegendAttributes.LegendItemKey);
+
+          if(!y){
+            return null;
+          }
           return p?.LegendAttributes?.EventColor;
         }
 
@@ -124,15 +135,7 @@ sap.ui.define(
         } else {
           return h?.LegendAttributes?.EventColor;
         }
-        // console.dir(h);
-
-        // if (h.DayClass === "1") {
-        //   return "spp-holiday-all-day";
-        // }
-        // if (h.DayClass === "2" || h.DayClass === "5") {
-        //   // return "spp-holiday-all-day";
-        //   return "spp-holiday-half-day";
-        // }
+      
       },
       ontap: function () {
         if (this.getDatePicker()) {

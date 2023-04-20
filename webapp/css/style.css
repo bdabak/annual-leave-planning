@@ -306,12 +306,14 @@
   --color-deep-orange-hover: #df572e;
   --color-gray: #a0a0a0;
   --color-gantt-green: #a5d8a7;
-  --cal-new-event: #d0aae6;
+  --cal-new-event-drag: #fdde55;
+  --cal-new-event: var(--color-yellow);
+  --cal-new-event-text: #37363d;
   --color-list-caret: #575d7e;
   --cal-event-color: #59b53b;
   --cal-event-desc-color: #fdfdfd;
-  --cal-event-other-month: #cfcfcf;
-  --cal-event-other-month-empty: #eeeeee;
+  --cal-event-other-month: #c7c7c7;
+  --cal-event-other-month-empty: #f7f7f7;
 
   --cal-event-color-red: #ef5350;
   --cal-event-color-pink: #ec407a;

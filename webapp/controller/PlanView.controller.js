@@ -747,7 +747,14 @@ sap.ui.define(
 
         onSplitSave: function () {
           var oEvent = this.getPageProperty("EventSplit");
-          var eL = this.getProperty("PlannedLeaves");
+
+          var s = this._getEventType(o.EventType);
+
+          if(!s){
+            return null;
+          }
+
+          var eL = this.getProperty(s);
 
           var i = _.findIndex(eL, ["EventId", oEvent.EventId]);
           if (!(i >= 0)) {
@@ -1330,7 +1337,13 @@ sap.ui.define(
           }
         },
         _handleSplitEvent: function (c, e, o) {
-          var s = o.EventType === "planned" ? "PlannedLeaves" : "AnnualLeaves";
+          // var s = o.EventType === "planned" ? "PlannedLeaves" : "AnnualLeaves";
+          var s = this._getEventType(o.EventType);
+
+          if(!s){
+            return null;
+          }
+
           var a = this.getProperty(s) || [];
 
           if (a.length === 0) {
@@ -1356,7 +1369,13 @@ sap.ui.define(
           this._openSplitEventDialog(null, z);
         },
         _handleDeleteEvent: function (c, e, o) {
-          var s = o.EventType === "planned" ? "PlannedLeaves" : "AnnualLeaves";
+          // var s = o.EventType === "planned" ? "PlannedLeaves" : "AnnualLeaves";
+          var s = this._getEventType(o.EventType);
+
+          if(!s){
+            return null;
+          }
+
           var a = this.getProperty(s) || [];
 
           if (a.length === 0) {
@@ -1395,8 +1414,32 @@ sap.ui.define(
 
           this.onEventDelete();
         },
+        _getEventType: function(k){
+          var keys = k.split("_");
+          var g = keys[0];
+          var i = keys[1];
+          var lg = this.getPageProperty("LegendGroup") || [];
+
+          if(lg.length === 0){
+            return null;
+          }
+    
+          var a = _.find(lg, ["LegendGroupKey", g]) || null;
+    
+          if(!a){
+            return null;
+          }
+          return a.DataSource === "PL" ? "PlannedLeaves" : a.DataSource === "AL" ? "AnnualLeaves" : null;
+    
+        },
         _handleEditEvent: function (c, e, o) {
-          var s = o.EventType === "planned" ? "PlannedLeaves" : "AnnualLeaves";
+
+          var s = this._getEventType(o.EventType);
+
+          if(!s){
+            return null;
+          }
+
           var a = this.getProperty(s) || [];
 
           if (a.length === 0) {
@@ -1483,7 +1526,9 @@ sap.ui.define(
                 hasOverflow: e.hasOverflow,
                 rowIndex: e.rowIndex,
                 rowSpan: 7,
-                editable: e.eventType === "planned",
+                editable: e.editable,
+                splittable: e.splittable,
+                deletable: e.deletable,
                 duration: e?.duration
                   ? formatter.suppressZeroDecimal(e.duration) +
                     " " +

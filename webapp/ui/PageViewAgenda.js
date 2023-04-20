@@ -32,15 +32,6 @@ sap.ui.define(
         events: {},
       },
 
-      init: function () {
-        // eventUtilities.subscribeEvent(
-        //   "PlanningCalendar",
-        //   "PeriodChanged",
-        //   this.onPeriodChanged,
-        //   this
-        // );
-      },
-
       fetchPeriodAgenda: function(){
         var that = this;
         var m = sap.ui.Device.system.phone;

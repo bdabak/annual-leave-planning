@@ -217,39 +217,59 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
     },
 
     checkPlannedVisible: function () {
-      //var s = _.find(this._legendSettings, ["type", "holiday"]);
-      var s = _.find(this.getProxyModelProperty("/Page/LegendGroup"), [
+      // var s = _.find(this.getProxyModelProperty("/Page/LegendGroup"), [
+      //   "DataSource",
+      //   "PL",
+      // ]);
+
+      // if (s && s?.Selected) {
+      //   return true;
+      // } else {
+      //   return false;
+      // }
+
+      var s = _.filter(this.getProxyModelProperty("/Page/LegendGroup"), [
         "DataSource",
         "PL",
       ]);
 
-      if (s && s?.Selected) {
-        return true;
-      } else {
-        return false;
-      }
+      var v = false;
+
+      $.each(s, function(i,e){
+        if(e.Selected){
+          v = true;
+          return false;
+        }
+      });
+     
+      return v;
     },
     checkAnnualVisible: function () {
-      var s = _.find(this.getProxyModelProperty("/Page/LegendGroup"), [
+      var s = _.filter(this.getProxyModelProperty("/Page/LegendGroup"), [
         "DataSource",
         "AL",
       ]);
 
-      if (s && s?.Selected) {
-        return true;
-      } else {
-        return false;
-      }
+      var v = false;
+
+      $.each(s, function(i,e){
+        if(e.Selected){
+          v = true;
+          return false;
+        }
+      });
+     
+      return v;
     },
 
     getEventColor: function (t) {
-      var s = _.find(this.getProxyModelProperty("/Page/Legend"), ["Type", t]);
+      // var s = _.find(this.getProxyModelProperty("/Page/Legend"), ["Type", t]);
 
-      if (s && s?.Design) {
-        return s.Design;
-      } else {
-        return "spp-unknown";
-      }
+      // if (s && s?.Design) {
+      //   return s.Design;
+      // } else {
+      //   return "spp-unknown";
+      // }
     },
 
     checkDateHoliday: function (d) {
@@ -421,7 +441,7 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
       var p = this.getProxyModelProperty("/Page/Period") || null;
       var eSD =
         this.getProxyModelProperty("/Page/Header/QuotaAccrualBeginDate") ||
-        null;
+        moment(new Date()).hour(3).startOf("month").toDate();
       if (eSD) {
         var sP = moment(eSD);
         sP.year(p.year);
@@ -453,18 +473,22 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
 
       //--List annual leaves
       if (this.checkAnnualVisible()) {
-        var aC = that.getEventColor("annual");
+        // var aC = that.getEventColor("annual");
         $.each(this.getAnnualLeaves(), function (i, c) {
           var l = _checkEventLiesWithinPeriod(c.StartDate, c.EndDate);
           if (l) {
             var sD = moment(c.StartDate);
             var eD = moment(c.EndDate);
+            var v = that.getEventTypeVisible(c.LegendAttributes.LegendGroupKey, c.LegendAttributes.LegendItemKey );
 
+            if(!v){
+              return true;
+            }
             var e = {
               eventId: c.EventId,
-              eventType: "annual",
-              color: aC,
-              text: "Yıllık izin",
+              eventType: c.LegendAttributes.LegendGroupKey + "_" + c.LegendAttributes.LegendItemKey,
+              color: c.LegendAttributes.EventColor,
+              text: c.LegendAttributes.LegendItemCount > 1 ? c.LegendAttributes.LegendGroupName + "-" + c.LegendAttributes.LegendItemName : c.LegendAttributes.LegendGroupName,
               startDate: {
                 date: sD.format("DD.MM.YYYY"),
                 dayOfWeek: sD.format("e"),
@@ -483,7 +507,10 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
                 monthText: eD.format("MMM"),
                 year: eD.format("YYYY"),
               },
-              duration: c.Kaltg,
+              duration: c.Kaltg,     
+              editable: c.LegendAttributes.Editable,
+              splittable: c.LegendAttributes.Splittable,
+              deletable: c.LegendAttributes.Deletable,
             };
 
             eL.push(e);
@@ -493,17 +520,22 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
 
       //--List plans
       if (this.checkPlannedVisible()) {
-        var pC = that.getEventColor("planned");
+        // var pC = that.getEventColor("planned");
         $.each(this.getPlannedLeaves(), function (i, c) {
           var l = _checkEventLiesWithinPeriod(c.StartDate, c.EndDate);
           if (l) {
             var sD = moment(c.StartDate);
             var eD = moment(c.EndDate);
+            var v = that.getEventTypeVisible(c.LegendAttributes.LegendGroupKey, c.LegendAttributes.LegendItemKey );
+
+            if(!v){
+              return true;
+            }
             var e = {
               eventId: c.EventId,
-              eventType: "planned",
-              color: pC,
-              text: "Planlı izin",
+              eventType: c.LegendAttributes.LegendGroupKey + "_" + c.LegendAttributes.LegendItemKey,
+              color: c.LegendAttributes.EventColor,
+              text: c.LegendAttributes.LegendItemCount > 1 ? c.LegendAttributes.LegendGroupName + "-" + c.LegendAttributes.LegendItemName : c.LegendAttributes.LegendGroupName,
               startDate: {
                 date: sD.format("DD.MM.YYYY"),
                 dayOfWeek: sD.format("e"),
@@ -523,6 +555,9 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
                 year: eD.format("YYYY"),
               },
               duration: c.UsedQuota,
+              editable: c.LegendAttributes.Editable,
+              splittable: c.LegendAttributes.Splittable,
+              deletable: c.LegendAttributes.Deletable,
             };
 
             eL.push(e);
@@ -535,6 +570,32 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
       }
 
       return eL;
+    },
+
+    getEventTypeVisible:function(g,i){  
+      var lg = this.getProxyModelProperty("/Page/LegendGroup") || [];
+
+      if(lg.length === 0){
+        return false;
+      }
+
+      var a = _.find(lg, ["LegendGroupKey", g]) || null;
+
+      if(!a){
+        return false;
+      }
+
+      if(a.LegendItemSet.length === 1){
+        return a.Selected;
+      }else{
+        var b = _.find(a.LegendItemSet, ["LegendItemKey", i]) || null;
+        if(!b){
+          return false;
+        }
+
+        return b.Selected;
+      }
+
     },
 
     getDayAttributes: function (d, a = false) {
@@ -650,6 +711,13 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
             if (!p) {
               return true;
             }
+
+            var v = that.getEventTypeVisible(c.LegendAttributes.LegendGroupKey, c.LegendAttributes.LegendItemKey );
+
+            if(!v){
+              return true;
+            }
+
             e = {
               m: m,
               eventId: c.EventId,
@@ -690,6 +758,9 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
               startDate: moment(c.startDate).format("DD MMM"),
               endDate: moment(c.endDate).format("DD MMM"),
               duration: c.Kaltg,
+              editable: c.LegendAttributes.Editable,
+              splittable: c.LegendAttributes.Splittable,
+              deletable: c.LegendAttributes.Deletable,
             };
             l.push(e);
           } else {
@@ -711,6 +782,12 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
             if (!p) {
               return true;
             }
+            var v = that.getEventTypeVisible(c.LegendAttributes.LegendGroupKey, c.LegendAttributes.LegendItemKey );
+
+            if(!v){
+              return true;
+            }
+
             e = {
               m: m,
               eventId: c.EventId,
@@ -751,6 +828,9 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
               startDate: moment(c.StartDate).format("DD MMM"),
               endDate: moment(c.EndDate).format("DD MMM"),
               duration: c.UsedQuota,
+              editable: c.LegendAttributes.Editable,
+              splittable: c.LegendAttributes.Splittable,
+              deletable: c.LegendAttributes.Deletable,
             };
             l.push(e);
           } else {
@@ -819,6 +899,9 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
                   "DD.MM.YYYY"
                 ).format("DD MMM"),
                 duration: null,
+                editable: false,
+                splittable: false,
+                deletable: false
               };
               l.push(e);
             }

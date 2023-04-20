@@ -108,7 +108,9 @@ sap.ui.define(
               hasOverflow: e.hasOverflow,
               rowIndex: e.rowIndex,
               rowSpan: e.rowSpan,
-              editable: e.eventType === "planned"
+              editable: e.editable,
+              splittable: e.splittable,
+              deletable: e.deletable,
             });
             c.addAggregation("events", n);
           });

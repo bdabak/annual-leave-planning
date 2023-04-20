@@ -55,7 +55,7 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
         e.stopPropagation();
         if($(e.target).hasClass("spp-list-item") || $(e.target).hasClass("spp-icon") ){
           this.setSelected(!this.getSelected());
-          //this.getParent().fireLegendSelectionChanged();
+          this.getParent().fireLegendSelectionChanged();
           this.getParent().getParent().setItemsSelection();
         }
       }

@@ -21210,6 +21210,9 @@ button.spp-button.spp-recurrencelegendbutton {
 
 .spp-cal-new-event {
   --cal-event-color: var(--cal-new-event);
+  --cal-event-color-set: var(--cal-new-event);
+  --cal-event-text-color-set: var(--cal-new-event-text);
+  --cal-event-desc-color: var(--cal-new-event-text);
 }
 
 .spp-cal-color-cyan {
@@ -23598,8 +23601,7 @@ button.spp-button.spp-recurrencelegendbutton {
 
 .spp-yearview-content .spp-calendar-cell.spp-today .spp-calendar-cell-inner {
   border-radius: 50%;
-  /* background-color: #5fa2dd; */
-  color: #fff;
+  color: inherit;
   font-weight: 700;
   border:2px solid #324e66;
 }
@@ -24909,7 +24911,7 @@ button.spp-button.spp-recurrencelegendbutton {
   color: inherit;
 }
 
-.spp-yearview-content .spp-calendar-cell.spp-other-month.spp-cal-empty-cell {
+.spp-yearview-content .spp-calendar-cell.spp-other-month.spp-cal-empty-cell{
   background-color: var(--cal-event-other-month-empty);
   color: inherit;
   opacity: 0.7;
@@ -24917,5 +24919,17 @@ button.spp-button.spp-recurrencelegendbutton {
 
 .spp-yearview-content .spp-calendar-cell:not(.spp-other-month):hover .spp-calendar-cell-inner {
   background-color: var(--cal-event-color-set);
-  filter: brightness(85%);
+  filter: brightness(90%);
+}
+
+.spp-yearview-content .spp-calendar-cell.spp-cal-tentative-event {
+  --cal-event-color-set: var(--cal-new-event-drag);
+  --cal-event-text-color-set: var(--cal-new-event-text);
+  --cal-event-desc-color: var(--cal-new-event-text);
+}
+
+.spp-yearview-content.spp-show-events-heatmap .spp-create-event-active {
+  --cal-event-color-set: var(--cal-new-event);
+  --cal-event-text-color-set: var(--cal-new-event-text);
+  --cal-event-desc-color: var(--cal-new-event-text);
 }
