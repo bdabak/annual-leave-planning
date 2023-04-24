@@ -40,13 +40,26 @@ sap.ui.define([], function () {
         return true;
       }
 
-
-
       if(e?.New && h?.PlanningEnabled){
         return true;
       }
 
       return false;
+    },
+    checkAddSplitVisible: function (s = [], r) {
+      var v = _.filter(s, ["Visible", true]);
+      return v.length < 5;
+    },
+    checkRemoveSplitVisible: function (s = [], r) {
+      var v = _.filter(s, ["Visible", true]);
+      return v.length > 2;
+    },
+    convertGuidToChar: function(g){
+      var c = g;
+
+      c = c.replaceAll("-","").toUpperCase();
+
+      return c;
     }
   };
 });

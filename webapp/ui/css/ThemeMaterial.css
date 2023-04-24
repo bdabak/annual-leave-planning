@@ -11278,8 +11278,13 @@ body.spp-container.spp-outer {
 
 .spp-list-caret{
   margin-left:0.5rem;
-  font-size: 1.5em;
+  font-size: 1.2em;
   color: var(--color-list-caret);
+  transition: color 0.3s ease;
+}
+
+.spp-list-caret:hover{
+  color: var(--color-list-caret-hover);
 }
 
 .spp-list-item.spp-hidden
@@ -24911,10 +24916,16 @@ button.spp-button.spp-recurrencelegendbutton {
   color: inherit;
 }
 
-.spp-yearview-content .spp-calendar-cell.spp-other-month.spp-cal-empty-cell{
+.spp-yearview-content .spp-calendar-cell.spp-other-month.spp-cal-empty-cell:not(.spp-create-event-active){
   background-color: var(--cal-event-other-month-empty);
   color: inherit;
   opacity: 0.7;
+}
+
+.spp-yearview-content .spp-calendar-cell.spp-other-month.spp-cal-tentative-event,
+.spp-yearview-content .spp-calendar-cell.spp-other-month.spp-create-event-active{
+  background-color: var(--cal-event-other-month) !important;
+  color: inherit;
 }
 
 .spp-yearview-content .spp-calendar-cell:not(.spp-other-month):hover .spp-calendar-cell-inner {

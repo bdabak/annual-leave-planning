@@ -487,6 +487,7 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
             var e = {
               eventId: c.EventId,
               eventType: c.LegendAttributes.LegendGroupKey + "_" + c.LegendAttributes.LegendItemKey,
+              leaveType: c.LegendAttributes.LeaveType,
               color: c.LegendAttributes.EventColor,
               text: c.LegendAttributes.LegendItemCount > 1 ? c.LegendAttributes.LegendGroupName + "-" + c.LegendAttributes.LegendItemName : c.LegendAttributes.LegendGroupName,
               startDate: {
@@ -534,6 +535,7 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
             var e = {
               eventId: c.EventId,
               eventType: c.LegendAttributes.LegendGroupKey + "_" + c.LegendAttributes.LegendItemKey,
+              leaveType: c.LegendAttributes.LeaveType,
               color: c.LegendAttributes.EventColor,
               text: c.LegendAttributes.LegendItemCount > 1 ? c.LegendAttributes.LegendGroupName + "-" + c.LegendAttributes.LegendItemName : c.LegendAttributes.LegendGroupName,
               startDate: {
@@ -723,6 +725,7 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
               eventId: c.EventId,
               // eventType: "annual",
               eventType: c.LegendAttributes.LegendGroupKey + "_" + c.LegendAttributes.LegendItemKey,
+              leaveType: c.LegendAttributes.LeaveType,
               title: m.format("MMMM, ddd DD"),
               color: c.LegendAttributes.EventColor,
               text: c.LegendAttributes.LegendItemCount > 1 ? c.LegendAttributes.LegendGroupName + "-" + c.LegendAttributes.LegendItemName : c.LegendAttributes.LegendGroupName,
@@ -793,6 +796,7 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
               eventId: c.EventId,
               // eventType: "planned",
               eventType: c.LegendAttributes.LegendGroupKey + "_" + c.LegendAttributes.LegendItemKey,
+              leaveType: c.LegendAttributes.LeaveType,
               title: m.format("MMMM, ddd DD"),
               color: c.LegendAttributes.EventColor,
               text: c.LegendAttributes.LegendItemCount > 1 ? c.LegendAttributes.LegendGroupName + "-" + c.LegendAttributes.LegendItemName : c.LegendAttributes.LegendGroupName,

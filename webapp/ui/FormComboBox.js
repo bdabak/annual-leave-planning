@@ -154,6 +154,13 @@ sap.ui.define(
         this.getParent().setProperty("opened", false);
       },
 
+      ontap:function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        if($(e.target).attr("role") === "combobox"){
+          this.togglePicker();
+        }
+      },
       onfocusin: function () {
         if (!this.getEditable()) {
           return;

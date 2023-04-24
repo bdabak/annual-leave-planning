@@ -147,7 +147,7 @@
 								firstChild="false"
 								class="spp-red"
 								press=".onEventDelete"
-								visible="{= !${planModel>EventEdit/New} }"
+								visible="{= !${planModel>EventEdit/New} &amp;&amp; ${planModel>EventEdit/Deletable} }"
 							/>
 							<Button
 								id="CreateEditEventDialogCancelAction"

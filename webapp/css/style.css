@@ -309,7 +309,8 @@
   --cal-new-event-drag: #fdde55;
   --cal-new-event: var(--color-yellow);
   --cal-new-event-text: #37363d;
-  --color-list-caret: #575d7e;
+  --color-list-caret: #4b527a;
+  --color-list-caret-hover: #3183fe;
   --cal-event-color: #59b53b;
   --cal-event-desc-color: #fdfdfd;
   --cal-event-other-month: #c7c7c7;

@@ -58,7 +58,7 @@ sap.ui.define(
           if (sTextCode) {
             oDialog.setText(this.getText(sTextCode, aMessageParameters));
           } else {
-            oDialog.setText(this.getText("pleaseWait"));
+            oDialog.setText(this.getText("pleaseWait", [] ));
           }
   
           setTimeout(function () {

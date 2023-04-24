@@ -100,6 +100,7 @@ sap.ui.define(
             var n = new Event({
               eventId: e.eventId,
               eventType: e.eventType,
+              leaveType: e.leaveType,
               color: e.color,
               text: e.text,
               height: "20px",

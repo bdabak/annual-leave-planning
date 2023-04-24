@@ -85,7 +85,8 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
           .openStart("span") //Item
           .class("spp-list-caret")
           .class("spp-fa")
-          .class(e ? "spp-fa-square-caret-up" : "spp-fa-square-caret-down")
+          // .class(e ? "spp-fa-square-caret-up" : "spp-fa-square-caret-down")
+          .class(e ? "spp-fa-chevron-up" : "spp-fa-chevron-down")
           .openEnd()
           .close("span");
       }

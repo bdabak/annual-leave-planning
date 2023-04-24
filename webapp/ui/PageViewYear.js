@@ -213,7 +213,7 @@ sap.ui.define(
         );
 
         $(".spp-cal-tentative-event")
-          .not(".spp-other-month")
+          // .not(".spp-other-month")
           .addClass("spp-create-event-active");
           // .addClass("spp-create-event-active");
         $(".spp-cal-tentative-event").removeClass("spp-cal-tentative-event");

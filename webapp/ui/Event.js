@@ -30,6 +30,11 @@ sap.ui.define(
             bindable: true,
             defaultValue: "",
           },
+          leaveType: {
+            type: "string",
+            bindable: true,
+            defaultValue: null,
+          },
           startDate: {
             type: "string",
             bindable: true,
@@ -235,6 +240,13 @@ sap.ui.define(
         var that = this;
         var eventId = this.getProperty("eventId");
         var eventType = this.getProperty("eventType");
+        var leaveType = this.getProperty("leaveType");
+        var oEventObject = {
+          EventId: eventId,
+          EventType: eventType,
+          LeaveType: leaveType,
+          Deletable: bDeletable,
+        };
 
         if (!this._actionSheet) {
           var b = [];
@@ -249,10 +261,7 @@ sap.ui.define(
                   .getText("editAction"),
                 icon: "sap-icon://edit",
                 press: function () {
-                  eventUtilities.publishEvent("PlanningCalendar", "EditEvent", {
-                    EventId: eventId,
-                    EventType: eventType,
-                  });
+                  eventUtilities.publishEvent("PlanningCalendar", "EditEvent", _.clone(oEventObject));
                 },
               })
             );
@@ -264,13 +273,10 @@ sap.ui.define(
                   .getModel("i18n")
                   .getResourceBundle()
                   .getText("editAction"),
-                solid: false,
+                solid: true,
                 press: function () {
                   that._actionSheet.close();
-                  eventUtilities.publishEvent("PlanningCalendar", "EditEvent", {
-                    EventId: eventId,
-                    EventType: eventType,
-                  });
+                  eventUtilities.publishEvent("PlanningCalendar", "EditEvent",  _.clone(oEventObject));
                 },
               })
             );
@@ -288,10 +294,7 @@ sap.ui.define(
                   eventUtilities.publishEvent(
                     "PlanningCalendar",
                     "SplitEvent",
-                    {
-                      EventId: eventId,
-                      EventType: eventType,
-                    }
+                    _.clone(oEventObject)
                   );
                 },
               })
@@ -303,16 +306,13 @@ sap.ui.define(
                   .getModel("i18n")
                   .getResourceBundle()
                   .getText("splitAction"),
-                solid: false,
+                solid: true,
                 press: function () {
                   that._actionSheet.close();
                   eventUtilities.publishEvent(
                     "PlanningCalendar",
                     "SplitEvent",
-                    {
-                      EventId: eventId,
-                      EventType: eventType,
-                    }
+                    _.clone(oEventObject)
                   );
                 },
               }).addStyleClass("spp-indigo")
@@ -332,10 +332,7 @@ sap.ui.define(
                   eventUtilities.publishEvent(
                     "PlanningCalendar",
                     "DeleteEvent",
-                    {
-                      EventId: eventId,
-                      EventType: eventType,
-                    }
+                    _.clone(oEventObject)
                   );
                 },
               })
@@ -347,16 +344,13 @@ sap.ui.define(
                   .getModel("i18n")
                   .getResourceBundle()
                   .getText("deleteAction"),
-                solid: false,
+                solid: true,
                 press: function () {
                   that._actionSheet.close();
                   eventUtilities.publishEvent(
                     "PlanningCalendar",
                     "DeleteEvent",
-                    {
-                      EventId: eventId,
-                      EventType: eventType,
-                    }
+                    _.clone(oEventObject)
                   );
                 },
               }).addStyleClass("spp-red")

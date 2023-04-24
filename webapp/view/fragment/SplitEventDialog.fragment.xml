@@ -129,7 +129,7 @@
 									}, {
 										path: 'planModel>EventSplit/ButtonState'
 									}],
-									formatter: '.checkAddSplitVisible'
+									formatter: '.formatter.checkAddSplitVisible'
 								}"
 							/>
 							<Button
@@ -147,7 +147,7 @@
 									}, {
 										path: 'planModel>EventSplit/ButtonState'
 									}],
-									formatter: '.checkRemoveSplitVisible'
+									formatter: '.formatter.checkRemoveSplitVisible'
 								}"
 							/>
 						</items>
