@@ -318,27 +318,27 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
         this.fireCancelled();
       },
       makeDraggable: function() {
-        var elmnt = this.$().get(0);
-        var headerId = this.getHeader().$().attr("id");
-
-        if(!elmnt){
+        var el = this.$().get(0);
+        var hId = this.getHeader().$().attr("id");
+        
+        if(!el){
           return;
         }
-        var leftPosition0 = 0, topPosition0 = 0, leftPosition = 0, topPosition = 0;
-        if (document.getElementById(headerId)) {
+        var leftPosition1 = 0, topPosition1 = 0, leftPosition0 = 0, topPosition0 = 0;
+        if (document.getElementById(hId)) {
           /* if present, the header is where you move the DIV from:*/
-          document.getElementById(headerId).onmousedown = dragMouseDown;
+          document.getElementById(hId).onmousedown = dragMouseDown;
         } else {
           /* otherwise, move the DIV from anywhere inside the DIV:*/
-          elmnt.onmousedown = dragMouseDown;
+          el.onmousedown = dragMouseDown;
         }
       
         function dragMouseDown(e) {
           e = e || window.event;
           e.preventDefault();
           // get the mouse cursor position at startup:
-          leftPosition = e.clientX;
-          topPosition = e.clientY;
+          leftPosition0 = e.clientX;
+          topPosition0 = e.clientY;
           document.onmouseup = closeDragElement;
           // call a function whenever the cursor moves:
           document.onmousemove = elementDrag;
@@ -348,13 +348,13 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
           e = e || window.event;
           e.preventDefault();
           // calculate the new cursor position:
-          leftPosition0 = leftPosition - e.clientX;
-          topPosition0 = topPosition - e.clientY;
-          leftPosition = e.clientX;
-          topPosition = e.clientY;
+          leftPosition1 = leftPosition0 - e.clientX;
+          topPosition1 = topPosition0 - e.clientY;
+          leftPosition0 = e.clientX;
+          topPosition0 = e.clientY;
           // set the element's new position:
-          elmnt.style.top = (elmnt.offsetTop - topPosition0) + "px";
-          elmnt.style.left = (elmnt.offsetLeft - leftPosition0) + "px";
+          el.style.top = (el.offsetTop - topPosition1) + "px";
+          el.style.left = (el.offsetLeft - leftPosition1) + "px";
         }
       
         function closeDragElement() {
