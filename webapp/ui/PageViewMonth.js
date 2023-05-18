@@ -418,8 +418,9 @@ sap.ui.define(
           );
         },
 
-        _handleCreateEventCancelled: function () {
+        _handleCreateEventCancelled: function (e,o,p) {
           this._refreshCellStates();
+          if(p.showAlert){
           Swal.fire({
             position: "bottom",
             icon: "info",
@@ -428,6 +429,7 @@ sap.ui.define(
             toast: true,
             timer: 2000,
           });
+        }
         },
       }
     );

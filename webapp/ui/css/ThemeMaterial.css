@@ -9931,6 +9931,10 @@ a.spp-button {
   pointer-events: none;
 }
 
+.spp-calendarpanel .spp-calendar-null-cell {
+  display: none;
+}
+
 .spp-calendarpanel.spp-disable-othermonth-cells
   .spp-calendar-cell.spp-other-month {
   opacity: 0.7;
@@ -9970,7 +9974,8 @@ a.spp-button {
   display: flex;
 }
 
-.spp-calendarpanel .spp-calendar-cell {
+.spp-calendarpanel .spp-calendar-cell,
+.spp-calendarpanel .spp-calendar-empty-cell {
   display: flex;
   text-align: center;
   flex-direction: column;
@@ -11192,7 +11197,7 @@ body.spp-container.spp-outer {
   margin: 0;
   -webkit-user-select: none;
   user-select: none;
-  font-size: clamp(0.6rem, 0.5474rem + 0.2807vw, 0.8rem);
+  font-size: 1rem;
 }
 
 .spp-list.spp-floating {
@@ -11251,8 +11256,8 @@ body.spp-container.spp-outer {
   display: flex;
 }
 
-.spp-group-list-item .spp-list{
-  margin-left:2em !important;
+.spp-group-list-item .spp-list {
+  margin-left: 2em !important;
 }
 
 .spp-list-item-row {
@@ -11265,30 +11270,29 @@ body.spp-container.spp-outer {
   justify-content: center;
 }
 
-.spp-list-item-header{
+.spp-list-item-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-.spp-list-item-header-title{
+.spp-list-item-header-title {
   display: flex;
   align-items: center;
 }
 
-.spp-list-caret{
-  margin-left:0.5rem;
+.spp-list-caret {
+  margin-left: 0.5rem;
   font-size: 1.2em;
   color: var(--color-list-caret);
   transition: color 0.3s ease;
 }
 
-.spp-list-caret:hover{
+.spp-list-caret:hover {
   color: var(--color-list-caret-hover);
 }
 
-.spp-list-item.spp-hidden
-{
+.spp-list-item.spp-hidden {
   display: none;
 }
 
@@ -19929,16 +19933,21 @@ button.spp-button.spp-recurrencelegendbutton {
   opacity: 1;
 }
 
-.spp-selected-partial > .spp-list-item-header > .spp-list-item-header-title > .spp-icon:before {
+.spp-selected-partial
+  > .spp-list-item-header
+  > .spp-list-item-header-title
+  > .spp-icon:before {
   content: "\f146";
   opacity: 1;
 }
 
-.spp-selected-full > .spp-list-item-header > .spp-list-item-header-title > .spp-icon:before {
+.spp-selected-full
+  > .spp-list-item-header
+  > .spp-list-item-header-title
+  > .spp-icon:before {
   content: "\f14a";
   opacity: 1;
 }
-
 
 .spp-sch-color-red {
   --event-primary-color-h: 1.1320754717deg;
@@ -21109,8 +21118,6 @@ button.spp-button.spp-recurrencelegendbutton {
   gap: 0.3em;
 }
 
-
-
 .spp-cal-event-duration {
   margin-left: 0.3em;
 }
@@ -21426,6 +21433,8 @@ button.spp-button.spp-recurrencelegendbutton {
 
   .spp-cal-agenda-event-row {
     align-self: center;
+    flex-flow: column nowrap;
+    gap: 0.1rem;
   }
 }
 
@@ -22703,7 +22712,7 @@ button.spp-button.spp-recurrencelegendbutton {
 }
 
 .spp-cal-event-wrap.spp-continues-past:not(.spp-rtl) .spp-cal-event {
-  padding-left: calc(var(--arrow-width) + 0.3em);
+  padding: 0 calc(var(--arrow-width) + 0.3em);
   clip-path: polygon(
     0 50%,
     var(--arrow-width) 0,
@@ -22909,8 +22918,6 @@ button.spp-button.spp-recurrencelegendbutton {
   background-color: var(--cal-event-color-set);
 }
 
-
-
 .spp-cal-event-desc-complex {
   display: flex;
   align-items: center;
@@ -22941,7 +22948,6 @@ button.spp-button.spp-recurrencelegendbutton {
 .spp-cal-event-body .spp-cal-event-desc {
   overflow: hidden;
   text-overflow: ellipsis;
-  padding-block-end: 1px;
 }
 
 .spp-cal-event-body .spp-cal-event-desc .spp-resource-avatar {
@@ -23270,7 +23276,7 @@ button.spp-button.spp-recurrencelegendbutton {
 
 .spp-sidebar .spp-sidebar-content {
   align-items: stretch;
-  gap: 1em;
+  gap: clamp(0.2em, 0.4474rem + 0.2807vw, 0.5em);
 }
 
 .spp-sidebar .spp-sidebar-content.spp-panel-content {
@@ -23286,7 +23292,7 @@ button.spp-button.spp-recurrencelegendbutton {
 }
 
 .spp-calendar .spp-sidebar {
-  max-width: 30%;
+  max-width: 25%;
 }
 
 .spp-calendar
@@ -23565,6 +23571,10 @@ button.spp-button.spp-recurrencelegendbutton {
   background-color: #f0f0f0;
 }
 
+.spp-calendar-cell.spp-cal-null-cell {
+  cursor: unset !important;
+}
+
 .spp-yearview-content.spp-show-events-heatmap .spp-datepicker-1-to-3-events {
   background-color: #f9f69e;
 }
@@ -23594,7 +23604,8 @@ button.spp-button.spp-recurrencelegendbutton {
   top: 1.7em;
 }
 
-.spp-yearview-content .spp-calendar-cell .spp-calendar-cell-inner {
+.spp-yearview-content .spp-calendar-cell .spp-calendar-cell-inner,
+.spp-yearview-content .spp-calendar-null-cell .spp-calendar-cell-inner {
   height: 2em;
   width: 2em;
   flex-shrink: 0;
@@ -23608,7 +23619,7 @@ button.spp-button.spp-recurrencelegendbutton {
   border-radius: 50%;
   color: inherit;
   font-weight: 700;
-  border:2px solid #324e66;
+  border: 2px solid #324e66;
 }
 
 .spp-yearview-content
@@ -24291,7 +24302,8 @@ button.spp-button.spp-recurrencelegendbutton {
 */
 
 .spp-sidebar:not(.spp-collapsed) {
-  width: 18em;
+  /* width: 13em; */
+  width: clamp(13em, 4.4286rem + 11.4286vw, 18em);
 }
 
 .spp-sidebar.spp-expanded {
@@ -24371,8 +24383,6 @@ button.spp-button.spp-recurrencelegendbutton {
   display: block;
 }
 
-
-
 .spp-past-date:hover .spp-calendar-cell-inner {
   cursor: not-allowed !important;
 }
@@ -24405,7 +24415,7 @@ button.spp-button.spp-recurrencelegendbutton {
 .spp-popup-align-center {
   float: left;
   left: 50% !important;
-  top: 50% !important;
+  top: 50% !important; 
   transform: translate(-50%, -50%);
 }
 
@@ -24514,7 +24524,6 @@ button.spp-button.spp-recurrencelegendbutton {
 .spp-actionsheet .spp-button {
   width: 100%;
   font-size: 75%;
-  margin-bottom: 0.2rem;
 }
 
 .spp-button-smaller {
@@ -24581,6 +24590,7 @@ button.spp-button.spp-recurrencelegendbutton {
 
 .spp-indicator-inner {
   display: flex;
+
   line-height: 2rem;
   padding: 0 0.3rem;
 }
@@ -24599,7 +24609,45 @@ button.spp-button.spp-recurrencelegendbutton {
 .spp-indicator-label {
   font-weight: 300;
   color: #333;
-  font-size: 115%;
+}
+.spp-indicator-label-hastooltip {
+  position: relative;
+  cursor: pointer;
+}
+
+.spp-indicator-hastooltip {
+  width: 200px;
+}
+
+.spp-indicator-label-tooltip::after {
+  padding-left: 3px;
+  font-family: "Font Awesome 6 Free", FontAwesome6Free;
+  content: "\f059";
+  color: #757575;
+}
+
+.spp-indicator-tooltip {
+  visibility: hidden;
+  background-color: #544848;
+  color: #fff;
+  text-align: center;
+  border-radius: 2px;
+  box-shadow: 1px 1px 12px rgba(0, 0, 0, 0.2);
+  position: absolute;
+  z-index: 2;
+  font-size: 0.75rem;
+  padding: 3px;
+  white-space: normal;
+  width: 100%;
+  top: 0;
+  left: calc(50% + 10px);
+  line-height: 0.8rem;
+}
+
+.spp-indicator-label-hastooltip:hover
+  .spp-indicator-hastooltip
+  .spp-indicator-tooltip {
+  visibility: visible;
 }
 
 .spp-indicator-value {
@@ -24634,8 +24682,6 @@ button.spp-button.spp-recurrencelegendbutton {
   overflow-y: auto;
   max-height: 400px;
 }
-
-
 
 .spp-planned-leave:not(.spp-other-month) {
   background-color: var(--color-blue);
@@ -24751,8 +24797,16 @@ button.spp-button.spp-recurrencelegendbutton {
   background-color: var(--cal-event-color-blue);
 }
 
+.spp-sch-light-blue {
+  background-color: var(--cal-event-color-light-blue);
+}
+
 .spp-sch-foreground-blue {
   color: var(--cal-event-color-blue);
+}
+
+.spp-sch-foreground-light-blue {
+  color: var(--cal-event-color-light-blue);
 }
 
 .spp-sch-cyan {
@@ -24787,12 +24841,16 @@ button.spp-button.spp-recurrencelegendbutton {
   color: var(--cal-event-color-green);
 }
 
+.spp-sch-foreground-light-green {
+  color: var(--cal-event-color-light-green);
+}
+
 .spp-sch-lime {
   background-color: var(--cal-event-color-lime);
 }
 
 .spp-sch-foreground-lime {
-  color:var(--cal-event-color-lime);
+  color: var(--cal-event-color-lime);
 }
 
 .spp-sch-yellow {
@@ -24812,7 +24870,7 @@ button.spp-button.spp-recurrencelegendbutton {
 }
 
 .spp-sch-deep-orange {
-  background-color:  var(--cal-event-color-deep-orange);
+  background-color: var(--cal-event-color-deep-orange);
 }
 
 .spp-sch-foreground-deep-orange {
@@ -24824,7 +24882,7 @@ button.spp-button.spp-recurrencelegendbutton {
 }
 
 .spp-sch-foreground-gray {
-  color:var(--cal-event-color-gray);
+  color: var(--cal-event-color-gray);
 }
 
 .spp-sch-gantt-green {
@@ -24832,103 +24890,121 @@ button.spp-button.spp-recurrencelegendbutton {
 }
 
 .spp-sch-foreground-gantt-green {
-  color:var(--cal-event-color-gantt-green);
+  color: var(--cal-event-color-gantt-green);
 }
 
-.spp-event-color-red{
+.spp-event-color-red {
   --cal-event-color-set: var(--cal-event-color-red);
   --cal-event-text-color-set: var(--cal-event-desc-color);
-} 
-.spp-event-color-pink{
+}
+.spp-event-color-pink {
   --cal-event-color-set: var(--cal-event-color-pink);
   --cal-event-text-color-set: var(--cal-event-desc-color);
-} 
-.spp-event-color-purple{
+}
+.spp-event-color-purple {
   --cal-event-color-set: var(--cal-event-color-purple);
   --cal-event-text-color-set: var(--cal-event-desc-color);
-} 
-.spp-event-color-violet{
+}
+.spp-event-color-violet {
   --cal-event-color-set: var(--cal-event-color-violet);
   --cal-event-text-color-set: var(--cal-event-desc-color);
-} 
-.spp-event-color-indigo{
+}
+.spp-event-color-indigo {
   --cal-event-color-set: var(--cal-event-color-indigo);
   --cal-event-text-color-set: var(--cal-event-desc-color);
-} 
-.spp-event-color-blue{
+}
+.spp-event-color-blue {
   --cal-event-color-set: var(--cal-event-color-blue);
   --cal-event-text-color-set: var(--cal-event-desc-color);
-} 
-.spp-event-color-cyan{
+}
+.spp-event-color-light-blue {
+  --cal-event-color-set: var(--cal-event-color-light-blue);
+  --cal-event-text-color-set: var(--cal-event-desc-color);
+}
+.spp-event-color-cyan {
   --cal-event-color-set: var(--cal-event-color-cyan);
   --cal-event-text-color-set: var(--cal-event-desc-color);
-} 
-.spp-event-color-magenta{
+}
+.spp-event-color-magenta {
   --cal-event-color-set: var(--cal-event-color-magenta);
   --cal-event-text-color-set: var(--cal-event-desc-color);
-} 
-.spp-event-color-teal{
+}
+.spp-event-color-teal {
   --cal-event-color-set: var(--cal-event-color-teal);
   --cal-event-text-color-set: var(--cal-event-desc-color);
-} 
-.spp-event-color-green{
+}
+.spp-event-color-green {
   --cal-event-color-set: var(--cal-event-color-green);
   --cal-event-text-color-set: var(--cal-event-desc-color);
 }
-.spp-event-color-gantt-green{
+
+.spp-event-color-light-green {
+  --cal-event-color-set: var(--cal-event-color-light-green);
+  --cal-event-text-color-set: var(--cal-event-desc-color);
+}
+
+.spp-event-color-gantt-green {
   --cal-event-color-set: var(--cal-event-color-gantt-green);
   --cal-event-text-color-set: var(--cal-event-desc-color);
-} 
-.spp-event-color-lime{
+}
+.spp-event-color-lime {
   --cal-event-color-set: var(--cal-event-color-lime);
   --cal-event-text-color-set: var(--cal-event-desc-color);
-} 
-.spp-event-color-yellow{
+}
+.spp-event-color-yellow {
   --cal-event-color-set: var(--cal-event-color-yellow);
   --cal-event-text-color-set: var(--cal-event-desc-color);
-} 
-.spp-event-color-orange{
+}
+.spp-event-color-orange {
   --cal-event-color-set: var(--cal-event-color-orange);
   --cal-event-text-color-set: var(--cal-event-desc-color);
-} 
-.spp-event-color-deep-orange{
+}
+.spp-event-color-deep-orange {
   --cal-event-color-set: var(--cal-event-color-deep-orange);
   --cal-event-text-color-set: var(--cal-event-desc-color);
 }
-.spp-event-color-gray{
+.spp-event-color-gray {
   --cal-event-color-set: var(--cal-event-color-gray);
   --cal-event-text-color-set: var(--cal-event-desc-color);
-} 
+}
 
 .spp-cal-event-bar-container .spp-solid-bar .spp-event-time,
 .spp-cal-event-bar-container .spp-solid-bar .spp-cal-event-desc {
   color: var(--cal-event-desc-color);
 }
 
-.spp-solid-bar .spp-cal-event ,
+.spp-solid-bar .spp-cal-event,
 .spp-yearview-content .spp-calendar-cell:not(.spp-other-month) {
   background-color: var(--cal-event-color-set);
-  color:  var(--cal-event-text-color-set);
+  color: var(--cal-event-text-color-set);
 }
 
-.spp-yearview-content .spp-calendar-cell.spp-other-month:not(.spp-cal-empty-cell) {
+.spp-yearview-content
+  .spp-calendar-cell.spp-other-month:not(.spp-cal-empty-cell) {
   background-color: var(--cal-event-other-month);
   color: inherit;
 }
 
-.spp-yearview-content .spp-calendar-cell.spp-other-month.spp-cal-empty-cell:not(.spp-create-event-active){
+.spp-yearview-content
+  .spp-calendar-cell.spp-other-month.spp-cal-empty-cell:not(
+    .spp-create-event-active
+  ) {
   background-color: var(--cal-event-other-month-empty);
   color: inherit;
   opacity: 0.7;
 }
 
-.spp-yearview-content .spp-calendar-cell.spp-other-month.spp-cal-tentative-event,
-.spp-yearview-content .spp-calendar-cell.spp-other-month.spp-create-event-active{
+.spp-yearview-content
+  .spp-calendar-cell.spp-other-month.spp-cal-tentative-event,
+.spp-yearview-content
+  .spp-calendar-cell.spp-other-month.spp-create-event-active {
   background-color: var(--cal-event-other-month) !important;
   color: inherit;
 }
 
-.spp-yearview-content .spp-calendar-cell:not(.spp-other-month):hover .spp-calendar-cell-inner {
+.spp-yearview-content
+  .spp-calendar-cell:not(.spp-other-month):hover
+  .spp-calendar-cell-inner {
   background-color: var(--cal-event-color-set);
   filter: brightness(90%);
 }
@@ -24943,4 +25019,57 @@ button.spp-button.spp-recurrencelegendbutton {
   --cal-event-color-set: var(--cal-new-event);
   --cal-event-text-color-set: var(--cal-new-event-text);
   --cal-event-desc-color: var(--cal-new-event-text);
+}
+
+.spp-cal-rejected-event {
+  animation: textBlink 3s ease-in-out infinite;
+  color: var(--cal-color-red);
+  display: flex;
+  align-items: center;
+  border-radius: 0.25rem;
+  background-color: rgb(255 245 245);
+  margin-left: 1rem;
+  padding: 0.25rem;
+}
+
+@keyframes textBlink {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.spp-resp-grid-container {
+  font-size: 0.75em;
+}
+.spp-resp-grid {
+  margin: 0 auto;
+  display: grid;
+  gap: 0.2rem;
+  grid-template-columns: 1fr;
+  align-items: center;
+  justify-content: center;
+}
+
+.spp-resp-grid-header {
+  text-align: center;
+  border-bottom: 1px dashed #cdcdcd;
+  font-weight: bold;
+  padding-block-end: 0.3rem;
+}
+
+@media (min-width: 400px) {
+  .spp-resp-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+
+.spp-header-draggable{
+  cursor:move;
 }

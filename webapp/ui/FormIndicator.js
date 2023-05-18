@@ -8,6 +8,11 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
           type: "string",
           bindable: true,
         },
+        tooltip: {
+          type: "string",
+          bindable: true,
+          defaultValue: null,
+        },
         value: {
           type: "string",
           bindable: true,
@@ -33,6 +38,7 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
       events: {},
     },
     renderer: function (oRM, oControl) {
+      var sTooltip = oControl.getTooltip() || null;
       oRM
         .openStart("div", oControl)
         .class("spp-widget")
@@ -51,12 +57,32 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
         .openEnd();
 
       //--Label--//
-      oRM
-        .openStart("label")
-        .class("spp-indicator-label")
-        .openEnd()
-        .text(oControl.getLabel())
-        .close("label");
+      oRM.openStart("label").class("spp-indicator-label");
+      if (sTooltip) {
+        oRM
+          .class("spp-indicator-label-hastooltip");
+        }
+
+      oRM.openEnd().text(oControl.getLabel());
+      if (sTooltip) {
+        oRM
+          .openStart("span")
+          .class("spp-indicator-label-tooltip")
+          .openEnd()
+          .close("span");
+
+        oRM.openStart("div").class("spp-indicator-hastooltip").openEnd();
+
+        oRM
+          .openStart("span")
+          .class("spp-indicator-tooltip")
+          .openEnd()
+          .text(sTooltip)
+          .close("span");
+
+        oRM.close("div");
+      }
+      oRM.close("label");
       //--Label--//
 
       //--Value--//
@@ -81,6 +107,7 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
       //--Value--//
 
       oRM.close("div");
+
       oRM.close("div");
     },
   });

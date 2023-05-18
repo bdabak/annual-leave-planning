@@ -3,6 +3,19 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
 
   var _planModel = {};
   return {
+    
+    initializeMoment: function () {
+      var sCurrentLocale = sap.ui.getCore().getConfiguration().getLanguage();
+      
+      sCurrentLocale = sCurrentLocale === "TR" ? "tr" : "en";
+      moment.locale(sCurrentLocale);
+      moment().isoWeekday(1); // Monday
+      moment.updateLocale(sCurrentLocale, {
+        week: {
+          dow: 1,
+        },
+      });
+    },
     setProxyModel: function (m) {
       this._planModel = m;
     },
@@ -32,6 +45,11 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
 
       return m.format("DD.MM.YYYY");
     },
+    formatDateObject: function (d) {
+      var m = moment(d).hour(3);
+
+      return m.format("DD.MM.YYYY");
+    },
     convertDateToPeriod: function (d) {
       var m;
       if (d === null || d === undefined) {
@@ -57,10 +75,15 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
       return d;
     },
 
-    calculateOffsetDate: function (d, o, y) {
+    calculateOffsetDate: function (d, o, y, w) {
       var m = moment(d);
 
-      o === "+" ? m.add(y, "y").subtract(1, "d") : m.subtract(y, "y");
+      if(w === "y"){
+        o === "+" ? m.add(y, "y").subtract(1, "d") : m.subtract(y, "y");
+      }else if(w === "m"){
+        o === "+" ? m.add(y, "m") : m.subtract(y, "m");
+      }
+      
 
       return m.toDate();
     },
@@ -71,9 +94,12 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
       var s = moment(o).startOf("month").weekday(0);
       var e = moment(o).endOf("month").weekday(6);
 
-      if (moment.duration(e.diff(s)).asWeeks() <= 5) {
-        e.add(1, "week");
-      }
+      // console.log(s.format("DD.MM.YYYY"));
+      // console.log(e.format("DD.MM.YYYY"));
+
+      // if (moment.duration(e.diff(s)).asWeeks() <= 5) {
+      //   e.add(1, "week");
+      // }
 
       var oMonth = {
         monthName: o.format("MMMM"),
@@ -163,17 +189,24 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
       }
     },
 
-    initializeMoment: function () {
-      moment.locale("tr");
-      moment().isoWeekday(1); // Monday
-      moment.updateLocale("tr", {
-        week: {
-          dow: 1,
-        },
-      });
-    },
 
-    decidePeriodChangeDirection: function (o, n) {
+    decidePeriodChangeDirection: function (o, n, m) {
+      console.log(o,n,m);
+      if(m=== "A"){
+        return null;
+      }
+      if(m === "Y"){
+        if(o.year === n.year){
+          return null;
+        }       
+      }
+
+      if(m === "M"){
+        if(o.year === n.year && o.month === n.month){
+          return null;
+        }       
+      }
+      
       var oP = moment(o.day + "." + o.month + "." + o.year, "DD.MM.YYYY");
       var nP = moment(n.day + "." + n.month + "." + n.year, "DD.MM.YYYY");
       return oP.isAfter(nP) ? "L" : oP.isBefore(nP) ? "R" : null;
@@ -188,6 +221,16 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
       var d = m.toDate();
 
       return d;
+    },
+
+    isValidDate: function(d){
+      if (!d) {
+        return false;
+      }
+
+      var m = moment(d, "DD.MM.YYYY").hour(3);
+     
+      return m.isValid();
     },
 
     findDatesBetweenTwoDates: function (b, e) {
@@ -398,9 +441,11 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
         var e = s.clone().add(1, "y");
       }
       var m = moment(d, "DD.MM.YYYY").hour(3);
-      var t = moment(new Date());
+      var t = moment(new Date()).hour(3);
+      var l = moment(moment(new Date()).clone().subtract(1,"months").startOf("month").hour(3).toDate());
 
-      return m.isAfter(t, "day");
+
+      return m.isSameOrAfter(l, "day");
       // return m.isAfter(t, "day") && m.isBetween(s, e, undefined, "[)");
     },
 
@@ -512,6 +557,7 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
               editable: c.LegendAttributes.Editable,
               splittable: c.LegendAttributes.Splittable,
               deletable: c.LegendAttributes.Deletable,
+              rejected: false
             };
 
             eL.push(e);
@@ -560,6 +606,7 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
               editable: c.LegendAttributes.Editable,
               splittable: c.LegendAttributes.Splittable,
               deletable: c.LegendAttributes.Deletable,
+              rejected: c.LeaveStatus === "LRJ"
             };
 
             eL.push(e);

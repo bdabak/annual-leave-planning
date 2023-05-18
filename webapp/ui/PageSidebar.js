@@ -37,24 +37,6 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
         .class("spp-panel-collapse-left")
         .class("spp-first-visible-child");
 
-      // .class("spp-widget")
-      // .class("spp-container")
-      // .class("spp-panel")
-      // .class("spp-responsive")
-      // .class("spp-sidebar")
-      // .class("spp-panel-has-bottom-toolbar")
-      // .class("spp-vbox")
-      // .class("spp-panel-collapsible")
-      // .class("spp-panel-has-tools")
-      // .class("spp-has-datepicker")
-      // .class("spp-sidebar-left")
-      // .class("spp-panel-collapse-left")
-      // .class("spp-first-visible-child")
-      // .class("spp-panel-collapsible-overlay")
-      // .class("spp-collapsed")
-      // .class("spp-responsive-small")
-      // .class("spp-panel-overlay-revealed")
-
       if (sap.ui.Device.system.desktop) {
         oRM.class("spp-panel-collapsible-inline").class("spp-responsive-large");
         if (bHidden) {

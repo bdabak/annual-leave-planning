@@ -10,6 +10,7 @@
 		class="spp-eventeditor"
 		showPointer="false"
 		alignment="center"
+		draggable="true"
 		animate="true"
 	>
 		<header>
@@ -109,6 +110,24 @@
 							/>
 						</field>
 					</FormField>
+					<FormIndicator
+								id="SplitFormFieldQuotaUsed"
+								label="{i18n>leaveQuotaUsed}"
+								tooltip="{i18n>quotaUsageTooltip}"
+								value="{
+									path: 'planModel>EventSplit/UsedQuota',
+									type: 'sap.ui.model.odata.type.Decimal',
+									formatOptions: {
+										minFractionDigits: 0,
+										maxFractionDigits: 2,
+										groupingEnabled: false,
+										decimalSeparator: ','
+									}
+								}"
+								unit="{i18n>days}"
+								alignment="H"
+								
+							/>
 					<Toolbar
 						hasWrapper="false"
 						class="spp-popup-toolbar sapUiTinyMarginTopBottom"
@@ -116,7 +135,7 @@
 						<items>
 							<Button
 								icon="spp-icon-add"
-								label="Bölüm Ekle"
+								label="{i18n>addSplit}"
 								firstChild="true"
 								lastChild="true"
 								raised="false"
@@ -134,7 +153,7 @@
 							/>
 							<Button
 								icon="spp-icon-remove"
-								label="Bölüm Sil"
+								label="{i18n>removeSplit}"
 								firstChild="false"
 								lastChild="true"
 								raised="false"
@@ -215,6 +234,7 @@
 							<FormIndicator
 								id="Split0FormFieldQuotaUsed"
 								label="{i18n>leaveQuotaUsed}"
+								tooltip="{i18n>quotaUsageTooltip}"
 								value="{
 									path: 'planModel>EventSplit/Splits/0/UsedQuota',
 									type: 'sap.ui.model.odata.type.Decimal',
@@ -298,6 +318,7 @@
 							<FormIndicator
 								id="Split1FormFieldQuotaUsed"
 								label="{i18n>leaveQuotaUsed}"
+								tooltip="{i18n>quotaUsageTooltip}"
 								value="{
 									path: 'planModel>EventSplit/Splits/1/UsedQuota',
 									type: 'sap.ui.model.odata.type.Decimal',
@@ -381,6 +402,7 @@
 							<FormIndicator
 								id="Split2FormFieldQuotaUsed"
 								label="{i18n>leaveQuotaUsed}"
+								tooltip="{i18n>quotaUsageTooltip}"
 								value="{
 									path: 'planModel>EventSplit/Splits/2/UsedQuota',
 									type: 'sap.ui.model.odata.type.Decimal',
@@ -464,6 +486,7 @@
 							<FormIndicator
 								id="Split3FormFieldQuotaUsed"
 								label="{i18n>leaveQuotaUsed}"
+								tooltip="{i18n>quotaUsageTooltip}"
 								value="{
 									path: 'planModel>EventSplit/Splits/3/UsedQuota',
 									type: 'sap.ui.model.odata.type.Decimal',
@@ -547,6 +570,7 @@
 							<FormIndicator
 								id="Split4FormFieldQuotaUsed"
 								label="{i18n>leaveQuotaUsed}"
+								tooltip="{i18n>quotaUsageTooltip}"
 								value="{
 									path: 'planModel>EventSplit/Splits/4/UsedQuota',
 									type: 'sap.ui.model.odata.type.Decimal',

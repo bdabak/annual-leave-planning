@@ -9,6 +9,7 @@
 		class="spp-eventeditor"
 		showPointer="false"
 		alignment="center"
+		draggable="true"
 		animate="true"
 	>
 		<header>
@@ -56,8 +57,7 @@
 												key="{planModel>Type}"
 												value="{planModel>Description}"
 												selected="{= ${planModel>EventEdit/LeaveType/Key} === ${planModel>Type} }"
-				
-												visible="{parts:[{path:'planModel>Type'},{path:'planModel>EventEdit'}, {path:'planModel>Header'}], formatter:'.formatter.getLeaveTypeVisible'}"
+												visible="{parts:[{path:'planModel>Source'},{path:'planModel>Requestable'}], formatter:'.getLeaveTypeVisible'}"
 											/>
 										</items>
 									</PickerListWidget>
@@ -82,6 +82,7 @@
 							<FormDatePicker
 								id="FormInputStartDate"
 								value="{planModel>EventEdit/StartDate}"
+								referenceDate="{planModel>EventEdit/RefDate}"
 								changed=".onEventDateChanged"
 							/>
 						</field>
@@ -104,6 +105,7 @@
 							<FormDatePicker
 								id="FormInputEndDate"
 								value="{planModel>EventEdit/EndDate}"
+								referenceDate="{planModel>EventEdit/RefDate}"
 								changed=".onEventDateChanged"
 							/>
 						</field>
@@ -111,6 +113,7 @@
 					<FormIndicator
 						id="FormFieldQuotaUsed"
 						label="{i18n>leaveQuotaUsed}"
+						tooltip="{i18n>quotaUsageTooltip}"
 						value="{
 							path: 'planModel>EventEdit/UsedQuota',
 							type: 'sap.ui.model.odata.type.Decimal',

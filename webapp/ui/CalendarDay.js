@@ -31,6 +31,11 @@ sap.ui.define(
             type: "string",
             bindable: true,
           },
+          nullCell: {
+            type: "boolean",
+            bindable: true,
+            defaultValue: false
+          }
         },
         aggregations: {
           _cell: {
@@ -49,54 +54,71 @@ sap.ui.define(
         var bSelectable = dateUtilities.checkDateIsSelectable(e.date);
         var dP = oControl.getDatePicker();
         var s = oControl.getSelectedDate();
+        var rO = e.sameMonth;
         var c = oControl
           .getAggregation("_cell")
           .setDay(e.day)
           .setDatePicker(dP);
+        
+
         oRM.openStart("div", oControl); //Main
-
-        if (!bSelectable) {
-          oRM.class("spp-past-date");
-        }
-
-        oRM
+        if (!rO) {
+          c.setDay(null);
+          c.setDatePicker(null);
+          oControl.setProperty("nullCell", true, true);
+          oRM
           .class("spp-day-name")
           .class("spp-calendar-cell")
-          .class("spp-day-of-week-" + e.dayOfWeek);
-        if (!e.sameMonth) {
-          oRM.class("spp-other-month");
-        }
+          .class("spp-cal-null-cell");
+        }else{
+          if (!bSelectable) {
+            oRM.class("spp-past-date");
+          }
 
-        if (s && s === e.date) {
-          oRM.class("spp-active-day").class("spp-selected-date");
-        }
-
-        if (e.sameMonth && e.isToday) {
-          oRM.class("spp-today");
-        }
-
-        if (dP) {
           oRM
-            .class(e.dayOfWeek > 4 ? "spp-weekend" : "spp-weekday")
-            .class(e.dayOfWeek > 4 ? "spp-nonworking-day" : "spp-working-day");
-        } else {
-          var s = oControl._getDayClass(e.date);
+            .class("spp-day-name")
+            .class("spp-calendar-cell")
+            .class("spp-day-of-week-" + e.dayOfWeek);
+          if (!e.sameMonth) {
+            oRM.class("spp-other-month");
+          }
 
-          if (s) {
-            oRM.class(s);
-          } else {
+          if (s && s === e.date) {
+            oRM.class("spp-active-day").class("spp-selected-date");
+          }
+
+          if (e.sameMonth && e.isToday) {
+            oRM.class("spp-today");
+          }
+
+          if (dP) {
             oRM
-              .class("spp-cal-empty-cell")
               .class(e.dayOfWeek > 4 ? "spp-weekend" : "spp-weekday")
               .class(
                 e.dayOfWeek > 4 ? "spp-nonworking-day" : "spp-working-day"
               );
+          } else {
+            var s = oControl._getDayClass(e.date);
+
+            if (s) {
+              oRM.class(s);
+            } else {
+              oRM
+                .class("spp-cal-empty-cell")
+                .class(e.dayOfWeek > 4 ? "spp-weekend" : "spp-weekday")
+                .class(
+                  e.dayOfWeek > 4 ? "spp-nonworking-day" : "spp-working-day"
+                );
+            }
           }
+          oRM.attr("data-date", e.date);
         }
 
-        oRM.attr("data-date", e.date);
+        
         oRM.openEnd();
-        oRM.renderControl(c);
+       
+          oRM.renderControl(c);
+         
         oRM.close("div");
       },
       _getViewComponent: function () {
@@ -108,9 +130,12 @@ sap.ui.define(
         var p = dateUtilities.checkDateAnnual(d);
 
         if (p) {
-          var v = dateUtilities.getEventTypeVisible(p.LegendAttributes.LegendGroupKey, p.LegendAttributes.LegendItemKey);
+          var v = dateUtilities.getEventTypeVisible(
+            p.LegendAttributes.LegendGroupKey,
+            p.LegendAttributes.LegendItemKey
+          );
 
-          if(!v){
+          if (!v) {
             return null;
           }
 
@@ -120,9 +145,12 @@ sap.ui.define(
         p = dateUtilities.checkDatePlanned(d);
 
         if (p) {
-          var y = dateUtilities.getEventTypeVisible(p.LegendAttributes.LegendGroupKey, p.LegendAttributes.LegendItemKey);
+          var y = dateUtilities.getEventTypeVisible(
+            p.LegendAttributes.LegendGroupKey,
+            p.LegendAttributes.LegendItemKey
+          );
 
-          if(!y){
+          if (!y) {
             return null;
           }
           return p?.LegendAttributes?.EventColor;
@@ -135,15 +163,32 @@ sap.ui.define(
         } else {
           return h?.LegendAttributes?.EventColor;
         }
-      
       },
-      ontap: function () {
-        if (this.getDatePicker()) {
+      ontap: function (e) {
+       
+
+        if (this.getDatePicker() || this.getNullCell()) {
           return;
         }
+
+        e.preventDefault();
+        e.stopPropagation();
+        
+        var a = this.getDay();
+        var bSelectable = dateUtilities.checkDateIsSelectable(a.date);
+
+        if(!bSelectable){
+          return;
+        }
+
         var d = this.getDay().date;
-        var a = dateUtilities.getDayAttributes(d, false) || null;
-        if (!a) {
+        var a = dateUtilities.getDayAttributes(d, false) || [];
+
+        if (!a || a.length === 0 || eventUtilities.getSelectEventStatus()) {
+          eventUtilities.publishEvent("PlanningCalendar", "SelectEventDate", {
+            Element: this.$(),
+            Date: d,
+          });
           return;
         }
 

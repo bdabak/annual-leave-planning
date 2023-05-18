@@ -36,7 +36,7 @@ sap.ui.define(
         renderer: function (oRM, oControl) {
           var days = oControl.getDays();
           var w = oControl.getWeek();
-
+          
           oRM.openStart("div", oControl); //Main
           oRM.class("spp-calendar-week");
           oRM.attr("data-week", w);

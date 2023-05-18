@@ -42,6 +42,10 @@ sap.ui.define(
             type: "com.thy.ux.annualleaveplanning.ui.Modal",
             multiple: false,
           },
+          datepicker: {
+            type: "com.thy.ux.annualleaveplanning.ui.DatePickerWidget",
+            multiple: false,
+          }
         },
         events: {},
       },
@@ -143,6 +147,8 @@ sap.ui.define(
 
         oRM.close("div"); //Main Page
 
+        //--Dependents
+        oRM.renderControl(oControl.getAggregation("datepicker"));
         oRM.renderControl(oControl.getAggregation("modal"));
 
         oRM.close("div"); //Control

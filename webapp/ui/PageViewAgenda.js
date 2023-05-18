@@ -38,6 +38,7 @@ sap.ui.define(
         var t = 0;
         var eL = dateUtilities.getEventsWithinPeriod();
         this.destroyAggregation("rows");
+       
         $.each(eL, function(i,r ){
           var eH = 77;
           if(m){

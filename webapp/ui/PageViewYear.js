@@ -226,7 +226,7 @@ sap.ui.define(
         var d = $(".spp-create-event-active");
         // var d = $(".spp-datepicker-1-to-3-events");
 
-        if (d && d?.length > 0) {
+        if (d && d?.length > 1) {
           var startDate = d.first().data("date");
           var endDate = d.last().data("date");
           eventUtilities.publishEvent("PlanningCalendar", "CreateEvent", {
@@ -260,8 +260,9 @@ sap.ui.define(
         );
       },
 
-      _handleCreateEventCancelled: function () {
+      _handleCreateEventCancelled: function (e,o,p) {
         this._refreshCellStates();
+        if(p.showAlert){
         Swal.fire({
           position: "bottom",
           icon: "info",
@@ -270,6 +271,7 @@ sap.ui.define(
           toast: true,
           timer: 2000,  
         });
+      }
       },
     });
   }

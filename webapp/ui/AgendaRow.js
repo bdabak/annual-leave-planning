@@ -96,6 +96,7 @@ sap.ui.define(
           editable: r.editable,
           splittable: r.splittable,
           deletable: r.deletable,
+          rejected: r.rejected,
           duration: formatter.suppressZeroDecimal(r.duration) + " " + this.getModel("i18n").getResourceBundle().getText("days")
         });
 

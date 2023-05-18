@@ -103,15 +103,22 @@ sap.ui.define(
             bindable: true,
             defaultValue: false,
           },
+          rejected: {
+            type: "boolean",
+            bindable: true,
+            defaultValue: false,
+          },
           duration: {
             type: "string",
             bindable: true,
             defaultValue: null,
           },
         },
-        aggregations: {},
+        aggregations: {
+        },
         events: {},
       },
+
       renderer: function (oRM, oControl) {
         var bPast = oControl.getHasPast();
         var bEvent = oControl.getEventType();
@@ -124,6 +131,11 @@ sap.ui.define(
             : 0 || 0;
         var iSpan = oControl.getRowSpan();
         var bAgenda = oControl.getForAgenda();
+        var bHasAction =
+          oControl.getEditable() ||
+          oControl.getSplittable() ||
+          oControl.getDeletable();
+
         oRM.openStart("div", oControl); //Main
         oRM
           .class("spp-cal-event-wrap")
@@ -218,8 +230,11 @@ sap.ui.define(
             .close("span");
         }
 
+      
+
         oRM.close("div");
         //--Render event description--//
+
 
         oRM.close("div");
         //--Render event body--//
@@ -261,7 +276,11 @@ sap.ui.define(
                   .getText("editAction"),
                 icon: "sap-icon://edit",
                 press: function () {
-                  eventUtilities.publishEvent("PlanningCalendar", "EditEvent", _.clone(oEventObject));
+                  eventUtilities.publishEvent(
+                    "PlanningCalendar",
+                    "EditEvent",
+                    _.clone(oEventObject)
+                  );
                 },
               })
             );
@@ -276,7 +295,11 @@ sap.ui.define(
                 solid: true,
                 press: function () {
                   that._actionSheet.close();
-                  eventUtilities.publishEvent("PlanningCalendar", "EditEvent",  _.clone(oEventObject));
+                  eventUtilities.publishEvent(
+                    "PlanningCalendar",
+                    "EditEvent",
+                    _.clone(oEventObject)
+                  );
                 },
               })
             );
@@ -357,14 +380,6 @@ sap.ui.define(
             );
           }
 
-          this._actionSheet = new ActionSheet({
-            buttons: b,
-            afterClose: function () {
-              that._actionSheet.destroy();
-              that._actionSheet = null;
-            },
-          }).addStyleClass("spp-actionsheet");
-
           this._actionSheet = new Popover({
             showHeader: false,
             afterClose: function () {
@@ -372,6 +387,7 @@ sap.ui.define(
               that._actionSheet = null;
             },
             showArrow: true,
+            showCloseButton: true,
             placement: "Auto",
             content: new VerticalLayout({
               width: "100%",

@@ -28,6 +28,10 @@
 				type="XML"
 			/>
 		</footer>
+		<datepicker>
+			<DatePickerWidget id="LeaveManagementPageDatePicker"
+				floating="true" visible="false" shared="true"/>
+		</datepicker>
 		<modal>
 			<Modal id="LeaveManagementPageModal"/>
 		</modal>

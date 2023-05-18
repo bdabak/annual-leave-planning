@@ -1,0 +1,42 @@
+<c:FragmentDefinition
+	xmlns="com.thy.ux.annualleaveplanning.ui"
+	xmlns:c="sap.ui.core"
+>
+	<LegendGroup
+		id="LeaveManagementPageLegendGroup"
+		items="{
+			path: 'planModel>LegendGroup',
+			templateShareable: false
+		}"
+		legendSelectionChanged=".onLegendSelectionChanged"
+	>
+		<items>
+			<LegendGroupItem
+				color="{planModel>LegendGroupColor}"
+				text="{planModel>LegendGroupName}"
+				selected="{planModel>Selected}"
+				items="{planModel>LegendItemSet}"
+			>
+				<legend>
+					<Legend
+						id="LeaveManagementPageLegendGroupItem"
+						items="{
+							path: 'planModel>LegendItemSet',
+							templateShareable: false
+						}"
+						legendSelectionChanged=".onLegendSelectionChanged"
+					>
+						<items>
+							<LegendItem
+								id="LeaveManagementPageLegendSubItem"
+								color="{planModel>LegendItemColor}"
+								text="{planModel>LegendItemName}"
+								selected="{planModel>Selected}"
+							/>
+						</items>
+					</Legend>
+				</legend>
+			</LegendGroupItem>
+		</items>
+	</LegendGroup>
+</c:FragmentDefinition>

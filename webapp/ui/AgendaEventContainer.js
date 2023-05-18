@@ -24,13 +24,24 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
           oRM.openStart("div"); //Agenda Row
           oRM.class("spp-cal-agenda-event-row");
           oRM.openEnd();
-          // oRM.openStart("div"); //Event Time
-          // oRM.class("spp-cal-eventlist-event-time");
-          // oRM.openEnd();
-          // oRM.text("Btş: " + e.getEndDate());
-          // oRM.close("div"); //Event time
+          
           oRM.renderControl(e);
+
+
+          if(e.getRejected()){
+            oRM.openStart("div"); //Event Time
+            oRM.class("spp-cal-rejected-event");
+            oRM.openEnd();
+            oRM.openStart("span"); //Event Time
+            oRM.class("spp-fa").class("spp-fa-circle-exclamation");
+            oRM.openEnd();
+            oRM.text(" İzin reddedildi. Düzenleme gerekli.");
+            oRM.close("span"); //Event time
+            oRM.close("div"); //Event time
+  
+          }
           oRM.close("div"); //Agenda Row
+         
         });
         
         oRM.close("div");

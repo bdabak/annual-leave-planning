@@ -5,7 +5,13 @@ sap.ui.define(
   ],
   function (Control, eventUtilities) {
     "use strict";
-
+    var dragInfo = {
+      clientX: null,
+      clientY: null,
+      prevClientX: null,
+      prevClientY: null,
+      dragStarted: false
+    };
     return Control.extend("com.thy.ux.annualleaveplanning.ui.Modal", {
       metadata: {
         properties: {},
@@ -84,12 +90,15 @@ sap.ui.define(
 
         this.destroyAggregation("content");
 
+        eventUtilities.publishEvent("PlanningCalendar", "ModalClosed", null);
+
       },
       ontap: function (oEvent) {
         if ($(oEvent.target).hasClass("spp-float-overlay")) {
           this.close();
         }
       },
+
     });
   }
 );

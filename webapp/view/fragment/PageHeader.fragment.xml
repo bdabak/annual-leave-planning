@@ -4,11 +4,14 @@
         <toolbar>
             <Toolbar id="LeaveManagementPageHeaderToolbar">
                 <items>
-                    <Button id="ToggleSidebarButton" icon="spp-icon-menu" firstChild="true" press=".onToggleSidebar">
+                     <Button id="HomeButton" icon="spp-fa-home" class="spp-red" press=".onNavBack" solid="true" visible="{planModel>HomeButtonVisible}" firstChild="true" 
+                     />
+                    <Button id="ToggleSidebarButton" icon="spp-icon-menu" press=".onToggleSidebar">
                         <customData>
                             <core:CustomData key="ref" value="toggleSideBar" writeToDom="true" />
                         </customData>
                     </Button>
+                    <!-- <ToolbarSpacer id="PageHeaderToolbarSpacer1"/> -->
                     <Button id="TodayButton" icon="spp-icon-calendar-day" label="{i18n>today}" class="spp-calendar-today-button spp-cal-nav-item" press=".onPeriodChange">
                         <customData>
                             <core:CustomData key="ref" value="todayButton" writeToDom="true" />
@@ -29,7 +32,8 @@
                     </Button>
                     <Period id="PlanningPeriod" mode="{planModel>Mode}" period="{planModel>Period}" />
 
-                    <ToolbarSpacer id="PageHeaderToolbarSpacer"/>
+                    <!--  -->
+                    <ToolbarSpacer id="PageHeaderToolbarSpacer2"/>
 
                     <Button id="MobileViewMenuButton" icon="spp-icon-calendar-days" tooltip="{i18n>viewSelection}" solid="true" visible= "{= ${device>/system/phone} }" class="spp-cal-nav-item" press=".onMobileViewMenu" />
                     <ButtonGroup id="DesktopViewViewGroup" visible="{= !${device>/system/phone} }">

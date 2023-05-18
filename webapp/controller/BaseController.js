@@ -25,7 +25,9 @@ sap.ui.define(
          * @returns {sap.ui.model.Model} the model instance
          */
         getModel: function (sName) {
-          return this.getView().getModel(sName);
+          var oModel =  this.getView().getModel(sName) || this.getOwnerComponent().getModel(sName);
+
+          return oModel;
         },
   
         /**

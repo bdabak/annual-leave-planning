@@ -9,6 +9,9 @@
 			path: 'planModel>Header/QuotaPlanned'
 		}, {
 			path: 'planModel>Header/QuotaToBePlanned'
+		},
+		{
+			path: 'planModel>Header/CouncilApprovalStatus'
 		}],
 		formatter: '.formatter.decidePlanApproveStatus'
 	}">

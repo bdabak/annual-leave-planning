@@ -297,6 +297,7 @@
   --color-cyan: #26c6da;
   --color-teal: #26a69a;
   --color-green: #27ca37;
+  --color-light-green: #90ee90;
   --color-green-hover: #26812f;
   --color-lime: #d4e157;
   --color-yellow: #fdd835;
@@ -322,16 +323,19 @@
   --cal-event-color-violet: #7e57c2;
   --cal-event-color-indigo: #5c6bc0;
   --cal-event-color-blue: #42a5f5;
+  --cal-event-color-light-blue: #8ec9fa;
   --cal-event-color-cyan: #26c6da;
   --cal-event-color-magenta: #f0f;
   --cal-event-color-teal: #26a69a;
   --cal-event-color-green: #66bb6a;
+  --cal-event-color-light-green: #90ee90;
   --cal-event-color-gantt-green: #a5d8a7;
   --cal-event-color-lime: #d4e157;
   --cal-event-color-yellow: #fdd835;
   --cal-event-color-orange: #ffa726;
   --cal-event-color-deep-orange: #ff7043;
   --cal-event-color-gray: #a0a0a0;
+  --arrow-width:0px;
 }
 
 ::-webkit-scrollbar-corner {

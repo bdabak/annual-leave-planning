@@ -1,0 +1,35 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:thy="com.thy.ux.annualleaveplanning.ui"
+>
+	<Dialog
+		title="{i18n>filterEvents}"
+		afterClose=".onFilterEventClosed"
+		binding="{planModel>/Page}"
+		class="sapUiContentPadding"
+	>
+		<content>
+			<VBox>
+				<core:Fragment
+					fragmentName="com.thy.ux.annualleaveplanning.view.fragment.EventLegend"
+					type="XML"
+				/>
+				<HBox
+					width="100%"
+					justifyContent="Center"
+				>
+					<thy:Button
+                    icon="spp-fa-thumbs-up" class="spp-green"
+						label="{i18n>okAction}"
+						solid="false"
+						press=".onFilterEventClose"
+					/>
+				</HBox>
+			</VBox>
+		</content>
+		<!-- <buttons>
+            <Button press=".onFilterEventClose" text="{i18n>okAction}"></Button>
+        </buttons> -->
+	</Dialog>
+</core:FragmentDefinition>

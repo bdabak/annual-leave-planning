@@ -1,17 +1,50 @@
 sap.ui.define([], function () {
   "use strict";
-
+  var subscribedEventsStack = [];
+  var oEventBus;
+  var waitingForEndSelection = false;
   return {
+    initiate: function(){
+      this.invalidateEvents();
+      this.createEventBus();
+    },
+    createEventBus: function(){
+      oEventBus = new sap.ui.core.EventBus();
+    },
+    setSelectEventStatus: function(s){
+      waitingForEndSelection = s;
+    },
+    getSelectEventStatus: function(){
+      return waitingForEndSelection;
+    },
+    getEventBus: function(){
+      return oEventBus;
+    },
     publishEvent: function (c, e, p) {
-      var b = sap.ui.getCore().getEventBus();
+      var b = this.getEventBus();
 
       b.publish(c, e, p ? p : null);
     },
     subscribeEvent: function (c, e, m, t) {
-      var b = sap.ui.getCore().getEventBus();
+      var b = this.getEventBus();
 
       b.unsubscribe(c, e, m, t);
       b.subscribe(c, e, m, t);
+
+      subscribedEventsStack.push({
+        c: c,
+        e: e,
+        f: m,
+        l: t
+      });
+    },
+    invalidateEvents:function(){
+      var b = this.getEventBus();
+      $.each(subscribedEventsStack,function(i,s){
+        b.unsubscribe(s.c, s.e, s.f, s.l);
+      });
+      subscribedEventsStack = [];
+      waitingForEndSelection = false;
     },
     createEventId: function() { 
       var d = new Date().getTime();//Timestamp

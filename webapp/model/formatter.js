@@ -12,14 +12,22 @@ sap.ui.define([], function () {
 
       var oFloatFormat =
         sap.ui.core.format.NumberFormat.getFloatInstance(oFormatOptions);
+      var r = oFloatFormat.format(f);
 
-      return oFloatFormat.format(f);
+      r = r.replaceAll(",00","");
+      return r;
     },
 
-    decidePlanApproveStatus: function (e, p, t) {
+    decidePlanApproveStatus: function (e, p, t, c) {
       if (!e || p === null || p === undefined || t === null || t === undefined) {
         return false;
       }
+
+      if(c !== "" && c !== null && c !== undefined){
+        // console.log(c);
+         return false;
+      }
+
       try {
         if(parseFloat(p) <= 0){
           return false;
@@ -35,17 +43,17 @@ sap.ui.define([], function () {
       }
     },
 
-    getLeaveTypeVisible: function(t,e,h){
-      if(t && t === '0010'){
-        return true;
-      }
+    // getLeaveTypeVisible: function(t,e,h){
+    //   if(t && t === '0010'){
+    //     return true;
+    //   }
+    //   console.log(t,e,h);
+    //   if(e?.New && h?.PlanningEnabled){
+    //     return true;
+    //   }
 
-      if(e?.New && h?.PlanningEnabled){
-        return true;
-      }
-
-      return false;
-    },
+    //   return false;
+    // },
     checkAddSplitVisible: function (s = [], r) {
       var v = _.filter(s, ["Visible", true]);
       return v.length < 5;

@@ -56,75 +56,9 @@ sap.ui.define(
             .getRoute("RoutePlanView")
             .attachPatternMatched(this._handlePlanViewCalled, this);
         },
-        onSplitEventDateChanged: function (e) {
-          var that = this;
-          var s = e.getSource() || null;
-          if (!s) {
-            return;
-          }
-
-          var i = s.data("targetIndex") || null;
-
-          if (i === null) {
-            return;
-          }
-
-          var p = "EventSplit/Splits/" + i;
-
-          var oEvent = this._getPageProperty(p) || null;
-
-          if (oEvent === null) {
-            return;
-          }
-
-          var sD = dateUtilities.convertToDate(oEvent.StartDate);
-          var eD = dateUtilities.convertToDate(oEvent.EndDate);
-          if (!sD || !eD) {
-            return;
-          }
-          oEvent.UsedQuota = null;
-
-          if (moment(sD).isAfter(moment(eD))) {
-            Swal.fire({
-              position: "bottom",
-              icon: "error",
-              html: "Bitiş tarihi, başlangıç tarihinden önce olamaz",
-              toast: true,
-              showConfirmButton: false,
-              timer: 5000,
-              timerProgressBar: true,
-            });
-            return;
-          }
-
-          oEvent.QuotaCalculating = true;
-
-          this._countUsedQuota(sD, eD).then(function (response) {
-            oEvent.QuotaCalculating = false;
-            oEvent.UsedQuota = response.UsedQuota;
-            that._setPageProperty(p, oEvent);
-          });
+        onExit: function () {
+          eventUtilities.invalidateEvents();
         },
-
-        onEventDateChanged: function (e) {
-          var oEvent = this._getPageProperty("EventEdit");
-          var that = this;
-
-          oEvent.QuotaCalculating = true;
-          oEvent.UsedQuota = null;
-
-          this._setPageProperty("EventEdit", oEvent);
-
-          this._countUsedQuota(
-            dateUtilities.convertToDate(oEvent.StartDate),
-            dateUtilities.convertToDate(oEvent.EndDate)
-          ).then(function (response) {
-            oEvent.QuotaCalculating = false;
-            oEvent.UsedQuota = response.UsedQuota;
-            that._setPageProperty("EventEdit", oEvent);
-          });
-        },
-
 
         /* Event handlers*/
         onToggleSidebar: function (e) {
@@ -140,7 +74,6 @@ sap.ui.define(
         onLegendSelectionChanged: function () {
           this._triggerRenderChanged();
         },
-
 
         onViewChange: function (e) {
           var s = e.getSource();
@@ -173,7 +106,7 @@ sap.ui.define(
           }.bind(this);
 
           this._oMobileViewMenu = Fragment.load({
-            id: this.getView().getId(),
+            id: this._getPagePrefix(),
             name: "com.thy.ux.annualleaveplanning.view.fragment.MobileViewMenu",
             controller: this,
           }).then(
@@ -183,6 +116,92 @@ sap.ui.define(
               return this._oMobileViewMenu;
             }.bind(this)
           );
+        },
+
+        onSplitEventDateChanged: function (e) {
+          var that = this;
+          var s = e.getSource() || null;
+          if (!s) {
+            return;
+          }
+
+          var i = s.data("targetIndex") || null;
+
+          if (i === null) {
+            return;
+          }
+
+          var p = "EventSplit/Splits/" + i;
+
+          var oEvent = this._getPageProperty(p) || null;
+
+          if (oEvent === null) {
+            return;
+          }
+
+          var sD = dateUtilities.convertToDate(oEvent.StartDate);
+          var eD = dateUtilities.convertToDate(oEvent.EndDate);
+
+          if (!sD || !eD) {
+            if (sD) {
+              oEvent["RefStartDate"] = oEvent["RefEndDate"] = oEvent.StartDate;
+            } else {
+              oEvent["RefStartDate"] = oEvent["RefEndDate"] = oEvent.EndDate;
+            }
+
+            this._setPageProperty(p, oEvent);
+
+            return;
+          }
+          oEvent.UsedQuota = null;
+
+          if (moment(sD).isAfter(moment(eD))) {
+            Swal.fire({
+              position: "bottom",
+              icon: "error",
+              html: "Bitiş tarihi, başlangıç tarihinden önce olamaz",
+              toast: true,
+              showConfirmButton: false,
+              timer: 5000,
+              timerProgressBar: true,
+            });
+            return;
+          }
+
+          oEvent.QuotaCalculating = true;
+
+          this._countUsedQuota(sD, eD).then(function (response) {
+            oEvent.QuotaCalculating = false;
+            oEvent.UsedQuota = response.UsedQuota;
+            that._setPageProperty(p, oEvent);
+          });
+        },
+
+        onEventDateChanged: function (e) {
+          var sId = e.getSource().getId();
+          var oEvent = this._getPageProperty("EventEdit");
+          var that = this;
+
+
+          oEvent.QuotaCalculating = true;
+          oEvent.UsedQuota = null;
+
+          if (sId.includes("StartDate")) {
+            oEvent["RefDate"] = oEvent.StartDate;
+          } else {
+            oEvent["RefDate"] = oEvent.EndDate;
+          }
+
+          this._setPageProperty("EventEdit", oEvent);
+
+          this._countUsedQuota(
+            dateUtilities.convertToDate(oEvent.StartDate),
+            dateUtilities.convertToDate(oEvent.EndDate)
+          ).then(function (response) {
+            oEvent.QuotaCalculating = false;
+            oEvent.UsedQuota = response.UsedQuota;
+            that._setPageProperty("EventEdit", oEvent);
+          });
         },
 
         onViewMenuItemSelected: function (e) {
@@ -201,14 +220,20 @@ sap.ui.define(
         onEventDialogClosed: function () {
           if (this._oEventDialog) this._oEventDialog.close();
         },
-        onAfterEventDialogClosed: function () {
-          this._createEventCancelled();
+        onAfterEventDialogClosed: function (e) {
+          try {
+            e.getSource()?.destroy();
+            if (this._oEventDialog) this._oEventDialog.destroy();
+          } catch (e) {
+            //catch possible errors
+          }
+
           this._oEventDialog = null;
         },
 
         onEventCancelled: function () {
-          this._cancelCreateEvent();
           this._closeEventDialog();
+          this._cancelCreateEvent();
         },
 
         onEventDelete: function () {
@@ -223,9 +248,9 @@ sap.ui.define(
             return;
           }
 
-          var i = _.findIndex(eL, ["EventId", oEvent.EventId]) ;
+          var i = _.findIndex(eL, ["EventId", oEvent.EventId]);
 
-          if(i===-1){
+          if (i === -1) {
             Swal.fire({
               position: "bottom",
               icon: "error",
@@ -259,9 +284,26 @@ sap.ui.define(
             }
           });
         },
+        onFilterLegend: function () {
+          this._oFilterEventDialog = sap.ui.xmlfragment(
+            "com.thy.ux.annualleaveplanning.view.fragment.FilterEvents",
+            this
+          );
 
+          this.getView().addDependent(this._oFilterEventDialog);
+
+          this._oFilterEventDialog.open();
+        },
+        onFilterEventClose: function () {
+          this._oFilterEventDialog.close();
+        },
+        onFilterEventClosed: function () {
+          this._oFilterEventDialog.destroy();
+        },
         onEventSave: function () {
           var oEvent = this._getPageProperty("EventEdit");
+          var oHeader = this._getPageProperty("Header");
+          var that = this;
 
           if (
             oEvent.LeaveType.Key === "" ||
@@ -278,7 +320,66 @@ sap.ui.define(
           }
 
           var sPath = this._getDataSourceFromKey(oEvent.LeaveType.Key);
-            
+
+          //--Event checks
+          //--S0-Date check
+          if (
+            !dateUtilities.isValidDate(oEvent.StartDate) ||
+            !dateUtilities.isValidDate(oEvent.EndDate)
+          ) {
+            Swal.fire({
+              position: "bottom",
+              icon: "error",
+              html: this.getText("enterValidDates", []),
+              toast: true,
+              showConfirmButton: true,
+            });
+            return;
+          }
+          //--S0-Date check
+
+          //--S1-Date check
+          if (
+            moment(dateUtilities.convertToDate(oEvent.StartDate)).isAfter(
+              moment(dateUtilities.convertToDate(oEvent.EndDate))
+            )
+          ) {
+            Swal.fire({
+              position: "bottom",
+              icon: "error",
+              html: this.getText("correctDates", []),
+              toast: true,
+              showConfirmButton: true,
+            });
+            return;
+          }
+          //--S1-Date check
+
+          //--S2-Date within planning period
+          if (sPath === "PL") {
+            if (
+              !moment(
+                dateUtilities.convertToDate(oEvent.StartDate)
+              ).isSameOrAfter(oHeader.QuotaAccrualBeginDate) ||
+              !moment(
+                dateUtilities.convertToDate(oEvent.EndDate)
+              ).isSameOrBefore(oHeader.QuotaAccrualEndDate)
+            ) {
+              Swal.fire({
+                position: "bottom",
+                icon: "error",
+                html: this.getText("planningPeriodError", [
+                  dateUtilities.formatDateObject(oHeader.QuotaAccrualBeginDate),
+                  dateUtilities.formatDateObject(oHeader.QuotaAccrualEndDate),
+                ]),
+                toast: true,
+                showConfirmButton: true,
+              });
+              return;
+            }
+          }
+          //--S2-Date within planning period
+
           switch (sPath) {
             case "PL":
               if (oEvent.New) {
@@ -289,15 +390,148 @@ sap.ui.define(
               break;
             case "AL":
               if (oEvent.New) {
-                this._createAnnualLeave(oEvent);
-              } else {
-                //Not exists
+                var aFPL = this._findPlanningEventsAfterLeave(oEvent);
+
+                if (aFPL.length > 0) {
+                  var btnClickHandler = function (e) {
+                    Swal.close();
+                    var d = $(e.target)?.data();
+                    var r = _.find(aFPL, ["EventId", d.eventId]);
+                    var o = {
+                      EventId: r.EventId,
+                      EventType:
+                        r.LegendAttributes.LegendGroupKey +
+                        "_" +
+                        r.LegendAttributes.LegendItemKey,
+                      LeaveType: r.LegendAttributes.LeaveType,
+                      Deletable: r.LegendAttributes.Deletable,
+                    };
+                    if (d.action === "Edit") {
+                      that._handleEditEvent(null, null, o);
+                    } else if (d.action === "Split") {
+                      that._handleSplitEvent(null, null, o);
+                    }
+                  };
+
+                  Swal.fire({
+                    title: this.getText("leaveRequestHasFuturePlansTitle", []),
+                    html: this._generateFuturePlanList(aFPL,oEvent),
+                    icon: "info",
+                    showCancelButton: false,
+                    confirmButtonColor: "#2196f3",
+                    backdrop: false,
+                    confirmButtonText: this.getText(
+                      "continueWithCurrentLeave",
+                     []
+                    ),
+                    didRender: function () {
+                      $(".spp-use-future-plan-button").on(
+                        "click",
+                        btnClickHandler.bind(that)
+                      );
+                    },
+                    willClose: function () {
+                      $(".spp-use-future-plan-button").off(
+                        "click",
+                        btnClickHandler
+                      );
+                      that._cancelCreateEvent(false);
+                    },
+                  }).then((a) => {
+                    if (a.isConfirmed) {
+                      this._createAnnualLeave(oEvent);
+                    }
+                  });
+                } else {
+                  this._createAnnualLeave(oEvent);
+                }
               }
               break;
           }
 
           this._closeEventDialog();
         },
+
+        _generateFuturePlanList: function (aFPL, oEvent) {
+         
+
+          var h = this.getText("leaveRequestHasFuturePlansText",  [oEvent.StartDate, oEvent.EndDate]);
+          var that = this;
+          var p = `<div class='spp-resp-grid-container'><header class='spp-resp-grid-header'>${that.getText(
+            "plannedLeavesAtFuture",
+            []
+          )}</header><div class='spp-resp-grid'>`;
+          $.each(aFPL, function (i, l) {
+            p =
+              p +
+              `<div class="spp-resp-grid-cell">
+            ${dateUtilities.formatDateObject(
+              l.StartDate
+            )} - ${dateUtilities.formatDateObject(l.EndDate)}
+            </div>
+            <div class="spp-resp-grid-cell">
+              <button class="swal2-confirm swal2-styled swal2-default-outline spp-use-future-plan-button" 
+              data-event-id="${l.EventId}"
+              data-action="Edit">${that.getText("editAction", [])}</button>
+              <button class="swal2-deny swal2-styled swal2-default-outline spp-use-future-plan-button" 
+              data-event-id="${l.EventId}"
+              data-action="Split">${that.getText("splitAction", [])}</button>
+            </div>`;
+          });
+
+          p = p + "</div></div>";
+
+          h = h + p;
+
+          return h;
+        },
+        _findPlanningEventsAfterLeave: function (e) {
+          var aPL = this._getProperty("PlannedLeaves");
+          var sD = dateUtilities.convertToDate(e.StartDate);
+          var eD = dateUtilities.convertToDate(e.EndDate);
+
+          var h = this._getPageProperty("Header");
+
+          if (
+              !moment(
+               sD
+              ).isSameOrAfter(h.QuotaAccrualBeginDate) ||
+              !moment(
+                eD
+              ).isSameOrBefore(h.QuotaAccrualEndDate)
+            ) {
+
+            return [];
+          }
+
+          var aFPL =
+            _.filter(aPL, function (l, i) {
+              if (l.LeaveStatus === "PLN" && l.LeaveType === "PL") {
+                if (
+                  moment(l.StartDate).isAfter(moment(eD)) ||
+                  moment(l.EndDate).isAfter(moment(sD)) ||
+                  moment(l.StartDate).isBetween(
+                    moment(sD),
+                    moment(eD),
+                    undefined,
+                    "[]"
+                  ) ||
+                  moment(l.EndDate).isBetween(
+                    moment(sD),
+                    moment(eD),
+                    undefined,
+                    "[]"
+                  )
+                ) {
+                  return true;
+                }
+              }
+              return false;
+            }) || [];
+
+          return aFPL;
+        },
+
         onSendPlanForApproval: function () {
           var that = this;
           var oHeader = this._getPageProperty("Header");
@@ -323,7 +557,7 @@ sap.ui.define(
           Swal.fire({
             title: this.getText("planSendConfirmationTitle", []),
             html: this.getText("planSendConfirmationText", [
-              oHeader.QuotaPlanned,
+              formatter.suppressZeroDecimal(oHeader.QuotaPlanned),
             ]),
             icon: "warning",
             showCancelButton: true,
@@ -343,18 +577,16 @@ sap.ui.define(
           });
         },
 
-      
-
         onSplitSave: function () {
           var oEvent = this._getPageProperty("EventSplit");
 
-          var s = this._getEventType(oEvent.EventType);
+          // var s = this._getEventType(oEvent.LeaveType);
 
-          if (!s) {
-            return null;
-          }
+          // if (!s) {
+          //   return null;
+          // }
 
-          var eL = this._getProperty(s);
+          var eL = this._getProperty("PlannedLeaves");
 
           var i = _.findIndex(eL, ["EventId", oEvent.EventId]);
           if (i === -1) {
@@ -391,44 +623,43 @@ sap.ui.define(
           this._closeEventDialog();
         },
 
+        // onCallDatePicker: function (e) {
+        //   var s = e.getParameter("sourceField");
+        //   var t = e.getParameter("targetField");
+        //   var p = e.getParameter("period");
+        //   var o = t.$();
 
-        onCallDatePicker: function (e) {
-          var s = e.getParameter("sourceField");
-          var t = e.getParameter("targetField");
-          var p = e.getParameter("period");
-          var o = t.$();
+        //   if (this._oDatePickerWidget) {
+        //     this._oDatePickerWidget.destroy();
+        //   }
 
-          if (this._oDatePickerWidget) {
-            this._oDatePickerWidget.destroy();
-          }
+        //   if (o && o?.length > 0) {
+        //     var eO = o.offset(); //Element position
+        //     var eH = o.outerHeight(); //Element height
+        //     var eW = o.outerWidth();
 
-          if (o && o?.length > 0) {
-            var eO = o.offset(); //Element position
-            var eH = o.outerHeight(); //Element height
-            var eW = o.outerWidth();
+        //     this._oDatePickerWidget = new DatePickerWidget({
+        //       floating: true,
+        //       period: p,
+        //       select: function (e) {
+        //         var d = e.getParameter("selectedDate");
+        //         if (s && typeof s.handleValueSelection === "function") {
+        //           s.handleValueSelection(d);
+        //         }
+        //       },
+        //       selectedDate: dateUtilities.convertPeriodToDate(p),
+        //       elementPosition: {
+        //         offset: { ...eO },
+        //         outerHeight: eH,
+        //         outerWidth: eW,
+        //       },
+        //     });
 
-            this._oDatePickerWidget = new DatePickerWidget({
-              floating: true,
-              period: p,
-              select: function (e) {
-                var d = e.getParameter("selectedDate");
-                if (s && typeof s.handleValueSelection === "function") {
-                  s.handleValueSelection(d);
-                }
-              },
-              selectedDate: dateUtilities.convertPeriodToDate(p),
-              elementPosition: {
-                offset: { ...eO },
-                outerHeight: eH,
-                outerWidth: eW,
-              },
-            });
+        //     s.registerDatePickerWidget(this._oDatePickerWidget);
 
-            s.registerDatePickerWidget(this._oDatePickerWidget);
-
-            this._getModal().openSub(this._oDatePickerWidget);
-          }
-        },
+        //     this._getModal().openSub(this._oDatePickerWidget);
+        //   }
+        // },
         onAddSplit: function () {
           var aS = this._getPageProperty("EventSplit/Splits");
 
@@ -458,7 +689,27 @@ sap.ui.define(
           this._setPageProperty("EventSplit/Splits", aS);
           this._setPageProperty("EventSplit/ButtonState", new Date().getTime());
         },
-       
+
+        getLeaveTypeVisible: function (d, r) {
+          var e = this._getPageProperty("EventEdit");
+          var h = this._getPageProperty("Header");
+
+          if (!r) {
+            return false;
+          }
+
+          if (d === "AL") {
+            //Yıllık izin
+            return true;
+          }
+
+          if (d === "PL" && e?.New && h?.PlanningEnabled) {
+            return true;
+          }
+
+          return false;
+        },
+
         /* Private - Helper Methods */
         _getModal: function () {
           return this._getById("LeaveManagementPageModal");
@@ -511,27 +762,37 @@ sap.ui.define(
         _countUsedQuota: function (b, e) {
           var oModel = this.getModel();
           var p = $.Deferred();
-
-          oModel.callFunction("/CalculateQuota", {
-            urlParameters: {
-              StartDate: b,
-              EndDate: e,
-            },
-            success: function (d, r) {
-              p.resolve(d);
-            },
-            error: function (e) {
-              p.reject(e);
-            },
-          });
-
+          if (moment(b).isSameOrBefore(e)) {
+            oModel.callFunction("/CalculateQuota", {
+              urlParameters: {
+                StartDate: b,
+                EndDate: e,
+              },
+              success: function (d, r) {
+                p.resolve(d);
+              },
+              error: function (e) {
+                p.reject(e);
+              },
+            });
+          } else {
+            p.resolve({ UsedQuota: null });
+            Swal.fire({
+              position: "bottom",
+              icon: "warning",
+              html: this.getText("correctDates", []),
+              showConfirmButton: false,
+              toast: true,
+              timer: 3000,
+            });
+          }
           return p;
         },
 
         _showPlanningInfo: function () {
           var h = this._getPageProperty("Header");
           var t, m;
-          if (h.PlanningEnabled) {
+          if (h.PlanningEnabled && h.CouncilApprovalStatus === "") {
             t = `<strong>${this.getText(
               "planningStatus",
               []
@@ -565,6 +826,32 @@ sap.ui.define(
           }
         },
 
+        _showRejectedInfo: function () {
+          var h = this._getPageProperty("Header");
+          var t, m;
+
+          t = `<strong>${this.getText("rejectedPlansExist", [])}</strong>`;
+          m = `<p>${this.getText("rejectedPlansProcedure", [])}</p>`;
+
+          Swal.fire({
+            title: t,
+            icon: "warning",
+            html: m,
+            showCloseButton: false,
+            showCancelButton: false,
+            focusConfirm: true,
+            confirmButtonColor: "#0fb391",
+            confirmButtonText: `<i class="spp-fa spp-fa-thumbs-up"></i>&nbsp;${this.getText(
+              "okAction",
+              []
+            )}`,
+            confirmButtonAriaLabel: this.getText("okAction", []),
+            backdrop: true,
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+          });
+        },
+
         _refreshLegend: function () {
           var p = $.Deferred();
           var that = this;
@@ -591,15 +878,20 @@ sap.ui.define(
 
                 lg.push(lgr);
 
-
                 /* Leave Types */
-                if(lgr.LeaveType !== null && lgr.LeaveType !== ""){
+                if (
+                  lgr.LeaveType !== null &&
+                  lgr.LeaveType !== "" &&
+                  lgr.Requestable
+                ) {
                   lt.push({
-                      Type: lgr.LeaveType,
-                      Value: lgr.LegendGroupKey,
-                      Description: lgr.LegendGroupName,
-                      Color: lgr.LegendGroupColor,
-                      Selected: false,
+                    Type: lgr.LeaveType,
+                    Value: lgr.LegendGroupKey,
+                    Description: lgr.LegendGroupName,
+                    Color: lgr.LegendGroupColor,
+                    Requestable: lgr.Requestable,
+                    Source: lgr.DataSource,
+                    Selected: false,
                   });
                 }
                 /* Leave Types */
@@ -607,7 +899,6 @@ sap.ui.define(
 
               that._setPageProperty("LegendGroup", lg);
               that._setPageProperty("LeaveTypes", lt);
-              // console.log(lg);
               p.resolve(true);
             },
             error: function (e) {
@@ -664,11 +955,13 @@ sap.ui.define(
           t.day = oDefaultPeriod.day;
 
           var rD = dateUtilities.convertPeriodToDateObject(t);
+          var bD = dateUtilities.calculateOffsetDate(rD, "-", 1, "m");
+          var eY = dateUtilities.calculateOffsetDate(rD, "+", 1, "y");
 
-          var eD = dateUtilities.calculateOffsetDate(rD, "+", 1);
+          var eD = dateUtilities.calculateOffsetDate(eY, "+", 1, "m");
 
           var sPath = oModel.createKey("/CalendarQuerySet", {
-            BeginDate: rD,
+            BeginDate: bD,
             EndDate: eD,
           });
 
@@ -731,6 +1024,7 @@ sap.ui.define(
 
           /* Leaves */
           var pL = [];
+          // console.dir(o.PlannedLeaveSet.results);
           var b = o.PlannedLeaveSet.results;
           $.each(b, function (i, l) {
             var e = _.clone(_.omit(l, ["__metadata"]));
@@ -744,9 +1038,17 @@ sap.ui.define(
             });
           });
 
+          //Check if any rejected leave exists
+          var rL = _.filter(b, ["LeaveStatus", "LRJ"]) || [];
+          if (rL.length > 0) {
+            this._showRejectedInfo();
+          }
+
           this._setProperty("PlannedLeaves", pL);
 
           var aL = [];
+
+          // console.dir(o.LeaveRequestSet.results);
           var a = o.LeaveRequestSet.results;
           $.each(a, function (i, l) {
             var e = _.cloneDeep(_.omit(l, ["__metadata"]));
@@ -767,7 +1069,7 @@ sap.ui.define(
 
           return p;
         },
-        
+
         _triggerRenderChanged: function () {
           this._setPageProperty("PageRenderChanged", new Date().getTime());
         },
@@ -790,6 +1092,7 @@ sap.ui.define(
                 PlanId: oHeader.PlanId,
               },
             ],
+            ReturnSet: [],
           };
 
           var fnCallback = function () {
@@ -841,8 +1144,8 @@ sap.ui.define(
         },
         _deleteAnnualLeave: function (oAnnual) {
           var oLeaveModel = this.getModel("leaveRequest");
-          var sPath = oLeaveModel.createKey("/LeaveRequestCollection",{
-            ...oAnnual.Key
+          var sPath = oLeaveModel.createKey("/LeaveRequestCollection", {
+            ...oAnnual.Key,
           });
           var that = this;
 
@@ -959,7 +1262,6 @@ sap.ui.define(
             fnCallback
           );
         },
-
 
         _deletePlan: function (oEvent) {
           var that = this;
@@ -1105,7 +1407,7 @@ sap.ui.define(
                 LegendGroupName: r[0].LegendGroupName,
                 LegendItemCount: 1,
                 ...r[0].LegendItemSet[0],
-                LeaveType: null
+                LeaveType: null,
               };
             case "PL":
               $.each(r, function (i, l) {
@@ -1124,7 +1426,7 @@ sap.ui.define(
                 LegendGroupName: g.LegendGroupName,
                 LegendItemCount: g.LegendItemSet.length,
                 ...f,
-                LeaveType: g.LeaveType
+                LeaveType: g.LeaveType,
               };
             case "AL":
               $.each(r, function (i, l) {
@@ -1147,7 +1449,7 @@ sap.ui.define(
                 LegendGroupName: g.LegendGroupName,
                 LegendItemCount: g.LegendItemSet.length,
                 ...f,
-                LeaveType: g.LeaveType
+                LeaveType: g.LeaveType,
               };
 
             default:
@@ -1156,8 +1458,7 @@ sap.ui.define(
         },
         _closeEventDialog: function () {
           if (this._oEventDialog) {
-            this._oEventDialog.destroy();
-            this._oEventDialog = null;
+            this._oEventDialog.close();
           }
           //--Close modal--//
           this._getModal()?.close();
@@ -1180,7 +1481,7 @@ sap.ui.define(
               break;
           }
 
-          var d = dateUtilities.decidePeriodChangeDirection(x, p);
+          var d = dateUtilities.decidePeriodChangeDirection(x, p, m);
 
           if (d === null) {
             return;
@@ -1269,6 +1570,88 @@ sap.ui.define(
             }
           );
         },
+        _handleSelectEventDate: function (c, e, o) {
+          var p = this._getProperty("SelectEvent");
+          var that = this;
+          var opened = false;
+
+          var initiateSelectEvent = function () {
+            var n = {
+              Element: null,
+              Period: {
+                StartDate: null,
+                EndDate: null,
+              },
+            };
+            eventUtilities.setSelectEventStatus(false);
+            that._setProperty("SelectEvent", n);
+          };
+
+          if (!p.Period.StartDate) {
+            p.Element = o.Element;
+            p.Period.StartDate = o.Date;
+            p.Period.EndDate = null;
+            Swal.fire({
+              position: "bottom",
+              icon: "warning",
+              html: that.getText("selectEndDate", [p.Period.StartDate]),
+              showConfirmButton: false,
+              toast: true,
+              timer: 10000,
+              timerProgressBar: true,
+              didOpen: function () {
+                opened = true;
+              },
+              willClose: function () {
+                if (opened) {
+                  opened = false;
+                  $(".spp-calendar-cell").removeClass(
+                    "spp-cal-tentative-event"
+                  );
+                  initiateSelectEvent();
+                }
+              },
+            });
+            this._setProperty("SelectEvent", p);
+            $(`.spp-calendar-cell[data-date='${p.Period.StartDate}']`).addClass(
+              "spp-cal-tentative-event"
+            );
+            eventUtilities.setSelectEventStatus(true);
+            return;
+          } else {
+            Swal.close();
+            p.Period.EndDate = o.Date;
+
+            var dates =
+              dateUtilities.findDatesBetweenTwoDates(
+                p.Period.StartDate,
+                p.Period.EndDate
+              ) || [];
+
+            if(dates.length === 0){
+              Swal.fire({
+                position: "bottom",
+                icon: "warning",
+                html: this.getText("correctDates", []),
+                showConfirmButton: false,
+                toast: true,
+                timer: 3000,
+              });
+              initiateSelectEvent();
+              return;
+            }
+
+            dates.forEach(function (n) {
+              $(`.spp-calendar-cell[data-date='${n}']`).addClass(
+                "spp-cal-tentative-event"
+              );
+            });
+
+            this._openEditEventDialog(p.Element, p.Period, true);
+
+            initiateSelectEvent();
+          }
+        },
         _handleCreateEvent: function (c, e, o) {
           if (o && o.Element) {
             this._openEditEventDialog(o.Element, o.Period, true);
@@ -1346,12 +1729,12 @@ sap.ui.define(
             Deletable: true,
           };
 
-          if(s === "AnnualLeaves"){
+          if (s === "AnnualLeaves") {
             oEvent.Key = {
               EmployeeID: c.EmployeeID,
               RequestID: formatter.convertGuidToChar(c.RequestID),
               ChangeStateID: c.ChangeStateID,
-              LeaveKey: c.LeaveKey
+              LeaveKey: c.LeaveKey,
             };
           }
 
@@ -1425,7 +1808,7 @@ sap.ui.define(
 
           return t;
         },
-        _handleEditEvent: function (c, e, o) {
+        _handleEditEvent: function (x, e, o) {
           var s = this._getEventType(o.EventType);
 
           if (!s) {
@@ -1563,16 +1946,23 @@ sap.ui.define(
               EventId: p.EventId,
               StartDate: dateUtilities.formatDate(p.StartDate),
               EndDate: dateUtilities.formatDate(p.EndDate),
+              RefDate: dateUtilities.formatDate(p.StartDate),
               UsedQuota: p.UsedQuota,
               New: n,
               Title: that.getText(n ? "newEventTitle" : "editEventTitle", []),
               QuotaCalculating: false,
-              Deletable: p.Deletable || false 
+              Deletable: p.Deletable || false,
             };
             that._setPageProperty("EventEdit", oEvent);
 
+            // var o = sap.ui.getCore().byId("CreateEditEventDialog");
+            // if(o){
+            //   console.log("Exists");
+            //   o.destroy();
+            // }
+
             var oDialog = Fragment.load({
-              id: that.getView().getId(),
+              id: that._getPagePrefix(),
               name: "com.thy.ux.annualleaveplanning.view.fragment.EditEventDialog",
               controller: that,
             }).then(
@@ -1600,6 +1990,7 @@ sap.ui.define(
         _openSplitEventDialog: function (r, p) {
           var sD = dateUtilities.formatDate(p.StartDate);
           var eD = dateUtilities.formatDate(p.EndDate);
+          var that = this;
           var oEvent = {
             LeaveType: {
               Key: p.LeaveType.Type,
@@ -1668,17 +2059,12 @@ sap.ui.define(
           this._setPageProperty("EventSplit", oEvent);
 
           var oDialog = Fragment.load({
-            id: this.getView().getId(),
+            id: that._getPagePrefix(),
             name: "com.thy.ux.annualleaveplanning.view.fragment.SplitEventDialog",
             controller: this,
           }).then(
             function (d) {
               d.setStyles(this._getEditDialogStyles());
-              // d.setElementPosition({
-              //   offset: { ...eO },
-              //   outerHeight: eH,
-              //   outerWidth: eW,
-              // });
               this._oEventDialog = d;
               this._getModal().open(this._oEventDialog);
             }.bind(this)
@@ -1689,28 +2075,35 @@ sap.ui.define(
           this._cancelCreateEvent();
           this._getModal().close();
         },
-        _cancelCreateEvent: function () {
+        _cancelCreateEvent: function (p = true) {
           eventUtilities.publishEvent(
             "PlanningCalendar",
             "CreateEventCancelled",
-            null
+            {showAlert: p}
           );
         },
 
         _showServiceError: function (oError) {
           this._cancelCreateEvent();
+          var m;
 
+          try {
+            m = JSON.parse(oError?.responseText).error.message.value;
+          } catch (e) {
+            m = oError?.responseText;
+          }
 
           Swal.fire({
             icon: "error",
             title: this.getText("serviceErrorTitle", []),
-            html: JSON.parse(oError?.responseText).error.message.value,
+            html: m,
             position: "center",
             showConfirmButton: false,
             showCloseButton: true,
           });
         },
         _showErrorMessages: function (aError, titleText) {
+          this._cancelCreateEvent();
           try {
             if (aError?.length > 0) {
               var html = "<div class='spp-error-container'>";
@@ -1748,7 +2141,9 @@ sap.ui.define(
                 `,
                 },
                 grow: "row",
-                showConfirmButton: false,
+                showConfirmButton: true,
+                confirmButtonText: this.getText("okAction", []),
+                focusConfirm: true,
                 showCloseButton: true,
               });
             }
@@ -1769,12 +2164,13 @@ sap.ui.define(
                 EventId: null,
                 StartDate: null,
                 EndDate: null,
+                RefDate: null,
                 New: false,
                 UsedQuota: null,
                 Title: "",
                 QuotaCalculating: false,
                 Deletable: false,
-                Key: null
+                Key: null,
               },
               EventSplit: {
                 LeaveType: null,
@@ -1788,14 +2184,34 @@ sap.ui.define(
               },
               Header: {},
               LeaveTypes: [],
+              HomeButtonVisible: sap?.ushell?.Container ? true : false,
             },
             HolidayCalendar: null,
             PlannedLeaves: [],
             AnnualLeaves: [],
+            PagePrefix: this.getView().getId() + "_" + new Date().getTime(),
+            SelectEvent: {
+              Element: null,
+              Period: {
+                StartDate: null,
+                EndDate: null,
+              },
+            },
           };
+        },
+        _getPagePrefix: function () {
+          return this._getProperty("PagePrefix");
         },
         _subscribeEventHandlers: function () {
           /* Subscribe Event Handlers */
+
+          eventUtilities.subscribeEvent(
+            "PlanningCalendar",
+            "SelectEventDate",
+            this._handleSelectEventDate,
+            this
+          );
+
           eventUtilities.subscribeEvent(
             "PlanningCalendar",
             "CreateEvent",
@@ -1834,8 +2250,58 @@ sap.ui.define(
           /* Subscribe Event Handlers */
         },
 
-        
+        onNavBack: function () {
+          // var oRenderer = sap.ushell.Container.getRenderer("fiori2");
+          // if (oRenderer) {
+          //   oRenderer.setHeaderVisibility(true, true, [ "app"]);
+
+          var oNav = sap.ushell.Container.getService(
+            "CrossApplicationNavigation"
+          );
+
+          if (oNav) {
+            oNav.toExternal({
+              target: {
+                semanticObject: "Shell-home",
+              },
+            });
+          }
+          // }
+        },
+
+        _registerHasChange: function () {
+          var that = this;
+          window.removeEventListener("hashchange", that._hashChangeListener);
+
+          window.addEventListener(
+            "hashchange",
+            that._hashChangeListener.bind(that),
+            false
+          );
+        },
+
+        _hashChangeListener: function (e) {
+          if (sap?.ushell?.Container) {
+            if (e.newURL && e.newURL.includes("#Shell-home")) {
+              this.onExit();
+
+              var oRenderer = sap.ushell.Container.getRenderer("fiori2");
+              if (oRenderer) {
+                oRenderer.setHeaderVisibility(true, true, ["app"]);
+              }
+            }
+          }
+        },
+
         _handlePlanViewCalled: function () {
+          if (sap?.ushell?.Container) {
+            this._registerHasChange();
+            var oRenderer = sap.ushell.Container.getRenderer("fiori2");
+            if (oRenderer) {
+              oRenderer.setHeaderVisibility(false, false, ["app"]);
+            }
+          }
+
           this._setPageProperty("Visible", false);
           this.openBusyFragment("pleaseWait", []);
 
@@ -1860,6 +2326,7 @@ sap.ui.define(
           var t = e.getParameter("targetField");
           var p = e.getParameter("period");
           var o = t.$();
+
           if (o && o?.length > 0) {
             var eO = o.offset(); //Element position
             var eH = o.outerHeight(); //Element height

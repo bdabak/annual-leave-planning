@@ -1,14 +1,15 @@
 sap.ui.define(
-    [
-        "sap/ui/core/mvc/Controller"
-    ],
-    function(BaseController) {
-      "use strict";
-  
-      return BaseController.extend("com.thy.ux.annualleaveplanning.controller.App", {
+  ["./BaseController", "com/thy/ux/annualleaveplanning/utils/event-utilities"],
+  function (BaseController, eventUtilities) {
+    "use strict";
+
+    return BaseController.extend(
+      "com.thy.ux.annualleaveplanning.controller.App",
+      {
         onInit() {
-        }
-      });
-    }
-  );
-  
+          eventUtilities.initiate();
+        },
+      }
+    );
+  }
+);

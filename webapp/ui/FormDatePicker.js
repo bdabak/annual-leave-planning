@@ -4,8 +4,9 @@ sap.ui.define(
     "com/thy/ux/annualleaveplanning/ui/FormFieldTrigger",
     "com/thy/ux/annualleaveplanning/ui/DatePickerWidget",
     "com/thy/ux/annualleaveplanning/utils/date-utilities",
+    "com/thy/ux/annualleaveplanning/utils/event-utilities",
   ],
-  function (Control, FieldTrigger, DatePickerWidget, dateUtilities) {
+  function (Control, FieldTrigger, DatePickerWidget, dateUtilities, eventUtilities) {
     "use strict";
     var _firstRender = false;
     return Control.extend("com.thy.ux.annualleaveplanning.ui.FormDatePicker", {
@@ -62,57 +63,66 @@ sap.ui.define(
           },
         },
       },
-
+      /**
+       * @override
+       * @param {boolean} [bSuppressInvalidate] if true, the UI element is removed from DOM synchronously and parent will not be invalidated.
+       */
+      destroy: function(bSuppressInvalidate) {
+        Control.prototype.destroy.apply(this, arguments);
+        eventUtilities.publishEvent("PlanningCalendar", "CloseDatePicker", {
+          Element: this
+        });
+      },
       init: function () {
         var that = this;
         var dT = new FieldTrigger({
           icon: "spp-icon-calendar",
           alignEnd: true,
-          press: this.toggleDatePicker.bind(this),
+          press: this._toggleDatePicker.bind(this),
         });
         this.setAggregation("dateTrigger", dT);
       },
 
-      createDatePicker: function(){
-        var that =  this;
-        var d = this.getValue() || this.getReferenceDate() || null;
-        var p;
+      // createDatePicker: function(){
+      //   var that =  this;
+      //   var d = this.getValue() || this.getReferenceDate() || null;
+      //   var p;
 
-        if (!d) {
-          p = dateUtilities.getToday();
-          d = dateUtilities.convertPeriodToDate(p);
-        } else {
-          p = dateUtilities.convertDateToPeriod(d);
-        }
+      //   if (!d) {
+      //     p = dateUtilities.getToday();
+      //     d = dateUtilities.convertPeriodToDate(p);
+      //   } else {
+      //     p = dateUtilities.convertDateToPeriod(d);
+      //   }
 
-        var dP = new DatePickerWidget({
-          floating: true,
-          period: p,
-          select: function (e) {
-            var d = e.getParameter("selectedDate");
-            that.setValue(d);
-            that.fireChanged({
-              date: d
-            });
-            dP.setVisible(false);
-          },
-          selectedDate: d,
-          elementPosition: null,
-          visible: false,
-        });
+      //   var dP = new DatePickerWidget({
+      //     floating: true,
+      //     period: p,
+      //     select: function (e) {
+      //       var d = e.getParameter("selectedDate");
+      //       that.setValue(d);
+      //       that.fireChanged({
+      //         date: d
+      //       });
+      //       dP.setVisible(false);
+      //     },
+      //     selectedDate: d,
+      //     elementPosition: null,
+      //     visible: false,
+      //   });
 
-        this.setAggregation("datePickerWidget", dP); 
+      //   this.setAggregation("datePickerWidget", dP); 
         
-        return dP;
+      //   return dP;
 
-      },  
-      renderDatePicker: function (oRM) {
-        var dP = this.getAggregation("datePicker") || null;
-        if (!dP) {
-          dP = this.createDatePicker();
-        }
-        oRM.renderControl(dP);
-      },
+      // },  
+      // renderDatePicker: function (oRM) {
+      //   var dP = this.getAggregation("datePicker") || null;
+      //   if (!dP) {
+      //     dP = this.createDatePicker();
+      //   }
+      //   oRM.renderControl(dP);
+      // },
 
       registerDatePickerWidget: function (c) {
         this.setAssociation("datePickerWidget", c.getId());
@@ -120,37 +130,39 @@ sap.ui.define(
 
       handleValueSelection: function (v) {
         this.setValue(dateUtilities.formatDate(v));
-        this.closeDatePicker();
+        this.fireChanged({
+          date: v
+        });
       },
 
       closeDatePicker: function () {
-        var dP = this.getAggregation("datePickerWidget");
+        // var dP = this.getAggregation("datePickerWidget");
 
-        if (dP.getVisible()) {
-          dP.setVisible(false);
-        }
+        // if (dP.getVisible()) {
+        //   dP.setVisible(false);
+        // }
+
+        eventUtilities.publishEvent("PlanningCalendar", "CloseDatePicker", {
+          Element: this
+        });
       },
 
       openDatePicker: function () {
-        var dP = this.getAggregation("datePickerWidget");
+        // var dP = this.getAggregation("datePickerWidget");
 
-        if (!dP.getVisible()) {
-          dP.setVisible(true);
-        }
+        // if (!dP.getVisible()) {
+        //   dP.setVisible(true);
+        // }
+
+        eventUtilities.publishEvent("PlanningCalendar", "OpenDatePicker", {
+         Element: this
+        });
       },
 
-      toggleDatePicker: function () {
-        var dP = this.getAggregation("datePickerWidget");
-
-        if(!dP){
-          return;
-        }
-
-        if (dP.getVisible()) {
-          this.closeDatePicker();
-        } else {
-          this.openDatePicker();
-        }
+      _toggleDatePicker: function () {
+        eventUtilities.publishEvent("PlanningCalendar", "ToggleDatePicker", {
+          Element: this
+        });
       },
       /**
        * @override
@@ -184,8 +196,8 @@ sap.ui.define(
 
         if (bEditable) {
           oRM.renderControl(oControl.getAggregation("dateTrigger"));
-          // oRM.renderControl(oControl.getAggregation("datePickerWidget"));
-          oControl.renderDatePicker(oRM);
+        //   // oRM.renderControl(oControl.getAggregation("datePickerWidget"));
+        //   oControl.renderDatePicker(oRM);
         }
 
         oRM.close("div"); //Main
@@ -193,7 +205,7 @@ sap.ui.define(
       ontap:function(e){
         if ($(e.target).hasClass("spp-input-focus")) {
           if (this.getEditable()) {
-            this.toggleDatePicker();
+            this._toggleDatePicker();
           }
         }
       },
