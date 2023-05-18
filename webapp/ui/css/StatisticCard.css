@@ -1,103 +1,126 @@
-.spp-stat-card{
-    margin-bottom: clamp(0.3rem, 0.4474rem + 0.2807vw, 0.5rem);
-    width: 85%;
-    max-width: 160px;
+.spp-stat-card {
+  margin-bottom: clamp(0.3rem, 0.4474rem + 0.2807vw, 0.5rem);
+  width: 85%;
+  max-width: 160px;
 }
 
-.spp-stat-card-wrap{
-    background: #ffffff;
-    box-shadow: 2px 10px 20px rgba(0, 0, 0, 0.1);
-    border-radius: 7px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-    height: 100%;
-    font-family: "Roboto", sans-serif;
-    transition: .7s;
+.spp-stat-card-wrap {
+  background: #ffffff;
+  box-shadow: 2px 10px 20px rgba(0, 0, 0, 0.1);
+  border-radius: 7px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+  font-family: "Roboto", sans-serif;
+  transition: 0.7s;
 }
 
-.spp-stat-card-wrap:after{
-    display: block;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 10px;
-    content: "";
+.spp-stat-card-wrap:after {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 10px;
+  content: "";
 }
 
-.spp-stat-card-grid{
-    display: grid;
-    grid-template-columns: 1.25fr 10px 1fr;
-    gap: 0.2rem;
-    padding-left:  0.2rem;
-    padding-right:  0.2rem;
+.spp-stat-card-grid {
+  display: grid;
+  grid-template-columns: 1.25fr 10px 1fr;
+  gap: 0.2rem;
+  padding-left: 0.2rem;
+  padding-right: 0.2rem;
 }
 
-.spp-stat-card-grid-sep-col{
-    grid-row: span 2;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.spp-stat-card-grid-sep-col {
+  grid-row: span 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-
-.spp-stat-card-grid-sep{
-    border-left: 1px dashed var(--cal-event-color-blue);
-    height: 65%;
-    position: absolute;
-    bottom: 10px;
+.spp-stat-card-grid-sep {
+  border-left: 1px dashed var(--cal-event-color-blue);
+  height: 65%;
+  position: absolute;
+  bottom: 10px;
 }
 
-
-
-.spp-stat-card-primary:after{
-    background: linear-gradient(81.67deg, #0084f4 0%, #1a4da2 100%);
+.spp-stat-card-primary:after {
+  background: linear-gradient(81.67deg, #0084f4 0%, #1a4da2 100%);
 }
-.spp-stat-card-secondary:after{
-    background: linear-gradient(69.83deg, #0084f4 0%, #00c48c 100%);
+.spp-stat-card-secondary:after {
+  background: linear-gradient(69.83deg, #0084f4 0%, #00c48c 100%);
 }
-.spp-stat-card-success:after{
-    background: linear-gradient(82.59deg, #00c48c 0%, #00a173 100%);
+.spp-stat-card-success:after {
+  background: linear-gradient(82.59deg, #00c48c 0%, #00a173 100%);
 }
-.spp-stat-card-emphasize:after{
-    background: linear-gradient(81.67deg, #ff647c 0%, #1f5dc5 100%);
+.spp-stat-card-emphasize:after {
+  background: linear-gradient(81.67deg, #ff647c 0%, #1f5dc5 100%);
 }
 
-.spp-stat-card-value{
-    font-weight: 500;
-    line-height: clamp(1.5rem, 1.4578rem + 2.4096vw, 2rem);
-    min-height:clamp(1.5rem, 1.4578rem + 2.4096vw, 2rem);
-    color: #323c43;
+.spp-stat-card-value {
+  font-weight: 500;
+  line-height: clamp(1.5rem, 1.4578rem + 2.4096vw, 2rem);
+  min-height: clamp(1.5rem, 1.4578rem + 2.4096vw, 2rem);
+  color: #323c43;
 }
 
-.spp-stat-card-value-normal{
-    font-size: clamp(0.6rem, 0.6065rem + 0.4156vw, 1rem);
+.spp-stat-card-value-normal {
+  font-size: clamp(0.6rem, 0.6065rem + 0.4156vw, 1rem);
 }
 
-.spp-stat-card-value-small{
-    font-size: clamp(0.3rem, 0.6065rem + 0.4156vw, 0.7rem);
+.spp-stat-card-value-small {
+  font-size: clamp(0.3rem, 0.6065rem + 0.4156vw, 0.7rem);
 }
 
-.spp-stat-card-sub-value{
-    font-weight: 400;
-    font-size: clamp(0.3rem, 0.6065rem + 0.4156vw, 0.6rem);
-    line-height: clamp(0.7rem, 1.4578rem + 2.4096vw, 1rem);
-    color: #383c3f;
-    padding-bottom: 0.3rem;
+.spp-stat-card-sub-value {
+  font-weight: 400;
+  font-size: clamp(0.3rem, 0.6065rem + 0.4156vw, 0.6rem);
+  line-height: clamp(0.7rem, 1.4578rem + 2.4096vw, 1rem);
+  color: #383c3f;
+  padding-bottom: 0.3rem;
 }
 
-.spp-stat-card-title{
-    font-weight: 300;
-    color: #6c6c6c;
-    font-size: clamp(0.6rem, 0.6532rem + 0.2078vw, 0.8rem);
-    margin-bottom: clamp(0.1rem, 0.1458rem + 0.241vw, 0.15rem);
+.spp-stat-card-title {
+  position: relative;
+  font-weight: 300;
+  color: #6c6c6c;
+  font-size: clamp(0.5rem, 0.6532rem + 0.2078vw, 0.75rem);
+  margin-bottom: clamp(0.1rem, 0.1458rem + 0.241vw, 0.15rem);
+}
+.spp-stat-card-title-has-tooltip{
+    cursor:help;
 }
 
-.spp-stat-card-icon.spp-stat-card-icon-primary .spp-stat-card-icon-circle{
-    background: rgba(0, 123, 255, 0.2);
+.spp-stat-card-tooltip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 150px;
+  font-size: clamp(0.5rem, 0.6532rem + 0.2078vw, 0.75rem);
+  padding: 0.3rem 0.3rem;
+  background-color: #323c43;
+  color: white;
+  -webkit-box-shadow: 2px 2px 21px 1px rgba(130, 123, 130, 1) !important;
+  -moz-box-shadow: 2px 2px 21px 1px rgba(130, 123, 130, 1) !important;
+  box-shadow: 2px 2px 21px 1px rgba(130, 123, 130, 1) !important;
+}
+.spp-stat-card-tooltip .sapMPopoverArr:after {
+  background-color: #323c43;
+}
+.spp-stat-card-tooltip .sapMText {
+  font-size: clamp(0.5rem, 0.6532rem + 0.2078vw, 0.75rem);
+  background-color: #323c43;
+  color: white;
 }
 
-.spp-stat-card:hover .spp-stat-card-wrap{
-    transform:translateY(-5px);
+.spp-stat-card-icon.spp-stat-card-icon-primary .spp-stat-card-icon-circle {
+  background: rgba(0, 123, 255, 0.2);
+}
+
+.spp-stat-card:hover .spp-stat-card-wrap {
+  transform: translateY(-5px);
 }

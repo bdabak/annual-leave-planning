@@ -20,4 +20,4 @@ builder:
           name: ZHCM_UX_ALPL
           description: Yıllık İzin Planlama
           package: ZHR_ALPL
-          transport: D28K904049
+          transport: D28K904052

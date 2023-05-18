@@ -23471,14 +23471,14 @@ button.spp-button.spp-recurrencelegendbutton {
   max-width: 15.3846153846em;
   border: 0 none;
   text-align: center;
-  background-color: transparent;
+  background-color: #ededed;
   font-family: inherit;
   font-weight: inherit;
 }
 
 .spp-yearview-content .spp-yearview-month-name:hover {
   cursor: pointer;
-  background-color: #f0f0f0;
+  background-color: rgb(193 189 189);
 }
 
 .spp-yearview-content .spp-calendar-weekdays {

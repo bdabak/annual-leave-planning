@@ -2000,6 +2000,7 @@ sap.ui.define(
             EventId: p.EventId,
             StartDate: sD,
             EndDate: eD,
+            UsedQuota: p.UsedQuota,
             New: false,
             Title: this.getText("splitEventTitle", []),
             Splits: [

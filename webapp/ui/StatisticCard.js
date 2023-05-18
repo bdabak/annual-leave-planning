@@ -13,6 +13,11 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
           type: "string",
           bindable: true,
         },
+        tooltip:{
+          type: "string",
+          bindable: true,
+          defaultValue: null
+        },
         value: {
           type: "string",
           bindable: true,
@@ -63,6 +68,7 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
       );
     },
     renderer: function (oRM, oControl) {
+      
       oRM
         .openStart("div", oControl) //--Main
         .class("spp-stat-card")
@@ -139,11 +145,16 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
       var t1 = this.getTitle();
       var v1 = this.getValue();
       var s1 = this.getSubvalue();
+      var bTooltip = this.getTooltip() || null;
 
       //--Content header--//
-      oRM.openStart("h4").class("spp-stat-card-title").openEnd();
-      oRM.text(t1);
-      oRM.close("h4");
+      oRM.openStart("h4").class("spp-stat-card-title");
+      if(bTooltip){
+        oRM.class("spp-stat-card-title-has-tooltip");
+      }
+      oRM.openEnd()
+      .text(t1)
+      .close("h4");
       //--Content header--//
       //--Statistic value--//
       oRM.openStart("div")
@@ -159,5 +170,40 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
       }
       //--Statistic value--//
     },
+    onmouseover: function(){
+      var bTooltip = this.getTooltip() || null;
+      var that = this;
+      
+      if(bTooltip && !that._tooltipPopover){
+        that._tooltipPopover = new sap.m.Popover({
+          showHeader: false,
+          horizontalScrolling: false,
+          content:[
+            new sap.m.Text({
+              text: bTooltip,
+              textAlign: "Center"
+            })
+          ],
+          afterClose: function(){
+            that._tooltipPopover.destroy();
+            clearTimeout(openTooltip);
+            that._tooltipPopover = null;
+          },
+          placement: "Bottom",
+          showArrow: true,
+          offsetY: -20
+        }).addStyleClass("spp-stat-card-tooltip");
+
+        var openTooltip = function(){
+          that._tooltipPopover.openBy(that);          
+        };
+
+        setTimeout(openTooltip, 300);
+
+      };
+    },
+    onmouseout: function(){
+      this._tooltipPopover?.close();
+    }
   });
 });

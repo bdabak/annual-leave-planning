@@ -89,7 +89,7 @@
 					</FormField>
 					<FormField
 						id="SplitFormFieldEndDate"
-						lastChild="true"
+						lastChild="false"
 						containsFocus="true"
 						empty="false"
 						fieldType="datefield"
