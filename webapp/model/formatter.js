@@ -24,7 +24,7 @@ sap.ui.define([], function () {
       }
 
       if(c !== "" && c !== null && c !== undefined){
-        // console.log(c);
+      
          return false;
       }
 
@@ -43,17 +43,7 @@ sap.ui.define([], function () {
       }
     },
 
-    // getLeaveTypeVisible: function(t,e,h){
-    //   if(t && t === '0010'){
-    //     return true;
-    //   }
-    //   console.log(t,e,h);
-    //   if(e?.New && h?.PlanningEnabled){
-    //     return true;
-    //   }
-
-    //   return false;
-    // },
+   
     checkAddSplitVisible: function (s = [], r) {
       var v = _.filter(s, ["Visible", true]);
       return v.length < 5;
@@ -68,6 +58,12 @@ sap.ui.define([], function () {
       c = c.replaceAll("-","").toUpperCase();
 
       return c;
+    },
+    getNextYear: function(d){
+      
+      var m = moment(d).add(1, "y");
+      return m.format( moment.locale() === "tr" ? "D MMMM YYYY" : "MMMM Do, YYYY");
+
     }
   };
 });

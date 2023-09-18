@@ -18,6 +18,6 @@ builder:
           client: "300"
         app:
           name: ZHCM_UX_ALPL
-          description: Yıllık İzin Planlama
+          description: Yıllık izin planlama
           package: ZHR_ALPL
-          transport: D28K904052
+          transport: D28K904339

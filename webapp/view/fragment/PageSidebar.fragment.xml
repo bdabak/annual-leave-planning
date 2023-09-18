@@ -53,6 +53,16 @@
 						})
 				}"
             />
+			<StatisticCard
+                id="LeaveManagementPageStats5"
+                title="{i18n>nextQuotaAccrualDate}"
+                valueFontSize="small"
+                value="{ 
+					path: 'planModel>Header/QuotaAccrualBeginDate',
+					formatter: '.formatter.getNextYear'
+					
+				}"
+            />
             <StatisticCard
                 id="LeaveManagementPageStats2"
                 title="{i18n>quotaAccrualAmount}"
@@ -127,6 +137,9 @@
                 press=".onFilterLegend"
                 solid="false"
             />
+
+			 <Button id="TeamCalendarButton" 
+			 	icon="spp-fa-calendar" label="{i18n>teamCalendarApp}" class="spp-blue" solid="true"   press=".onNavigateTeamCalendar" />
             <!-- <StatisticCard id="LeaveManagementPageStats5"  title="Kullanılan İzin" theme="emphasize" value="{path:'planModel>Header/leaveUsed', type: 'sap.ui.model.odata.type.Decimal', formatOptions:{minFractionDigits:0,maxFractionDigits:2, groupingEnabled: false, decimalSeparator:','}}"  /> -->
         </items>
     </PageSidebar>

@@ -113,6 +113,11 @@ sap.ui.define(
             bindable: true,
             defaultValue: null,
           },
+          errorMessage:{
+            type: "string",
+            bindable: true,
+            defaultValue: null,
+          }
         },
         aggregations: {
         },
@@ -244,7 +249,19 @@ sap.ui.define(
 
         oRM.close("div");
       },
-      ontap: function () {
+      oncontextmenu: function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        this._callMenu();
+      },
+      
+      ontap: function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this._callMenu();
+      },
+
+      _callMenu: function(){
         var bEditable = this.getEditable();
         var bSplittable = this.getSplittable();
         var bDeletable = this.getDeletable();
@@ -397,7 +414,7 @@ sap.ui.define(
 
           this._actionSheet.openBy(this);
         }
-      },
+      }
     });
   }
 );

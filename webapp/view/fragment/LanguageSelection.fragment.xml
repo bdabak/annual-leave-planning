@@ -1,0 +1,11 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+>
+   	<Menu itemSelected=".onLanguageSelection">
+        <items>
+            <MenuItem icon="{planModel>/LanguageIconTR}" text="Türkçe" key="tr" />
+            <MenuItem icon="{planModel>/LanguageIconEN}" text="English" key ="en"/>
+        </items>
+	</Menu>
+</core:FragmentDefinition>

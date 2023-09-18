@@ -83,46 +83,6 @@ sap.ui.define(
         this.setAggregation("dateTrigger", dT);
       },
 
-      // createDatePicker: function(){
-      //   var that =  this;
-      //   var d = this.getValue() || this.getReferenceDate() || null;
-      //   var p;
-
-      //   if (!d) {
-      //     p = dateUtilities.getToday();
-      //     d = dateUtilities.convertPeriodToDate(p);
-      //   } else {
-      //     p = dateUtilities.convertDateToPeriod(d);
-      //   }
-
-      //   var dP = new DatePickerWidget({
-      //     floating: true,
-      //     period: p,
-      //     select: function (e) {
-      //       var d = e.getParameter("selectedDate");
-      //       that.setValue(d);
-      //       that.fireChanged({
-      //         date: d
-      //       });
-      //       dP.setVisible(false);
-      //     },
-      //     selectedDate: d,
-      //     elementPosition: null,
-      //     visible: false,
-      //   });
-
-      //   this.setAggregation("datePickerWidget", dP); 
-        
-      //   return dP;
-
-      // },  
-      // renderDatePicker: function (oRM) {
-      //   var dP = this.getAggregation("datePicker") || null;
-      //   if (!dP) {
-      //     dP = this.createDatePicker();
-      //   }
-      //   oRM.renderControl(dP);
-      // },
 
       registerDatePickerWidget: function (c) {
         this.setAssociation("datePickerWidget", c.getId());
@@ -136,24 +96,12 @@ sap.ui.define(
       },
 
       closeDatePicker: function () {
-        // var dP = this.getAggregation("datePickerWidget");
-
-        // if (dP.getVisible()) {
-        //   dP.setVisible(false);
-        // }
-
         eventUtilities.publishEvent("PlanningCalendar", "CloseDatePicker", {
           Element: this
         });
       },
 
       openDatePicker: function () {
-        // var dP = this.getAggregation("datePickerWidget");
-
-        // if (!dP.getVisible()) {
-        //   dP.setVisible(true);
-        // }
-
         eventUtilities.publishEvent("PlanningCalendar", "OpenDatePicker", {
          Element: this
         });

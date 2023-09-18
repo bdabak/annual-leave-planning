@@ -279,6 +279,78 @@
       url("./fonts/poppins-v20-latin_latin-ext-900.svg#Poppins") format("svg"); /* Legacy iOS */
 }
 
+@font-face {
+  font-family: 'smodflag';
+  src:  url('fonts/smodflag.eot?bmoc26');
+  src:  url('fonts/smodflag.eot?bmoc26#iefix') format('embedded-opentype'),
+    url('fonts/smodflag.ttf?bmoc26') format('truetype'),
+    url('fonts/smodflag.woff?bmoc26') format('woff'),
+    url('fonts/smodflag.svg?bmoc26#smodflag') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+[class^="smod-"], [class*=" smod-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'smodflag' !important;
+  speak: never;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.smod-gb .path1:before {
+  content: "\e900";
+  color: rgb(1, 33, 105);
+}
+.smod-gb .path2:before {
+  content: "\e901";
+  margin-left: -1.3330078125em;
+  color: rgb(255, 255, 255);
+}
+.smod-gb .path3:before {
+  content: "\e902";
+  margin-left: -1.3330078125em;
+  color: rgb(200, 16, 46);
+}
+.smod-gb .path4:before {
+  content: "\e903";
+  margin-left: -1.3330078125em;
+  color: rgb(255, 255, 255);
+}
+.smod-gb .path5:before {
+  content: "\e904";
+  margin-left: -1.3330078125em;
+  color: rgb(200, 16, 46);
+}
+.smod-tr .path1:before {
+  content: "\e905";
+  color: rgb(227, 10, 23);
+}
+.smod-tr .path2:before {
+  content: "\e906";
+  margin-left: -1.3330078125em;
+  color: rgb(255, 255, 255);
+}
+.smod-tr .path3:before {
+  content: "\e907";
+  margin-left: -1.3330078125em;
+  color: rgb(227, 10, 23);
+}
+.smod-tr .path4:before {
+  content: "\e908";
+  margin-left: -1.3330078125em;
+  color: rgb(255, 255, 255);
+}
+
+
 :root,
 :host {
   --scroll-bar-color: #c5c5c5;

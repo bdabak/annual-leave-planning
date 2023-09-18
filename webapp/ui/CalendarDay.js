@@ -161,12 +161,21 @@ sap.ui.define(
         if (!h) {
           return null;
         } else {
+
+          var z = dateUtilities.getEventTypeVisible(
+            h.LegendAttributes.LegendGroupKey,
+            h.LegendAttributes.LegendItemKey
+          );
+
+          if (!z) {
+            return null;
+          }
           return h?.LegendAttributes?.EventColor;
         }
       },
-      ontap: function (e) {
-       
 
+      _callDayInfo: function(e,m){
+       
         if (this.getDatePicker() || this.getNullCell()) {
           return;
         }
@@ -174,8 +183,8 @@ sap.ui.define(
         e.preventDefault();
         e.stopPropagation();
         
-        var a = this.getDay();
-        var bSelectable = dateUtilities.checkDateIsSelectable(a.date);
+        var c = this.getDay();
+        var bSelectable = dateUtilities.checkDateIsSelectable(c.date);
 
         if(!bSelectable){
           return;
@@ -183,19 +192,28 @@ sap.ui.define(
 
         var d = this.getDay().date;
         var a = dateUtilities.getDayAttributes(d, false) || [];
-
-        if (!a || a.length === 0 || eventUtilities.getSelectEventStatus()) {
-          eventUtilities.publishEvent("PlanningCalendar", "SelectEventDate", {
-            Element: this.$(),
-            Date: d,
-          });
-          return;
+        if(m){
+          if (!a || a.length === 0 || eventUtilities.getSelectEventStatus()) {
+            eventUtilities.publishEvent("PlanningCalendar", "SelectEventDate", {
+              Element: this.$(),
+              Date: d,
+            });
+            return;
+          }
         }
+        if(m === false && a.length>0){
+          eventUtilities.publishEvent("PlanningCalendar", "DisplayEventWidget", {
+            Element: this.$(),
+            Day: a,
+          });
+        }
+      },
+      oncontextmenu: function(e){
+        this._callDayInfo(e, false);
+      },
 
-        eventUtilities.publishEvent("PlanningCalendar", "DisplayEventWidget", {
-          Element: this.$(),
-          Day: a,
-        });
+      ontap: function (e) {
+        this._callDayInfo(e, true);
       },
     });
   }

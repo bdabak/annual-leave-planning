@@ -97,7 +97,8 @@ sap.ui.define(
           splittable: r.splittable,
           deletable: r.deletable,
           rejected: r.rejected,
-          duration: formatter.suppressZeroDecimal(r.duration) + " " + this.getModel("i18n").getResourceBundle().getText("days")
+          duration: formatter.suppressZeroDecimal(r.duration) + " " + this.getModel("i18n").getResourceBundle().getText("days"),
+          errorMessage: r?.errorMessage || null
         });
 
         eC.addAggregation("events", n);

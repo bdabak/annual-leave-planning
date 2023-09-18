@@ -8,6 +8,11 @@ sap.ui.define(
       {
         onInit() {
           eventUtilities.initiate();
+
+          //--Add custom icons
+          sap.ui.core.IconPool.addIcon("tr", "flagfont", "smodflag", "e905");
+          sap.ui.core.IconPool.addIcon("en", "flagfont", "smodflag", "e900");
+       
         },
       }
     );

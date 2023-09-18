@@ -311,8 +311,6 @@ sap.ui.define(
             var s = t.parents(".spp-calendar-cell");
             s.addClass("spp-editing").addClass("spp-editing-end");
 
-            // console.log(this._currentElementId);
-            // console.log(t.attr("id"));
 
             var dates =
               dateUtilities.findDatesBetweenTwoDates(

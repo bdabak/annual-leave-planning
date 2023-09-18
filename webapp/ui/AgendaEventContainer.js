@@ -28,14 +28,23 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
           oRM.renderControl(e);
 
 
-          if(e.getRejected()){
+          if(e.getRejected() || (e.getErrorMessage() !== "" &&  e.getErrorMessage() !== null)){
+            var bR = e.getRejected();
+            
+            var sR = oControl
+            .getModel("i18n")
+            .getResourceBundle()
+            .getText("planRejected");
+
+            var sM = bR ? " ".concat(sR) : " ".concat(e.getErrorMessage());
+
             oRM.openStart("div"); //Event Time
             oRM.class("spp-cal-rejected-event");
             oRM.openEnd();
             oRM.openStart("span"); //Event Time
             oRM.class("spp-fa").class("spp-fa-circle-exclamation");
             oRM.openEnd();
-            oRM.text(" İzin reddedildi. Düzenleme gerekli.");
+            oRM.text(sM);
             oRM.close("span"); //Event time
             oRM.close("div"); //Event time
   

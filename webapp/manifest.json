@@ -124,6 +124,13 @@
                     "target": [
                         "TargetPlanView"
                     ]
+                },
+                {
+                    "name": "NotAuthorized",
+                    "pattern": "NoAuthorization",
+                    "target": [
+                        "NotAuthorized"
+                    ]
                 }
             ],
             "targets": {
@@ -133,7 +140,15 @@
                     "clearControlAggregation": false,
                     "viewId": "PlanView",
                     "viewName": "PlanView"
+                },
+                "NotAuthorized": {
+                    "viewType": "XML",
+                    "transition": "fade",
+                    "clearControlAggregation": false,
+                    "viewId": "NotAuthorized",
+                    "viewName": "NotAuthorized"
                 }
+
             }
         },
         "rootView": {

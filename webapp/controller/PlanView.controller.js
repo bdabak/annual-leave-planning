@@ -11,6 +11,7 @@ sap.ui.define(
     "com/thy/ux/annualleaveplanning/ui/EventContainer",
     "com/thy/ux/annualleaveplanning/ui/Event",
     "com/thy/ux/annualleaveplanning/ui/DatePickerWidget",
+    "sap/m/PDFViewer",
     "com/thy/ux/annualleaveplanning/utils/date-utilities",
     "com/thy/ux/annualleaveplanning/utils/event-utilities",
     "com/thy/ux/annualleaveplanning/model/formatter",
@@ -30,6 +31,7 @@ sap.ui.define(
     EventContainer,
     Event,
     DatePickerWidget,
+    PDFViewer,
     dateUtilities,
     eventUtilities,
     formatter
@@ -55,6 +57,10 @@ sap.ui.define(
           this.getRouter()
             .getRoute("RoutePlanView")
             .attachPatternMatched(this._handlePlanViewCalled, this);
+
+          //PDF viewer
+          this._pdfViewer = new PDFViewer();
+          this.getView().addDependent(this._pdfViewer);
         },
         onExit: function () {
           eventUtilities.invalidateEvents();
@@ -79,6 +85,8 @@ sap.ui.define(
           var s = e.getSource();
           this._handleViewChange(s);
         },
+
+        
 
         onMobileViewMenu: function (e) {
           var r = e.getSource();
@@ -176,12 +184,54 @@ sap.ui.define(
             that._setPageProperty(p, oEvent);
           });
         },
+        onUserManual: function (e) {
+          var oView = this.getView();
+          var oButton = e.getSource();
+          if (!this._oMenuFragment) {
+            this._oMenuFragment = Fragment.load({
+              id: oView.getId(),
+              name: "com.thy.ux.annualleaveplanning.view.fragment.LanguageSelection",
+              controller: this
+            }).then(function(oMenu) {
+              this.getView().addDependent(oMenu);
+              oMenu.openBy(oButton);
+              this._oMenuFragment = oMenu;
+              
+              return this._oMenuFragment;
+            }.bind(this));
+          } else {
+            this._oMenuFragment.openBy(oButton);
+          }
 
+          
+        },
+
+        onLanguageSelection: function(oEvent){ 
+          var oItem = oEvent.getParameter("item");
+          var sKey = oItem.getKey();
+
+          if(!sKey) return;
+
+          var sLibraryPath = jQuery.sap.getModulePath(
+            "com.thy.ux.annualleaveplanning"
+          ); //get the server location of the ui library
+
+          var sFile = sLibraryPath + `/assets/manual_${sKey}.pdf`;
+
+          var oDevice = this.getModel("device").getData();
+
+          if (oDevice.browser.name === "cr" && oDevice.system.desktop) {
+            this._pdfViewer.setSource(sFile);
+            this._pdfViewer.setTitle(this.getText("userManual", []));
+            this._pdfViewer.open();
+          } else {
+            sap.m.URLHelper.redirect(sFile, true);
+          }
+        },
         onEventDateChanged: function (e) {
           var sId = e.getSource().getId();
           var oEvent = this._getPageProperty("EventEdit");
           var that = this;
-
 
           oEvent.QuotaCalculating = true;
           oEvent.UsedQuota = null;
@@ -415,14 +465,14 @@ sap.ui.define(
 
                   Swal.fire({
                     title: this.getText("leaveRequestHasFuturePlansTitle", []),
-                    html: this._generateFuturePlanList(aFPL,oEvent),
+                    html: this._generateFuturePlanList(aFPL, oEvent),
                     icon: "info",
                     showCancelButton: false,
                     confirmButtonColor: "#2196f3",
                     backdrop: false,
                     confirmButtonText: this.getText(
                       "continueWithCurrentLeave",
-                     []
+                      []
                     ),
                     didRender: function () {
                       $(".spp-use-future-plan-button").on(
@@ -453,9 +503,10 @@ sap.ui.define(
         },
 
         _generateFuturePlanList: function (aFPL, oEvent) {
-         
-
-          var h = this.getText("leaveRequestHasFuturePlansText",  [oEvent.StartDate, oEvent.EndDate]);
+          var h = this.getText("leaveRequestHasFuturePlansText", [
+            oEvent.StartDate,
+            oEvent.EndDate,
+          ]);
           var that = this;
           var p = `<div class='spp-resp-grid-container'><header class='spp-resp-grid-header'>${that.getText(
             "plannedLeavesAtFuture",
@@ -493,14 +544,9 @@ sap.ui.define(
           var h = this._getPageProperty("Header");
 
           if (
-              !moment(
-               sD
-              ).isSameOrAfter(h.QuotaAccrualBeginDate) ||
-              !moment(
-                eD
-              ).isSameOrBefore(h.QuotaAccrualEndDate)
-            ) {
-
+            !moment(sD).isSameOrAfter(h.QuotaAccrualBeginDate) ||
+            !moment(eD).isSameOrBefore(h.QuotaAccrualEndDate)
+          ) {
             return [];
           }
 
@@ -604,7 +650,39 @@ sap.ui.define(
           //TODO: Add additional split checks
           //TODO: Add additional split checks
 
-          var vS = _.filter(oEvent.Splits, ["Visible", true]);
+          // var vS = _.filter(oEvent.Splits, ["Visible", true]);
+          var hE = 0;
+          $.each(oEvent.Splits, function (i, e) {
+            if (
+              e.Visible === true &&
+              moment(dateUtilities.convertToDate(e.StartDate)).isAfter(
+                moment(dateUtilities.convertToDate(e.EndDate))
+              )
+            ) {
+              hE++;
+            }
+          });
+
+          if (hE > 0) {
+            Swal.fire({
+              position: "bottom",
+              icon: "warning",
+              html: this.getText("correctDates", []),
+              showConfirmButton: false,
+              toast: true,
+              timer: 3000,
+            });
+            return;
+          }
+          var vS = _.filter(oEvent.Splits, function (e) {
+            if (
+              e.Visible === true &&
+              moment(dateUtilities.convertToDate(e.StartDate)).isValid() &&
+              moment(dateUtilities.convertToDate(e.EndDate)).isValid()
+            ) {
+              return true;
+            }
+          });
 
           if (vS.length < 2) {
             Swal.fire({
@@ -709,7 +787,15 @@ sap.ui.define(
 
           return false;
         },
-
+        onNavigateTeamCalendar: function(){
+          this.oCrossAppNav = sap.ushell?.Container?.getService("CrossApplicationNavigation"); 
+          if(this.oCrossAppNav){
+            this.oCrossAppNav.toExternal({
+              target : { semanticObject : "ZHCMUXALTC", action : "display" },
+              params : { }
+            }); 
+          }
+        },
         /* Private - Helper Methods */
         _getModal: function () {
           return this._getById("LeaveManagementPageModal");
@@ -915,12 +1001,27 @@ sap.ui.define(
 
           oModel.read(sPath, {
             success: function (o, r) {
+
+              if(!o.Authorized){
+                that.getRouter().navTo("NotAuthorized", null, null, true);
+                p.reject({
+                  showMessage: false
+                });
+              }
+
               var period = that._getPageProperty("Period") || null;
               if (!period) {
-                that._setPageProperty(
-                  "Period",
-                  dateUtilities.convertDateToPeriod(o.QuotaAccrualBeginDate)
-                );
+                if (!o.PlanningEnabled) {
+                  that._setPageProperty(
+                    "Period",
+                    dateUtilities.convertDateToPeriod(new Date())
+                  );
+                } else {
+                  that._setPageProperty(
+                    "Period",
+                    dateUtilities.convertDateToPeriod(o.QuotaAccrualBeginDate)
+                  );
+                }
               }
               that._setPageProperty(
                 "Header",
@@ -943,9 +1044,15 @@ sap.ui.define(
           var that = this;
           var oModel = this.getModel();
           var oHeader = this._getPageProperty("Header");
-          var oDefaultPeriod = dateUtilities.convertDateToPeriod(
-            oHeader.QuotaAccrualBeginDate
-          );
+          var oDefaultPeriod;
+
+          if (oHeader.PlanningEnabled) {
+            oDefaultPeriod = dateUtilities.convertDateToPeriod(
+              oHeader.QuotaAccrualBeginDate
+            );
+          } else {
+            oDefaultPeriod = dateUtilities.convertDateToPeriod(null);
+          }
 
           //--Adjust period filters
           var t = _.clone(period) || _.clone(this._getPageProperty("Period"));
@@ -955,14 +1062,14 @@ sap.ui.define(
           t.day = oDefaultPeriod.day;
 
           var rD = dateUtilities.convertPeriodToDateObject(t);
-          var bD = dateUtilities.calculateOffsetDate(rD, "-", 1, "m");
+          var bD = dateUtilities.convertPeriodToDateObject(t);
           var eY = dateUtilities.calculateOffsetDate(rD, "+", 1, "y");
 
-          var eD = dateUtilities.calculateOffsetDate(eY, "+", 1, "m");
+          var eD = dateUtilities.calculateOffsetDate(rD, "+", 1, "y");
 
           var sPath = oModel.createKey("/CalendarQuerySet", {
-            BeginDate: bD,
-            EndDate: eD,
+            BeginDate: moment(bD).startOf("month").toDate().setHours(9),
+            EndDate: moment(eY).endOf("month").toDate().setHours(9),
           });
 
           oModel.read(sPath, {
@@ -993,7 +1100,7 @@ sap.ui.define(
             HolidayList: {},
             HolidayInfo: [],
           };
-          var a = that._getLegendAttributes("HL", null);
+
           $.each(r, function (i, l) {
             if (!hC.HolidayList.hasOwnProperty(l.Year)) {
               hC.HolidayList[l.Year] = [];
@@ -1011,6 +1118,8 @@ sap.ui.define(
               }
 
               $.each(h?.HolidayDateSet?.results, function (k, d) {
+                var a = that._getLegendAttributes("HL", d.DayClass);
+
                 hC.HolidayList[l.Year].push({
                   ..._.clone(_.omit(d, ["__metadata"])),
                   LegendAttributes: a,
@@ -1018,7 +1127,6 @@ sap.ui.define(
               });
             });
           });
-
           this._setProperty("HolidayCalendar", hC);
           /* Holiday calendar */
 
@@ -1132,7 +1240,6 @@ sap.ui.define(
             },
             filters: aFilters,
             success: function (o, r) {
-              // console.log(o);
               p.resolve(o);
             },
             error: function (e) {
@@ -1194,26 +1301,33 @@ sap.ui.define(
               EndDate: dateUtilities.convertToDate(oAnnual.EndDate),
               Attachments: [],
               ActionCode: 1,
+              ProcessCheckOnlyInd: true,
               AdditionalFields: {},
-              ProcessCheckOnlyInd: false,
               ApproverEmployeeID: oAbsence.ApproverName,
               ApproverEmployeeName: oAbsence.ApproverPernr,
               MultipleApprovers: _.clone(oAbsence.MultipleApprovers.results),
+              Notes: oAnnual.Reason,
             };
+
             that.openBusyFragment("annualLeaveBeingCreated", []);
             oLeaveModel.create("/LeaveRequestCollection", oLeaveRequest, {
-              success: function (o, r) {
-                that._refreshHeader().then(function () {
-                  that._triggerRenderChanged(); //Page should be rerendered
-                  that.closeBusyFragment();
-                  Swal.fire({
-                    position: "bottom",
-                    icon: "success",
-                    html: that.getText("annualLeaveSentForApproval", []),
-                    showConfirmButton: false,
-                    toast: true,
-                    timer: 2000,
-                  });
+              success: function (x, y) {
+                oLeaveRequest.ProcessCheckOnlyInd = false;
+                oLeaveModel.create("/LeaveRequestCollection", oLeaveRequest, {
+                  success: function (o, r) {
+                    that._refreshHeader().then(function () {
+                      that._triggerRenderChanged(); //Page should be rerendered
+                      that.closeBusyFragment();
+                      Swal.fire({
+                        position: "bottom",
+                        icon: "success",
+                        html: that.getText("annualLeaveSentForApproval", []),
+                        showConfirmButton: false,
+                        toast: true,
+                        timer: 2000,
+                      });
+                    });
+                  },
                 });
               },
               error: function (e) {
@@ -1403,11 +1517,22 @@ sap.ui.define(
 
           switch (s) {
             case "HL":
+              $.each(r, function (i, l) {
+                g = l;
+                f =
+                  _.find(l.LegendItemSet, {
+                    EventType: e,
+                  }) || null;
+                if (f !== null) {
+                  return false;
+                }
+              });
+
               return {
-                LegendGroupName: r[0].LegendGroupName,
-                LegendItemCount: 1,
-                ...r[0].LegendItemSet[0],
-                LeaveType: null,
+                LegendGroupName: g.LegendGroupName,
+                LegendItemCount: g.LegendItemSet.length,
+                ...f,
+                LeaveType: g.LeaveType,
               };
             case "PL":
               $.each(r, function (i, l) {
@@ -1620,7 +1745,17 @@ sap.ui.define(
             return;
           } else {
             Swal.close();
-            p.Period.EndDate = o.Date;
+
+            if (
+              moment(dateUtilities.convertToDate(o.Date)).isSameOrAfter(
+                moment(dateUtilities.convertToDate(p.Period.StartDate))
+              )
+            ) {
+              p.Period.EndDate = o.Date;
+            } else {
+              p.Period.EndDate = _.clone(p.Period.StartDate);
+              p.Period.StartDate = o.Date;
+            }
 
             var dates =
               dateUtilities.findDatesBetweenTwoDates(
@@ -1628,7 +1763,7 @@ sap.ui.define(
                 p.Period.EndDate
               ) || [];
 
-            if(dates.length === 0){
+            if (dates.length === 0) {
               Swal.fire({
                 position: "bottom",
                 icon: "warning",
@@ -1887,7 +2022,6 @@ sap.ui.define(
           var that = this;
 
           $.each(l, function (i, e) {
-            // console.log(e);
             eventList.push(
               new Event({
                 eventId: e.eventId,
@@ -1952,14 +2086,9 @@ sap.ui.define(
               Title: that.getText(n ? "newEventTitle" : "editEventTitle", []),
               QuotaCalculating: false,
               Deletable: p.Deletable || false,
+              Reason: "",
             };
             that._setPageProperty("EventEdit", oEvent);
-
-            // var o = sap.ui.getCore().byId("CreateEditEventDialog");
-            // if(o){
-            //   console.log("Exists");
-            //   o.destroy();
-            // }
 
             var oDialog = Fragment.load({
               id: that._getPagePrefix(),
@@ -2080,7 +2209,7 @@ sap.ui.define(
           eventUtilities.publishEvent(
             "PlanningCalendar",
             "CreateEventCancelled",
-            {showAlert: p}
+            { showAlert: p }
           );
         },
 
@@ -2172,6 +2301,7 @@ sap.ui.define(
                 QuotaCalculating: false,
                 Deletable: false,
                 Key: null,
+                Reason: "",
               },
               EventSplit: {
                 LeaveType: null,
@@ -2186,6 +2316,7 @@ sap.ui.define(
               Header: {},
               LeaveTypes: [],
               HomeButtonVisible: sap?.ushell?.Container ? true : false,
+
             },
             HolidayCalendar: null,
             PlannedLeaves: [],
@@ -2198,6 +2329,8 @@ sap.ui.define(
                 EndDate: null,
               },
             },
+            LanguageIconTR:  jQuery.sap.getModulePath("com.thy.ux.annualleaveplanning") + "/assets/images/tr.png",
+            LanguageIconEN:  jQuery.sap.getModulePath("com.thy.ux.annualleaveplanning") + "/assets/images/en.png",
           };
         },
         _getPagePrefix: function () {
@@ -2317,7 +2450,11 @@ sap.ui.define(
             .fail(
               function (e) {
                 this.closeBusyFragment();
-                this._showServiceError(e);
+                if(e.hasOwnProperty("showMessage") && e.showMessage === false){
+                  //Nothing
+                }else{
+                  this._showServiceError(e);
+                }
               }.bind(this)
             );
         },

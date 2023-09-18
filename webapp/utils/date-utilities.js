@@ -5,12 +5,15 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
   return {
     
     initializeMoment: function () {
-      var sCurrentLocale = sap.ui.getCore().getConfiguration().getLanguage();
+      var sCurrentLocale = sap.ui.getCore().getConfiguration().getLanguage().toUpperCase();
+      var sLanguage = jQuery.sap.getUriParameters().get("sap-language")?.toUpperCase();
+
+      console.log(sCurrentLocale, sLanguage);
       
-      sCurrentLocale = sCurrentLocale === "TR" ? "tr" : "en";
-      moment.locale(sCurrentLocale);
+      var sLocale = sCurrentLocale === "TR" || sLanguage === "TR" ? "tr" : "en";
+      moment.locale(sLocale);
       moment().isoWeekday(1); // Monday
-      moment.updateLocale(sCurrentLocale, {
+      moment.updateLocale(sLocale, {
         week: {
           dow: 1,
         },
@@ -79,12 +82,10 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
       var m = moment(d);
 
       if(w === "y"){
-        o === "+" ? m.add(y, "y").subtract(1, "d") : m.subtract(y, "y");
+        o === "+" ? m.add(y, "years").subtract(1, "days") : m.subtract(y, "years");
       }else if(w === "m"){
-        o === "+" ? m.add(y, "m") : m.subtract(y, "m");
+        o === "+" ? m.add(y, "months") : m.subtract(y, "months");
       }
-      
-
       return m.toDate();
     },
 
@@ -93,13 +94,6 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
       var o = moment(m, "MM.YYYY"); // Get moment object of month
       var s = moment(o).startOf("month").weekday(0);
       var e = moment(o).endOf("month").weekday(6);
-
-      // console.log(s.format("DD.MM.YYYY"));
-      // console.log(e.format("DD.MM.YYYY"));
-
-      // if (moment.duration(e.diff(s)).asWeeks() <= 5) {
-      //   e.add(1, "week");
-      // }
 
       var oMonth = {
         monthName: o.format("MMMM"),
@@ -191,7 +185,6 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
 
 
     decidePeriodChangeDirection: function (o, n, m) {
-      console.log(o,n,m);
       if(m=== "A"){
         return null;
       }
@@ -305,16 +298,6 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
       return v;
     },
 
-    getEventColor: function (t) {
-      // var s = _.find(this.getProxyModelProperty("/Page/Legend"), ["Type", t]);
-
-      // if (s && s?.Design) {
-      //   return s.Design;
-      // } else {
-      //   return "spp-unknown";
-      // }
-    },
-
     checkDateHoliday: function (d) {
       if (!this.checkHolidaysVisible()) {
         return;
@@ -328,10 +311,18 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
         Month: m.format("MM"),
         Day: m.format("DD"),
       });
+     
       if (!v) {
         return null;
       }
-      return v;
+
+      if(v && v.LegendAttributes && v.LegendAttributes.Selected){
+        return v;
+      }
+
+      return;
+
+      // return v;
     },
     checkDatePlanned: function (d) {
       if (!this.checkPlannedVisible()) {
@@ -518,7 +509,6 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
 
       //--List annual leaves
       if (this.checkAnnualVisible()) {
-        // var aC = that.getEventColor("annual");
         $.each(this.getAnnualLeaves(), function (i, c) {
           var l = _checkEventLiesWithinPeriod(c.StartDate, c.EndDate);
           if (l) {
@@ -553,7 +543,7 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
                 monthText: eD.format("MMM"),
                 year: eD.format("YYYY"),
               },
-              duration: c.Kaltg,     
+              duration: c.Abrtg,     
               editable: c.LegendAttributes.Editable,
               splittable: c.LegendAttributes.Splittable,
               deletable: c.LegendAttributes.Deletable,
@@ -567,7 +557,6 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
 
       //--List plans
       if (this.checkPlannedVisible()) {
-        // var pC = that.getEventColor("planned");
         $.each(this.getPlannedLeaves(), function (i, c) {
           var l = _checkEventLiesWithinPeriod(c.StartDate, c.EndDate);
           if (l) {
@@ -606,7 +595,8 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
               editable: c.LegendAttributes.Editable,
               splittable: c.LegendAttributes.Splittable,
               deletable: c.LegendAttributes.Deletable,
-              rejected: c.LeaveStatus === "LRJ"
+              rejected: c.LeaveStatus === "LRJ",
+              errorMessage: c.ErrorMessage
             };
 
             eL.push(e);
@@ -749,7 +739,6 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
 
       //--Search in annual leaves
       if (this.checkAnnualVisible()) {
-        // var pC = that.getEventColor("annual");
         $.each(this.getAnnualLeaves(), function (i, c) {
           if (
             m.isBetween(moment(c.StartDate), moment(c.EndDate), undefined, "[]")
@@ -807,7 +796,7 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
                 : pL.length - p.index,
               startDate: moment(c.startDate).format("DD MMM"),
               endDate: moment(c.endDate).format("DD MMM"),
-              duration: c.Kaltg,
+              duration: c.Abrtg,
               editable: c.LegendAttributes.Editable,
               splittable: c.LegendAttributes.Splittable,
               deletable: c.LegendAttributes.Deletable,
@@ -821,7 +810,6 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
 
       //--Search in plans
       if (this.checkPlannedVisible()) {
-        // var pC = that.getEventColor("planned");
         $.each(this.getPlannedLeaves(), function (i, c) {
           if (
             m.isBetween(moment(c.StartDate), moment(c.EndDate), undefined, "[]")
@@ -892,7 +880,6 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
 
       //--Search in holidays
       if (this.checkHolidaysVisible()) {
-        // var hC = that.getEventColor("holiday");
 
         var hL =
           _.filter(this.getHolidayCalendar()?.HolidayList[y], {

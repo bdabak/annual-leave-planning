@@ -110,6 +110,29 @@
 							/>
 						</field>
 					</FormField>
+					<FormField
+						id="FormFieldReason"
+						lastChild="false"
+						containsFocus="true"
+						empty="false"
+						fieldType="textarea"
+						visible="{= ${planModel>EventEdit/LeaveType/Key} === '0010' }"
+					>
+						<label>
+							<FormLabel
+								id="FormLabelReason"
+								text="{i18n>leaveReason}"
+								for="FormInputEndDate"
+							/>
+						</label>
+						<field>
+							<FormTextArea
+								id="FormInputReason"
+								value="{planModel>EventEdit/Reason}"
+								
+							/>
+						</field>
+					</FormField>
 					<FormIndicator
 						id="FormFieldQuotaUsed"
 						label="{i18n>leaveQuotaUsed}"
@@ -130,6 +153,8 @@
 						}"
 						busyIndicatorDelay="0"
 					/>
+
+					
 				</items>
 				<toolbar>
 					<Toolbar id="CreateEditEventDialogToolbar">

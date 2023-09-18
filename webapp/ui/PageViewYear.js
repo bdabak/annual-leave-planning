@@ -223,7 +223,7 @@ sap.ui.define(
           this._refreshCellStates();
           return;
         }
-        var d = $(".spp-create-event-active");
+        var d = $(".spp-day-name.spp-create-event-active");
         // var d = $(".spp-datepicker-1-to-3-events");
 
         if (d && d?.length > 1) {
