@@ -3,6 +3,7 @@ sap.ui.define([], function () {
   var subscribedEventsStack = [];
   var oEventBus;
   var waitingForEndSelection = false;
+  var waitingForMergeSelection = false;
   return {
     initiate: function(){
       this.invalidateEvents();
@@ -17,7 +18,17 @@ sap.ui.define([], function () {
     getSelectEventStatus: function(){
       return waitingForEndSelection;
     },
+
+    setMergeEventStatus: function(s){
+      waitingForMergeSelection = s;
+    },
+    getMergeEventStatus: function(){
+      return waitingForMergeSelection;
+    },
     getEventBus: function(){
+      if(!oEventBus){
+        this.createEventBus();
+      }
       return oEventBus;
     },
     publishEvent: function (c, e, p) {

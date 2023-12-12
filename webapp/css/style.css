@@ -280,30 +280,15 @@
 }
 
 @font-face {
-  font-family: 'smodflag';
-  src:  url('fonts/smodflag.eot?bmoc26');
-  src:  url('fonts/smodflag.eot?bmoc26#iefix') format('embedded-opentype'),
-    url('fonts/smodflag.ttf?bmoc26') format('truetype'),
-    url('fonts/smodflag.woff?bmoc26') format('woff'),
-    url('fonts/smodflag.svg?bmoc26#smodflag') format('svg');
+  font-family: "smodflag";
+  src: url("fonts/smodflag.eot?bmoc26");
+  src: url("fonts/smodflag.eot?bmoc26#iefix") format("embedded-opentype"),
+    url("fonts/smodflag.ttf?bmoc26") format("truetype"),
+    url("fonts/smodflag.woff?bmoc26") format("woff"),
+    url("fonts/smodflag.svg?bmoc26#smodflag") format("svg");
   font-weight: normal;
   font-style: normal;
   font-display: block;
-}
-
-[class^="smod-"], [class*=" smod-"] {
-  /* use !important to prevent issues with browser extensions that change fonts */
-  font-family: 'smodflag' !important;
-  speak: never;
-  font-style: normal;
-  font-weight: normal;
-  font-variant: normal;
-  text-transform: none;
-  line-height: 1;
-
-  /* Better Font Rendering =========== */
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
 .smod-gb .path1:before {
@@ -349,7 +334,6 @@
   margin-left: -1.3330078125em;
   color: rgb(255, 255, 255);
 }
-
 
 :root,
 :host {
@@ -407,7 +391,7 @@
   --cal-event-color-orange: #ffa726;
   --cal-event-color-deep-orange: #ff7043;
   --cal-event-color-gray: #a0a0a0;
-  --arrow-width:0px;
+  --arrow-width: 0px;
 }
 
 ::-webkit-scrollbar-corner {
@@ -446,3 +430,93 @@ body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown)
   background: rgba(0, 0, 0, 0.75) !important;
   backdrop-filter: blur(3px);
 }
+
+.tippy-box[data-theme~="material"] {
+  background-color: #212224;
+  font-weight: 300;
+}
+.tippy-box[data-theme~="material"][data-placement^="top"]
+  > .tippy-arrow:before {
+  border-top-color: #212224;
+}
+.tippy-box[data-theme~="material"][data-placement^="bottom"]
+  > .tippy-arrow:before {
+  border-bottom-color: #212224;
+}
+.tippy-box[data-theme~="material"][data-placement^="left"]
+  > .tippy-arrow:before {
+  border-left-color: #212224;
+}
+.tippy-box[data-theme~="material"][data-placement^="right"]
+  > .tippy-arrow:before {
+  border-right-color: #212224;
+}
+.tippy-box[data-theme~="material"] > .tippy-backdrop {
+  background-color: #212224;
+}
+.tippy-box[data-theme~="material"] > .tippy-svg-arrow {
+  fill: #212224;
+}
+
+.tippy-box[data-theme~="material-light"] {
+  background-color: #c50505;
+  color: #f7f7f7;
+  font-weight: 300;
+}
+.tippy-box[data-theme~="material-light"][data-placement^="top"]
+  > .tippy-arrow:before {
+  border-top-color: #c50505;
+}
+.tippy-box[data-theme~="material-light"][data-placement^="bottom"]
+  > .tippy-arrow:before {
+  border-bottom-color: #c50505;
+}
+.tippy-box[data-theme~="material-light"][data-placement^="left"]
+  > .tippy-arrow:before {
+  border-left-color: #c50505;
+}
+.tippy-box[data-theme~="material-light"][data-placement^="right"]
+  > .tippy-arrow:before {
+  border-right-color: #c50505;
+}
+.tippy-box[data-theme~="material-light"] > .tippy-backdrop {
+  background-color: #c50505;
+}
+.tippy-box[data-theme~="material-light"] > .tippy-svg-arrow {
+  fill: #c50505;
+}
+
+
+.tippy-box[data-animation="scale"][data-placement^="top"] {
+  transform-origin: bottom;
+}
+.tippy-box[data-animation="scale"][data-placement^="bottom"] {
+  transform-origin: top;
+}
+.tippy-box[data-animation="scale"][data-placement^="left"] {
+  transform-origin: right;
+}
+.tippy-box[data-animation="scale"][data-placement^="right"] {
+  transform-origin: left;
+}
+.tippy-box[data-animation="scale"][data-state="hidden"] {
+  transform: scale(0.5);
+  opacity: 0;
+}
+
+.tippy-box[data-animation="shift-away"][data-state="hidden"] {
+  opacity: 0;
+}
+.tippy-box[data-animation="shift-away"][data-state="hidden"][data-placement^="top"] {
+  transform: translateY(10px);
+}
+.tippy-box[data-animation="shift-away"][data-state="hidden"][data-placement^="bottom"] {
+  transform: translateY(-10px);
+}
+.tippy-box[data-animation="shift-away"][data-state="hidden"][data-placement^="left"] {
+  transform: translateX(10px);
+}
+.tippy-box[data-animation="shift-away"][data-state="hidden"][data-placement^="right"] {
+  transform: translateX(-10px);
+}
+

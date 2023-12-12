@@ -189,9 +189,25 @@ sap.ui.define(
         if(!bSelectable){
           return;
         }
+        
 
         var d = this.getDay().date;
         var a = dateUtilities.getDayAttributes(d, false) || [];
+
+        // console.log(a);
+        if ( a.length > 0 && eventUtilities.getMergeEventStatus()) {
+
+          var oEventObject = {
+            EventId: a[0].eventId,
+            EventType: a[0].eventType,
+            LeaveType: a[0].leaveType,
+            Deletable: false
+          };
+
+          eventUtilities.publishEvent("PlanningCalendar", "MergeEvent", _.clone(oEventObject));
+          return;
+        }
+
         if(m){
           if (!a || a.length === 0 || eventUtilities.getSelectEventStatus()) {
             eventUtilities.publishEvent("PlanningCalendar", "SelectEventDate", {

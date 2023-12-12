@@ -1,3 +1,5 @@
+/*global tippy */
+
 sap.ui.define(["sap/ui/core/Control"], function (Control) {
   "use strict";
 
@@ -173,37 +175,32 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
     onmouseover: function(){
       var bTooltip = this.getTooltip() || null;
       var that = this;
+      var oRef = this.getDomRef();
       
-      if(bTooltip && !that._tooltipPopover){
-        that._tooltipPopover = new sap.m.Popover({
-          showHeader: false,
-          horizontalScrolling: false,
-          content:[
-            new sap.m.Text({
-              text: bTooltip,
-              textAlign: "Center"
-            })
-          ],
-          afterClose: function(){
-            that._tooltipPopover.destroy();
-            clearTimeout(openTooltip);
-            that._tooltipPopover = null;
+      if(bTooltip && !this.tooltipShown){
+        tippy(oRef,{
+          content: "<span style='font-size:11px;'>" + bTooltip + "</span>", 
+          delay: [0,50],
+          maxWidth: oRef?.offsetWidth+25,
+          placement: 'bottom',
+          allowHTML: true,
+          animation:"scale",
+          inertia: true,
+          theme: "material",
+          onShow: function(){
+            that.tooltipShown = true; 
           },
-          placement: "Bottom",
-          showArrow: true,
-          offsetY: -20
-        }).addStyleClass("spp-stat-card-tooltip");
-
-        var openTooltip = function(){
-          that._tooltipPopover.openBy(that);          
-        };
-
-        setTimeout(openTooltip, 300);
-
+          onDestroy: function() {
+            that.tooltipShown = false; 
+          },
+          onClickOutside: function() {
+            that.tooltipShown = false; 
+          }
+        });
       };
     },
     onmouseout: function(){
-      this._tooltipPopover?.close();
+      //this._tooltipPopover?.close();
     }
   });
 });

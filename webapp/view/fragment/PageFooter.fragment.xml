@@ -9,11 +9,10 @@
 			path: 'planModel>Header/QuotaPlanned'
 		}, {
 			path: 'planModel>Header/QuotaToBePlanned'
-		},
-		{
+		}, {
 			path: 'planModel>Header/CouncilApprovalStatus'
 		}],
-		formatter: '.formatter.decidePlanApproveStatus'
+		formatter: '.formatter.decidePlanApproveControlsVisible'
 	}">
 		<buttons>
 			<Button
@@ -24,6 +23,27 @@
 				firstChild="true"
 				lastChild="true"
 				solid="true"
+				enabled="{
+					parts: [{
+						path: 'planModel>Header/PlanningEnabled'
+					}, {
+						path: 'planModel>Header/QuotaPlanned'
+					}, {
+						path: 'planModel>Header/QuotaToBePlanned'
+					}, {
+						path: 'planModel>Header/CouncilApprovalStatus'
+					}],
+					formatter: '.formatter.decidePlanApproveControlsEnabled'
+				}"
+				tooltip="{parts: [{
+						path: 'planModel>Header/PlanningEnabled'
+					}, {
+						path: 'planModel>Header/QuotaPlanned'
+					},
+					{
+						path: 'planModel>Header/QuotaToBePlanned'
+					}],
+					formatter: '.onGetIncompletedButtonTooltip'}"
 				press=".onSendPlanForApproval"
 			/>
 		</buttons>

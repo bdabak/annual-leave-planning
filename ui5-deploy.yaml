@@ -15,9 +15,9 @@ builder:
       configuration:
         target:
           url: http://tks0154.thy.com:8000
-          client: "300"
+          client: '300'
         app:
           name: ZHCM_UX_ALPL
           description: Yıllık izin planlama
           package: ZHR_ALPL
-          transport: D28K904339
+          transport: D28K904611

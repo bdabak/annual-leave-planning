@@ -1,0 +1,408 @@
+<core:FragmentDefinition
+	xmlns="com.thy.ux.annualleaveplanning.ui"
+	xmlns:core="sap.ui.core"
+	xmlns:m="sap.m"
+	xmlns:cd="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+>
+	<Dialog
+		id="MergeEventDialog"
+		closed=".onAfterEventDialogClosed"
+		cancelled=".onEventCancelled"
+		class="spp-eventeditor"
+		showPointer="false"
+		alignment="center"
+		draggable="true"
+		animate="true"
+	>
+		<header>
+			<DialogHeader
+				id="MergeEventDialogHeader"
+				title="{planModel>EventMerge/Title}"
+				closed=".onEventDialogClosed"
+			/>
+		</header>
+		<content>
+			<EventEditor id="MergeEventEditor">
+				<items>
+					<FormField
+						id="MergeFormFieldLeaveType"
+						firstChild="true"
+						empty="{= ${planModel>EventMerge/LeaveType/Key} === '' || ${planModel>EventMerge/LeaveType/Key} === null }"
+						fieldType="combo"
+					>
+						<label>
+							<FormLabel
+								id="FormLabelLeaveType"
+								text="{i18n>leaveType}"
+								for="FormComboLeaveType"
+							/>
+						</label>
+						<field>
+							<FormComboBox
+								id="FormComboLeaveType"
+								key="{planModel>EventMerge/LeaveType/Key}"
+								value="{planModel>EventMerge/LeaveType/Value}"
+								name="LeaveType"
+								icon="{planModel>EventMerge/LeaveType/Icon}"
+								editable="false"
+							>
+								<comboPicker>
+									<PickerListWidget
+										id="FormPickerLeaveType"
+										multiselect="false"
+										items="{planModel>LeaveTypes}"
+									>
+										<items>
+											<PickerListWidgetItem
+												id="FormPickerItemLeaveType"
+												icon="{planModel>Color}"
+												key="{planModel>Type}"
+												value="{planModel>Description}"
+												selected="{= ${planModel>EventMerge/LeaveType/Key} === ${planModel>Type} }"
+											/>
+										</items>
+									</PickerListWidget>
+								</comboPicker>
+							</FormComboBox>
+						</field>
+					</FormField>
+					<SplitRow
+						id="MergeOriginalPanel"
+						title="{i18n>originalLeaves}"
+						visible="true"
+						class="spp-split-3"
+					>
+						<content>
+							<FormField
+								id="MergeFormFieldEvent1StartDate"
+								containsFocus="true"
+								empty="false"
+								fieldType="datefield"
+								class="spp-flex-column-half sapUiTinyMarginEnd"
+							>
+								<label>
+									<FormLabel
+										id="FormLabelEvent1StartDate"
+										text="{i18n>leaveStartDate}"
+										for="FormInputEvent1StartDate"
+									/>
+								</label>
+								<field>
+									<FormDatePicker
+										id="FormInputEvent1StartDate"
+										value="{
+											path: 'planModel>EventMerge/Leaves/0/StartDate'
+										}"
+										editable="false"
+									/>
+								</field>
+							</FormField>
+							<FormField
+								id="MergeFormFieldEvent1EndDate"
+								lastChild="false"
+								containsFocus="true"
+								empty="false"
+								fieldType="datefield"
+								class="spp-flex-column-half"
+							>
+								<label>
+									<FormLabel
+										id="FormLabelEvent1EndDate"
+										text="{i18n>leaveEndDate}"
+										for="FormInputEvent1EndDate"
+									/>
+								</label>
+								<field>
+									<FormDatePicker
+										id="FormInputEvent1EndDate"
+										value="{
+											path: 'planModel>EventMerge/Leaves/0/EndDate'
+										}"
+										editable="false"
+									/>
+								</field>
+							</FormField>
+							<FormField
+								id="MergeFormFieldEvent2StartDate"
+								containsFocus="true"
+								empty="false"
+								fieldType="datefield"
+								class="spp-flex-column-half sapUiTinyMarginEnd"
+							>
+								<label>
+									<FormLabel
+										id="FormLabelEvent2StartDate"
+										text="{i18n>leaveStartDate}"
+										for="FormInputEvent2StartDate"
+									/>
+								</label>
+								<field>
+									<FormDatePicker
+										id="FormInputEvent2StartDate"
+										value="{planModel>EventMerge/Leaves/1/StartDate}"
+										editable="false"
+									/>
+								</field>
+							</FormField>
+							<FormField
+								id="MergeFormFieldEvent2EndDate"
+								lastChild="false"
+								containsFocus="true"
+								empty="false"
+								fieldType="datefield"
+								class="spp-flex-column-half"
+							>
+								<label>
+									<FormLabel
+										id="FormLabelEvent2EndDate"
+										text="{i18n>leaveEndDate}"
+										for="FormInputEndDate"
+									/>
+								</label>
+								<field>
+									<FormDatePicker
+										id="FormInputEvent2EndDate"
+										value="{planModel>EventMerge/Leaves/1/EndDate}"
+										editable="false"
+									/>
+								</field>
+							</FormField>
+							<FormIndicator
+								id="MergeFormFieldQuotaUsed"
+								label="{i18n>totalLeaveQuotaUsed}"
+								tooltip="{i18n>totalQuotaUsageTooltip}"
+								value="{
+									path: 'planModel>EventMerge/UsedQuota',
+									type: 'sap.ui.model.odata.type.Decimal',
+									formatOptions: {
+										minFractionDigits: 0,
+										maxFractionDigits: 2,
+										groupingEnabled: false,
+										decimalSeparator: ','
+									}
+								}"
+								unit="{i18n>days}"
+								alignment="H"
+							/>
+						</content>
+					</SplitRow>
+					<Toolbar
+						hasWrapper="false"
+						class="spp-popup-toolbar sapUiTinyMarginTopBottom spp-bottom-border"
+					>
+						<items>
+							<m:Title text="{i18n>mergingPane}" />
+						</items>
+					</Toolbar>
+					<SplitRow
+						id="Merge0Panel"
+						title="{planModel>EventMerge/Parts/0/Title}"
+						visible="{planModel>EventMerge/Parts/0/Visible}"
+						class="spp-split-1"
+						watermark="{planModel>EventMerge/Parts/0/Cancelled}"
+					>
+						<content>
+							<FormField
+								id="Merge0StartDateField"
+								containsFocus="true"
+								empty="{= ${planModel>EventMerge/Parts/0/StartDate} === null }"
+								fieldType="datefield"
+								class="spp-flex-column-half-with-button sapUiTinyMarginEnd"
+							>
+								<label>
+									<FormLabel
+										id="Merge0StartDateFieldLabel"
+										text="{i18n>leaveStartDate}"
+										for="Merge0StartDatePicker"
+									/>
+								</label>
+								<field>
+									<FormDatePicker
+										id="Merge0StartDatePicker"
+										name="Merge0StartDatePicker"
+										value="{planModel>EventMerge/Parts/0/StartDate}"
+										referenceDate="{planModel>EventMerge/Parts/0/RefStartDate}"
+										editable="true"
+										changed=".onMergeEventDateChanged"
+										cd:targetIndex="0"
+									/>
+								</field>
+							</FormField>
+							<FormField
+								id="Merge0EndDateField"
+								lastChild="true"
+								containsFocus="true"
+								empty="{= ${planModel>EventMerge/Parts/0/EndDate} === null }"
+								fieldType="datefield"
+								class="spp-flex-column-half-with-button sapUiTinyMarginEnd"
+							>
+								<label>
+									<FormLabel
+										id="Merge0EndDateLabel"
+										text="{i18n>leaveEndDate}"
+										for="Merge0EndDatePicker"
+									/>
+								</label>
+								<field>
+									<FormDatePicker
+										id="Merge0EndDatePicker"
+										name="Merge0EndDatePicker"
+										value="{planModel>EventMerge/Parts/0/EndDate}"
+										referenceDate="{planModel>EventMerge/Parts/0/RefEndDate}"
+										editable="true"
+										changed=".onMergeEventDateChanged"
+										cd:targetIndex="0"
+									/>
+								</field>
+							</FormField>
+							<Button
+								icon="{= ${planModel>EventMerge/Parts/0/Cancelled} ? 'spp-fa-arrow-rotate-left' : 'spp-fa-ban'}"
+								class="spp-red spp-merge-action"
+								press=".onMergeToggleCancel"
+								solid="true"
+								raised="true"
+								cd:targetIndex="0"
+								enabled="{= ${planModel>EventMerge/Parts/1/Cancelled} !== true }"
+							/>
+							<FormIndicator
+								id="Merge0FormFieldQuotaUsed"
+								label="{i18n>leaveQuotaUsed}"
+								tooltip="{i18n>quotaUsageTooltip}"
+								value="{
+									path: 'planModel>EventMerge/Parts/0/UsedQuota',
+									type: 'sap.ui.model.odata.type.Decimal',
+									formatOptions: {
+										minFractionDigits: 0,
+										maxFractionDigits: 2,
+										groupingEnabled: false,
+										decimalSeparator: ','
+									}
+								}"
+								unit="{i18n>days}"
+								busy="{
+									path: 'planModel>EventMerge/Parts/0/QuotaCalculating'
+								}"
+								busyIndicatorDelay="0"
+								alignment="H"
+							/>
+						</content>
+					</SplitRow>
+					<SplitRow
+						id="Merge1Panel"
+						title="{planModel>EventMerge/Parts/1/Title}"
+						visible="{planModel>EventMerge/Parts/1/Visible}"
+						class="spp-split-2"
+						watermark="{planModel>EventMerge/Parts/1/Cancelled}"
+					>
+						<content>
+							<FormField
+								id="Merge1StartDateField"
+								containsFocus="true"
+								empty="{= ${planModel>EventMerge/Parts/1/StartDate} === null }"
+								fieldType="datefield"
+								class="spp-flex-column-half-with-button sapUiTinyMarginEnd"
+							>
+								<label>
+									<FormLabel
+										id="Merge1StartDateFieldLabel"
+										text="{i18n>leaveStartDate}"
+										for="Merge1StartDatePicker"
+									/>
+								</label>
+								<field>
+									<FormDatePicker
+										id="Merge1StartDatePicker"
+										name="Merge1StartDatePicker"
+										value="{planModel>EventMerge/Parts/1/StartDate}"
+										referenceDate="{planModel>EventMerge/Parts/1/RefStartDate}"
+										editable="true"
+										changed=".onMergeEventDateChanged"
+										cd:targetIndex="1"
+									/>
+								</field>
+							</FormField>
+							<FormField
+								id="Merge1EndDateField"
+								lastChild="true"
+								containsFocus="true"
+								empty="{= ${planModel>EventMerge/Parts/1/EndDate} === null }"
+								fieldType="datefield"
+								class="spp-flex-column-half-with-button sapUiTinyMarginEnd"
+							>
+								<label>
+									<FormLabel
+										id="Merge1EndDateLabel"
+										text="{i18n>leaveEndDate}"
+										for="Merge1EndDatePicker"
+									/>
+								</label>
+								<field>
+									<FormDatePicker
+										id="Merge1EndDatePicker"
+										name="Merge1EndDatePicker"
+										value="{planModel>EventMerge/Parts/1/EndDate}"
+										referenceDate="{planModel>EventMerge/Parts/1/RefEndDate}"
+										editable="true"
+										changed=".onMergeEventDateChanged"
+										cd:targetIndex="1"
+									/>
+								</field>
+							</FormField>
+							<Button
+								icon="{= ${planModel>EventMerge/Parts/1/Cancelled} ? 'spp-fa-arrow-rotate-left' : 'spp-fa-ban'}"
+								class="spp-red spp-merge-action"
+								press=".onMergeToggleCancel"
+								solid="true"
+								raised="true"
+								cd:targetIndex="1"
+								enabled="{= ${planModel>EventMerge/Parts/0/Cancelled} !== true }"
+												/>
+							<FormIndicator
+								id="Merge1FormFieldQuotaUsed"
+								label="{i18n>leaveQuotaUsed}"
+								tooltip="{i18n>quotaUsageTooltip}"
+								value="{
+									path: 'planModel>EventMerge/Parts/1/UsedQuota',
+									type: 'sap.ui.model.odata.type.Decimal',
+									formatOptions: {
+										minFractionDigits: 0,
+										maxFractionDigits: 2,
+										groupingEnabled: false,
+										decimalSeparator: ','
+									}
+								}"
+								unit="{i18n>days}"
+								busy="{
+									path: 'planModel>EventMerge/Parts/1/QuotaCalculating'
+								}"
+								busyIndicatorDelay="0"
+								alignment="H"
+							/>
+						</content>
+					</SplitRow>
+				</items>
+				<toolbar>
+					<Toolbar id="MergeEventDialogToolbar">
+						<items>
+							<Button
+								id="MergeEventDialogSaveAction"
+								label="{i18n>saveAction}"
+								raised="true"
+								firstChild="true"
+								class="spp-orange"
+								press=".onMergeSave"
+								enabled="{parts:[{path:'planModel>EventMerge/Originals'},{path:'planModel>EventMerge/Parts'}, {path:'planModel>EventMerge/ButtonState'}], formatter: '.checkMergeButtonEnabled'}"
+							/>
+							<Button
+								id="MergeEventDialogCancelAction"
+								label="{i18n>cancelAction}"
+								lastChild="true"
+								press=".onEventCancelled"
+							/>
+						</items>
+					</Toolbar>
+				</toolbar>
+			</EventEditor>
+		</content>
+	</Dialog>
+</core:FragmentDefinition>

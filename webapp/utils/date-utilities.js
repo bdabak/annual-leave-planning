@@ -8,7 +8,7 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
       var sCurrentLocale = sap.ui.getCore().getConfiguration().getLanguage().toUpperCase();
       var sLanguage = jQuery.sap.getUriParameters().get("sap-language")?.toUpperCase();
 
-      console.log(sCurrentLocale, sLanguage);
+      // console.log(sCurrentLocale, sLanguage);
       
       var sLocale = sCurrentLocale === "TR" || sLanguage === "TR" ? "tr" : "en";
       moment.locale(sLocale);
@@ -44,12 +44,12 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
     },
 
     formatDate: function (d) {
-      var m = moment(d, "DD.MM.YYYY").hour(3);
+      var m = moment(d, "DD.MM.YYYY").hours(this.getTZO().hour).minutes(this.getTZO().minute);
 
       return m.format("DD.MM.YYYY");
     },
     formatDateObject: function (d) {
-      var m = moment(d).hour(3);
+      var m = moment(d).hours(this.getTZO().hour).minutes(this.getTZO().minute);
 
       return m.format("DD.MM.YYYY");
     },
@@ -69,10 +69,25 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
       return m.format("DD.MM.YYYY");
     },
 
+    getTZO: function(){
+      var d = new Date();
+      var o = d.getTimezoneOffset() / 60 * -1;
+      if(isNaN(o)){
+        return 3; // GMT+3 by default
+      }
+
+      if(o < 0){
+        o = 24 + o;
+      }
+
+      var h = parseInt(o,10);
+      var m = ( o - h ) * 60;
+
+      return {hour:h, minute: m};
+    },
+
     convertPeriodToDateObject: function (p) {
-      var m = moment(p.day + "." + p.month + "." + p.year, "DD.MM.YYYY").hour(
-        3
-      );
+      var m = moment(p.day + "." + p.month + "." + p.year, "DD.MM.YYYY").hours(this.getTZO().hour).minutes(this.getTZO().minute);
       var d = m.toDate();
 
       return d;
@@ -210,7 +225,7 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
         return null;
       }
 
-      var m = moment(d, "DD.MM.YYYY").hour(3);
+      var m = moment(d, "DD.MM.YYYY").hours(this.getTZO().hour).minutes(this.getTZO().minute);
       var d = m.toDate();
 
       return d;
@@ -221,7 +236,7 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
         return false;
       }
 
-      var m = moment(d, "DD.MM.YYYY").hour(3);
+      var m = moment(d, "DD.MM.YYYY").hours(this.getTZO().hour).minutes(this.getTZO().minute);
      
       return m.isValid();
     },
@@ -330,7 +345,7 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
       }
 
       var m = moment(d, "DD.MM.YYYY");
-      m.hour(3);
+      m.hours(this.getTZO().hour).minutes(this.getTZO().minute);
 
       //--Search in planned leaves
       var pL = _.find(this.getPlannedLeaves(), function (l, i) {
@@ -406,7 +421,7 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
         return;
       }
 
-      var m = moment(d, "DD.MM.YYYY").hour(3);
+      var m = moment(d, "DD.MM.YYYY").hours(this.getTZO().hour).minutes(this.getTZO().minute);
 
       //--Search in annual leaves
       var pL = _.find(this.getAnnualLeaves(), function (l, i) {
@@ -431,9 +446,9 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
         var s = moment(eSD);
         var e = s.clone().add(1, "y");
       }
-      var m = moment(d, "DD.MM.YYYY").hour(3);
-      var t = moment(new Date()).hour(3);
-      var l = moment(moment(new Date()).clone().subtract(1,"months").startOf("month").hour(3).toDate());
+      var m = moment(d, "DD.MM.YYYY").hours(this.getTZO().hour).minutes(this.getTZO().minute);
+      var t = moment(new Date()).hours(this.getTZO().hour).minutes(this.getTZO().minute);
+      var l = moment(moment(new Date()).clone().subtract(1,"months").startOf("month").hours(this.getTZO().hour).minutes(this.getTZO().minute).toDate());
 
 
       return m.isSameOrAfter(l, "day");
@@ -477,7 +492,7 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
       var p = this.getProxyModelProperty("/Page/Period") || null;
       var eSD =
         this.getProxyModelProperty("/Page/Header/QuotaAccrualBeginDate") ||
-        moment(new Date()).hour(3).startOf("month").toDate();
+        moment(new Date()).hours(this.getTZO().hour).minutes(this.getTZO().minute).startOf("month").toDate();
       if (eSD) {
         var sP = moment(eSD);
         sP.year(p.year);
@@ -595,7 +610,7 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
               editable: c.LegendAttributes.Editable,
               splittable: c.LegendAttributes.Splittable,
               deletable: c.LegendAttributes.Deletable,
-              rejected: c.LeaveStatus === "LRJ",
+              rejected: c.LeaveStatus === "LRJ" || c.LeaveStatus === "LRD",
               errorMessage: c.ErrorMessage
             };
 
@@ -639,8 +654,8 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
 
     getDayAttributes: function (d, a = false) {
       var m = moment.isMoment(d)
-        ? d.clone().hour(3)
-        : moment(d, "DD.MM.YYYY").hour(3);
+        ? d.clone().hours(this.getTZO().hour).minutes(this.getTZO().minute)
+        : moment(d, "DD.MM.YYYY").hours(this.getTZO().hour).minutes(this.getTZO().minute);
       var y = m.clone().format("YYYY");
       var l = [];
       var e = {};

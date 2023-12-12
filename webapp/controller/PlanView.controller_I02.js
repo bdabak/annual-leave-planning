@@ -67,13 +67,13 @@ sap.ui.define(
         },
 
         /* Event handlers*/
-        onGetIncompletedButtonTooltip: function (e, q, t) {
+        onGetIncompletedButtonTooltip: function(e,q,t){
           var sTooltip = null;
           var r = parseFloat(t) - parseFloat(q);
-          // return this.getText("warningBeforePlanningCompletion", [3]);
-          if (e && r > 0) {
-            sTooltip = this.getText("warningBeforePlanningCompletion", [r]);
-          }
+            return this.getText("warningBeforePlanningCompletion", [3]);
+          if(e && r > 0){
+            sTooltip =  this.getText("warningBeforePlanningCompletion", [r]);
+          } 
           return sTooltip;
         },
         onToggleSidebar: function (e) {
@@ -132,106 +132,6 @@ sap.ui.define(
             }.bind(this)
           );
         },
-        onMergeToggleCancel: function (e) {
-          var that = this;
-          var s = e.getSource() || null;
-          if (!s) {
-            return;
-          }
-
-          var i = s.data("targetIndex") || null;
-
-          if (i === null) {
-            return;
-          }
-
-          var p = "EventMerge/Parts/" + i + "/Cancelled";
-
-          var bCancel = this._getPageProperty(p);
-
-          if (bCancel === null) {
-            return;
-          }
-
-          //--Check if cancellable
-
-          this._setPageProperty(p, !bCancel);
-          this._setPageProperty("EventMerge/ButtonState", new Date().getTime());
-
-        },
-        checkMergeButtonEnabled: function (a,b,s) {
-          var t = 0;
-          var m = 0;
-          a.forEach((o) => {
-            t = t + parseFloat(o.UsedQuota);
-          });
-          b.forEach((p) => {
-            if (!p.Cancelled) {
-              m = m + parseFloat(p.UsedQuota);
-            }
-          });
-
-          return m >= t;
-        },
-        onMergeEventDateChanged: function (e) {
-          var that = this;
-          var s = e.getSource() || null;
-          if (!s) {
-            return;
-          }
-
-          var i = s.data("targetIndex") || null;
-
-          if (i === null) {
-            return;
-          }
-
-          var p = "EventMerge/Parts/" + i;
-
-          var oEvent = this._getPageProperty(p) || null;
-
-          if (oEvent === null) {
-            return;
-          }
-
-          var sD = dateUtilities.convertToDate(oEvent.StartDate);
-          var eD = dateUtilities.convertToDate(oEvent.EndDate);
-
-          if (!sD || !eD) {
-            if (sD) {
-              oEvent["RefStartDate"] = oEvent["RefEndDate"] = oEvent.StartDate;
-            } else {
-              oEvent["RefStartDate"] = oEvent["RefEndDate"] = oEvent.EndDate;
-            }
-
-            this._setPageProperty(p, oEvent);
-
-            return;
-          }
-          oEvent.UsedQuota = null;
-
-          if (moment(sD).isAfter(moment(eD))) {
-            Swal.fire({
-              position: "bottom",
-              icon: "error",
-              html: this.getText("dateSelectionError", []),
-              toast: true,
-              showConfirmButton: false,
-              timer: 5000,
-              timerProgressBar: true,
-            });
-            return;
-          }
-
-          oEvent.QuotaCalculating = true;
-
-          this._countUsedQuota(sD, eD).then(function (response) {
-            oEvent.QuotaCalculating = false;
-            oEvent.UsedQuota = response.UsedQuota;
-            that._setPageProperty(p, oEvent);
-            that._setPageProperty("EventMerge/ButtonState", new Date().getTime());
-          });
-        },
 
         onSplitEventDateChanged: function (e) {
           var that = this;
@@ -274,7 +174,7 @@ sap.ui.define(
             Swal.fire({
               position: "bottom",
               icon: "error",
-              html: this.getText("dateSelectionError", []),
+              html: "Bitiş tarihi, başlangıç tarihinden önce olamaz",
               toast: true,
               showConfirmButton: false,
               timer: 5000,
@@ -624,8 +524,8 @@ sap.ui.define(
               p +
               `<div class="spp-resp-grid-cell">
             ${dateUtilities.formatDateObject(
-                l.StartDate
-              )} - ${dateUtilities.formatDateObject(l.EndDate)}
+              l.StartDate
+            )} - ${dateUtilities.formatDateObject(l.EndDate)}
             </div>
             <div class="spp-resp-grid-cell">
               <button class="swal2-confirm swal2-styled swal2-default-outline spp-use-future-plan-button" 
@@ -730,15 +630,14 @@ sap.ui.define(
           });
         },
 
-        onMergeSave: function () {
-          var oEvent = this._getPageProperty("EventMerge");
-          
-          this._mergePlan(oEvent);
-
-          this._closeEventDialog();
-        },
         onSplitSave: function () {
           var oEvent = this._getPageProperty("EventSplit");
+
+          // var s = this._getEventType(oEvent.LeaveType);
+
+          // if (!s) {
+          //   return null;
+          // }
 
           var eL = this._getProperty("PlannedLeaves");
 
@@ -755,6 +654,10 @@ sap.ui.define(
             return;
           }
 
+          //TODO: Add additional split checks
+          //TODO: Add additional split checks
+
+          // var vS = _.filter(oEvent.Splits, ["Visible", true]);
           var hE = 0;
           $.each(oEvent.Splits, function (i, e) {
             if (
@@ -805,6 +708,43 @@ sap.ui.define(
           this._closeEventDialog();
         },
 
+        // onCallDatePicker: function (e) {
+        //   var s = e.getParameter("sourceField");
+        //   var t = e.getParameter("targetField");
+        //   var p = e.getParameter("period");
+        //   var o = t.$();
+
+        //   if (this._oDatePickerWidget) {
+        //     this._oDatePickerWidget.destroy();
+        //   }
+
+        //   if (o && o?.length > 0) {
+        //     var eO = o.offset(); //Element position
+        //     var eH = o.outerHeight(); //Element height
+        //     var eW = o.outerWidth();
+
+        //     this._oDatePickerWidget = new DatePickerWidget({
+        //       floating: true,
+        //       period: p,
+        //       select: function (e) {
+        //         var d = e.getParameter("selectedDate");
+        //         if (s && typeof s.handleValueSelection === "function") {
+        //           s.handleValueSelection(d);
+        //         }
+        //       },
+        //       selectedDate: dateUtilities.convertPeriodToDate(p),
+        //       elementPosition: {
+        //         offset: { ...eO },
+        //         outerHeight: eH,
+        //         outerWidth: eW,
+        //       },
+        //     });
+
+        //     s.registerDatePickerWidget(this._oDatePickerWidget);
+
+        //     this._getModal().openSub(this._oDatePickerWidget);
+        //   }
+        // },
         onAddSplit: function () {
           var aS = this._getPageProperty("EventSplit/Splits");
 
@@ -1051,8 +991,6 @@ sap.ui.define(
                 }
                 /* Leave Types */
               });
-
-              lt = _.orderBy(lt, ["Type"], ["desc"]);
 
               that._setPageProperty("LegendGroup", lg);
               that._setPageProperty("LeaveTypes", lt);
@@ -1324,7 +1262,7 @@ sap.ui.define(
         },
         _deleteAnnualLeave: function (oAnnual) {
           var oLeaveModel = this.getModel("leaveRequest");
-          var sPath = oLeaveModel.createKey("/LeaveRequestCollection", {
+          var sPath = oLeaveModel.createKey("/LeaveRequestSet", {
             ...oAnnual.Key,
           });
           var that = this;
@@ -1369,38 +1307,44 @@ sap.ui.define(
             var oLeaveRequest = {
               EmployeeID: oHeader.EmployeeNumber,
               AbsenceTypeCode: "0010",
-              InfoType: "2001",
+              // InfoType: "2001",
               StartDate: dateUtilities.convertToDate(oAnnual.StartDate),
               EndDate: dateUtilities.convertToDate(oAnnual.EndDate),
-              Attachments: [],
-              ActionCode: 1,
-              ProcessCheckOnlyInd: true,
+              // Attachments: [],
+              // ActionCode: 1,
+              ActionID: 1,
+              // ProcessCheckOnlyInd: true,
+              // ProcessCheckOnlyInd: false,
               AdditionalFields: {},
-              ApproverEmployeeID: oAbsence.ApproverName,
-              ApproverEmployeeName: oAbsence.ApproverPernr,
-              MultipleApprovers: _.clone(oAbsence.MultipleApprovers.results),
+              ApproverLvl1:{
+                Name:oAbsence.ApproverName,
+                Pernr:oAbsence.ApproverPernr,
+                Seqnr: "001",
+                DefaultFlag: false
+              },
+              // ApproverEmployeeID: oAbsence.ApproverName,
+              // ApproverEmployeeName: oAbsence.ApproverPernr,
+              // MultipleApprovers: _.clone(oAbsence.MultipleApprovers.results),
               Notes: oAnnual.Reason,
             };
 
             that.openBusyFragment("annualLeaveBeingCreated", []);
-            oLeaveModel.create("/LeaveRequestCollection", oLeaveRequest, {
-              success: function (x, y) {
-                oLeaveRequest.ProcessCheckOnlyInd = false;
-                oLeaveModel.create("/LeaveRequestCollection", oLeaveRequest, {
-                  success: function (o, r) {
-                    that._refreshHeader().then(function () {
-                      that._triggerRenderChanged(); //Page should be rerendered
-                      that.closeBusyFragment();
-                      Swal.fire({
-                        position: "bottom",
-                        icon: "success",
-                        html: that.getText("annualLeaveSentForApproval", []),
-                        showConfirmButton: false,
-                        toast: true,
-                        timer: 2000,
-                      });
-                    });
-                  },
+            // oLeaveModel.create("/LeaveRequestSet", oLeaveRequest, {
+            //   success: function (x, y) {
+            //     oLeaveRequest.ProcessCheckOnlyInd = false;
+            oLeaveModel.create("/LeaveRequestSet", oLeaveRequest, {
+              success: function (o, r) {
+                that._refreshHeader().then(function () {
+                  that._triggerRenderChanged(); //Page should be rerendered
+                  that.closeBusyFragment();
+                  Swal.fire({
+                    position: "bottom",
+                    icon: "success",
+                    html: that.getText("annualLeaveSentForApproval", []),
+                    showConfirmButton: false,
+                    toast: true,
+                    timer: 2000,
+                  });
                 });
               },
               error: function (e) {
@@ -1409,6 +1353,13 @@ sap.ui.define(
                 that._showServiceError(e);
               },
             });
+            // },
+            // error: function (e) {
+            //   // console.dir(e);
+            //   that.closeBusyFragment();
+            //   that._showServiceError(e);
+            // },
+            // });
           });
         },
 
@@ -1538,49 +1489,6 @@ sap.ui.define(
 
           this._callPlannedLeaveOperation(
             "plannedLeaveBeingSplitted",
-            oOperation,
-            fnCallback
-          );
-        },
-
-        _mergePlan: function (oEvent) {
-          var that = this;
-          var oHeader = this._getPageProperty("Header");
-          var aPL = this._getProperty("PlannedLeaves");
-          var aParts = _.filter(oEvent.Parts, ["Cancelled", false]) || [];
-
-          var oOperation = {
-            Actio: "MRG",
-            PlanId: oHeader.PlanId,
-            PlannedLeaveId: aParts[0].EventId,
-            PlannedLeaveSet: [],
-            ReturnSet: [],
-          };
-
-          $.each(aParts, function (i, s) {
-            oOperation.PlannedLeaveSet.push({
-              PlannedLeaveId: s.EventId,
-              EmployeeNumber: oHeader.EmployeeNumber,
-              StartDate: dateUtilities.convertToDate(s.StartDate),
-              EndDate: dateUtilities.convertToDate(s.EndDate),
-              LeaveType: "PL",
-              PlanId: oHeader.PlanId,
-            });
-          });
-
-          var fnCallback = function () {
-            Swal.fire({
-              position: "bottom",
-              icon: "success",
-              html: that.getText("eventMerged", []),
-              showConfirmButton: false,
-              toast: true,
-              timer: 2000,
-            });
-          };
-
-          this._callPlannedLeaveOperation(
-            "plannedLeaveBeingMerged",
             oOperation,
             fnCallback
           );
@@ -1908,36 +1816,7 @@ sap.ui.define(
             this._openEditEventDialog(o.Element, o.Period, true);
           }
         },
-        _handleSplitEvent: function (c, e, o) {
-          var s = this._getEventType(o.EventType);
 
-          if (!s) {
-            return null;
-          }
-
-          var a = this._getProperty(s) || [];
-
-          if (a.length === 0) {
-            return;
-          }
-
-          var b = _.find(a, ["EventId", o.EventId]) || null;
-
-          if (!b) {
-            return;
-          }
-
-          var t = this._getLeaveType(o.EventType);
-
-          var z = {
-            ...b,
-            LeaveType: {
-              ...t,
-            },
-          };
-
-          this._openSplitEventDialog(null, z);
-        },
         _handleMergeEvent: function (c, e, o) {
           var s = this._getEventType(o.EventType);
 
@@ -1951,139 +1830,54 @@ sap.ui.define(
             return;
           }
 
-          var b = _.find(a, ["EventId", o.EventId]) || null;
+          var c = _.find(a, ["EventId", o.EventId]) || null;
 
-          if (!b) {
+          if (!c) {
             return;
           }
 
           var t = this._getLeaveType(o.EventType);
 
-          var z;
-
-          if (eventUtilities.getMergeEventStatus()) {
-            z = this._getProperty("MergeEvent");
-            if (!z.Originals.length === 1) {
-              eventUtilities.setMergeEventStatus(false)
-              return;
-            }
-            if (z.Originals[0].EventId === o.EventId) {
-              Swal.fire({
-                position: "bottom",
-                icon: "error",
-                html: this.getText("sameEventSelectedError", []),
-                toast: true,
-                showConfirmButton: false,
-                timer: 5000,
-                timerProgressBar: true,
-              });
-              eventUtilities.setMergeEventStatus(false);
-              return;
-            }
-          } else {
-            //--First close the dialog
-            this._getModal().close();
-
-            //--Set the merge event data
-            z = {
-              LeaveType: {
-                ...t,
-              },
-              Originals: [],
-            };
+          var z = {
+            ...c,
+            LeaveType: {
+              ...t,
+            },
           };
 
-          z.Originals.push({
-            ...b
-          });
-
-          this._setProperty("MergeEvent", z);
-
-          this._selectEventMergeDate();
+          this._openMergeEventDialog(null, z);
         },
 
-        _selectEventMergeDate: function () {
-          var m = this._getProperty("MergeEvent");
-          var that = this;
-          var opened = false;
+        _handleSplitEvent: function (c, e, o) {
+          var s = this._getEventType(o.EventType);
 
-          var initiateMergeEvent = function () {
-            var n = {
-              LeaveType: {},
-              Originals: [],
-            };
-            eventUtilities.setMergeEventStatus(false);
-            that._setProperty("MergeEvent", n);
-          };
+          if (!s) {
+            return null;
+          }
 
-          if (m.Originals.length === 0) {
+          var a = this._getProperty(s) || [];
+
+          if (a.length === 0) {
             return;
           }
 
-          if (m.Originals.length === 1) {
-            Swal.fire({
-              position: "bottom",
-              icon: "warning",
-              html: that.getText("selectMergeSecondEvent", [dateUtilities.formatDate(m.Originals[0].StartDate), dateUtilities.formatDate(m.Originals[0].EndDate)]),
-              showConfirmButton: false,
-              toast: true,
-              timer: 10000,
-              timerProgressBar: true,
-              didOpen: function () {
-                opened = true;
-              },
-              willClose: function () {
-                if (opened) {
-                  opened = false;
-                  initiateMergeEvent();
-                }
-              },
-            });
-            eventUtilities.setMergeEventStatus(true);
+          var c = _.find(a, ["EventId", o.EventId]) || null;
+
+          if (!c) {
             return;
-          } else {
-            Swal.close();
-
-            m.Originals = _.orderBy(m.Originals, ["StartDate"], ["asc"]);
-
-            this._openMergeEventDialog(m);
-
-
-            // if (
-            //   moment(dateUtilities.convertToDate(o.Date)).isSameOrAfter(
-            //     moment(dateUtilities.convertToDate(p.Period.StartDate))
-            //   )
-            // ) {
-            //   p.Period.EndDate = o.Date;
-            // } else {
-            //   p.Period.EndDate = _.clone(p.Period.StartDate);
-            //   p.Period.StartDate = o.Date;
-            // }
-
-            // var dates =
-            //   dateUtilities.findDatesBetweenTwoDates(
-            //     p.Period.StartDate,
-            //     p.Period.EndDate
-            //   ) || [];
-
-            // if (dates.length === 0) {
-            //   Swal.fire({
-            //     position: "bottom",
-            //     icon: "warning",
-            //     html: this.getText("correctDates", []),
-            //     showConfirmButton: false,
-            //     toast: true,
-            //     timer: 3000,
-            //   });
-            //   initiateMergeEvent();
-            //   return;
-            // }
-
-
-            initiateMergeEvent();
           }
-        },
 
+          var t = this._getLeaveType(o.EventType);
+
+          var z = {
+            ...c,
+            LeaveType: {
+              ...t,
+            },
+          };
+
+          this._openSplitEventDialog(null, z);
+        },
         _handleDeleteEvent: function (c, e, o) {
           var s = this._getEventType(o.EventType);
 
@@ -2157,8 +1951,8 @@ sap.ui.define(
           return a.DataSource === "PL"
             ? "PlannedLeaves"
             : a.DataSource === "AL"
-              ? "AnnualLeaves"
-              : null;
+            ? "AnnualLeaves"
+            : null;
         },
         _getDataSourceFromKey: function (k) {
           var lg = this._getPageProperty("LegendGroup") || [];
@@ -2180,8 +1974,8 @@ sap.ui.define(
           return s === "PL"
             ? "PlannedLeaves"
             : s === "AL"
-              ? "AnnualLeaves"
-              : null;
+            ? "AnnualLeaves"
+            : null;
         },
 
         _getLeaveType: function (k) {
@@ -2273,7 +2067,7 @@ sap.ui.define(
             alignment: "auto",
             showPointer: true,
             content: this._createDisplayEventWidget(l),
-            closed: function () { },
+            closed: function () {},
           }).addStyleClass("spp-overflowpopup");
 
           this._getModal().open(oDialog);
@@ -2302,8 +2096,8 @@ sap.ui.define(
                 deletable: e.deletable,
                 duration: e?.duration
                   ? formatter.suppressZeroDecimal(e.duration) +
-                  " " +
-                  that.getText("days", [])
+                    " " +
+                    that.getText("days", [])
                   : null,
               }).addStyleClass("sapUiTinyMarginBottom")
             );
@@ -2376,6 +2170,91 @@ sap.ui.define(
           } else {
             openDialog();
           }
+        },
+
+        _openMergeEventDialog: function (r, p) {
+          var sD = dateUtilities.formatDate(p.StartDate);
+          var eD = dateUtilities.formatDate(p.EndDate);
+          var that = this;
+          var oEvent = {
+            LeaveType: {
+              Key: p.LeaveType.Type,
+              Value: p.LeaveType.Description,
+              Icon: p.LeaveType.Color,
+            },
+            EventId: p.EventId,
+            StartDate: sD,
+            EndDate: eD,
+            UsedQuota: p.UsedQuota,
+            New: false,
+            Title: this.getText("splitEventTitle", []),
+            Splits: [
+              {
+                Title: this.getText("eventSplitItem", ["1"]),
+                StartDate: null,
+                EndDate: null,
+                Visible: true,
+                UsedQuota: null,
+                RefStartDate: sD,
+                RefEndDate: eD,
+                QuotaCalculating: false,
+              },
+              {
+                Title: this.getText("eventSplitItem", ["2"]),
+                StartDate: null,
+                EndDate: null,
+                Visible: true,
+                UsedQuota: null,
+                RefStartDate: sD,
+                RefEndDate: eD,
+                QuotaCalculating: false,
+              },
+              {
+                Title: this.getText("eventSplitItem", ["3"]),
+                StartDate: null,
+                EndDate: null,
+                Visible: false,
+                UsedQuota: null,
+                RefStartDate: sD,
+                RefEndDate: eD,
+                QuotaCalculating: false,
+              },
+              {
+                Title: this.getText("eventSplitItem", ["4"]),
+                StartDate: null,
+                EndDate: null,
+                Visible: false,
+                UsedQuota: null,
+                RefStartDate: sD,
+                RefEndDate: eD,
+                QuotaCalculating: false,
+              },
+              {
+                Title: this.getText("eventSplitItem", ["5"]),
+                StartDate: null,
+                EndDate: null,
+                Visible: false,
+                UsedQuota: null,
+                RefStartDate: sD,
+                RefEndDate: eD,
+                QuotaCalculating: false,
+              },
+            ],
+            ButtonState: new Date().getTime(), //For refreshing button states
+          };
+          this._setPageProperty("EventSplit", oEvent);
+
+          var oDialog = Fragment.load({
+            id: that._getPagePrefix(),
+            name: "com.thy.ux.annualleaveplanning.view.fragment.MergeEventDialog",
+            controller: this,
+          }).then(
+            function (d) {
+              d.setStyles(this._getEditDialogStyles());
+              this._oEventDialog = d;
+              this._getModal().open(this._oEventDialog);
+            }.bind(this)
+          );
         },
 
         _openSplitEventDialog: function (r, p) {
@@ -2463,74 +2342,6 @@ sap.ui.define(
           );
         },
 
-        _openMergeEventDialog: function (p) {
-          var oPart1 = _.clone(p.Originals[0]);
-          var oPart2 = _.clone(p.Originals[1]);
-          var that = this;
-          var oEvent = {
-            LeaveType: {
-              Key: p.LeaveType.Type,
-              Value: p.LeaveType.Description,
-              Icon: p.LeaveType.Color,
-            },
-            Originals: _.clone(p.Originals),
-            Leaves: [
-              {
-                EventId: oPart1.EventId,
-                StartDate: dateUtilities.formatDate(oPart1.StartDate),
-                EndDate: dateUtilities.formatDate(oPart1.EndDate),
-              },
-              {
-                EventId: oPart2.EventId,
-                StartDate: dateUtilities.formatDate(oPart2.StartDate),
-                EndDate: dateUtilities.formatDate(oPart2.EndDate),
-              },
-            ],
-            UsedQuota: parseFloat(oPart1.UsedQuota) + parseFloat(oPart2.UsedQuota),
-            Title: this.getText("mergeEventTitle", []),
-            Parts: [
-              {
-                EventId: oPart1.EventId,
-                Title: this.getText("eventMergeItem", ["1"]),
-                StartDate: dateUtilities.formatDate(oPart1.StartDate),
-                EndDate: dateUtilities.formatDate(oPart1.EndDate),
-                Visible: true,
-                UsedQuota: oPart1.UsedQuota,
-                RefStartDate: dateUtilities.formatDate(oPart1.StartDate),
-                RefEndDate: dateUtilities.formatDate(oPart1.EndDate),
-                QuotaCalculating: false,
-                Cancelled: false
-              },
-              {
-                EventId: oPart2.EventId,
-                Title: this.getText("eventMergeItem", ["2"]),
-                StartDate: dateUtilities.formatDate(oPart2.StartDate),
-                EndDate: dateUtilities.formatDate(oPart2.EndDate),
-                Visible: true,
-                UsedQuota: oPart2.UsedQuota,
-                RefStartDate: dateUtilities.formatDate(oPart2.StartDate),
-                RefEndDate: dateUtilities.formatDate(oPart2.EndDate),
-                QuotaCalculating: false,
-                Cancelled: false
-              },
-            ],
-            ButtonState: new Date().getTime(), //For refreshing button states
-          };
-          this._setPageProperty("EventMerge", oEvent);
-
-          var oDialog = Fragment.load({
-            id: that._getPagePrefix(),
-            name: "com.thy.ux.annualleaveplanning.view.fragment.MergeEventDialog",
-            controller: this,
-          }).then(
-            function (d) {
-              d.setStyles(this._getEditDialogStyles());
-              this._oEventDialog = d;
-              this._getModal().open(this._oEventDialog);
-            }.bind(this)
-          );
-        },
-
         _createEventCancelled: function () {
           this._cancelCreateEvent();
           this._getModal().close();
@@ -2607,7 +2418,7 @@ sap.ui.define(
                 showCloseButton: true,
               });
             }
-          } catch (e) { }
+          } catch (e) {}
         },
 
         _initiateViewModel: function () {
@@ -2643,15 +2454,6 @@ sap.ui.define(
                 Splits: [],
                 ButtonState: null,
               },
-              EventMerge: {
-                LeaveType: null,
-                Originals: [],
-                Leaves: [],
-                UsedQuota: null,
-                Title: "",
-                Parts: [],
-                ButtonState: null,
-              },
               Header: {},
               LeaveTypes: [],
               HomeButtonVisible: sap?.ushell?.Container ? true : false,
@@ -2667,12 +2469,6 @@ sap.ui.define(
                 EndDate: null,
               },
             },
-
-            MergeEvent: {
-              Originals: [],
-              Parts: [],
-            },
-
             LanguageIconTR:
               jQuery.sap.getModulePath("com.thy.ux.annualleaveplanning") +
               "/assets/images/tr.png",
@@ -2815,10 +2611,6 @@ sap.ui.define(
                 }
               }.bind(this)
             );
-        },
-
-        _formatDate: function (d) {
-          return dateUtilities.formatDate(d);
         },
 
         _callDatePicker: function (e) {

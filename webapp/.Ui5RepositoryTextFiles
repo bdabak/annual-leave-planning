@@ -1,1 +1,4 @@
 ^.*\.json$
+^.*\.txt$
+^.*\.map$
+^.PlanView.controller_I02.js$

@@ -339,6 +339,24 @@ sap.ui.define(
                 },
               })
             );
+            
+            b.push(
+              new sap.m.Button({
+                text: that
+                  .getModel("i18n")
+                  .getResourceBundle()
+                  .getText("mergeAction"),
+                icon: "sap-icon://combine",
+                press: function () {
+                  eventUtilities.publishEvent(
+                    "PlanningCalendar",
+                    "MergeEvent",
+                    _.clone(oEventObject)
+                  );
+                },
+              })
+            );
+
             c.push(
               new Button({
                 icon: "spp-fa-arrows-turn-to-dots",
@@ -356,6 +374,25 @@ sap.ui.define(
                   );
                 },
               }).addStyleClass("spp-indigo")
+            );
+
+            c.push(
+              new Button({
+                icon: "spp-fa-code-merge",
+                label: that
+                  .getModel("i18n")
+                  .getResourceBundle()
+                  .getText("mergeAction"),
+                solid: true,
+                press: function () {
+                  that._actionSheet.close();
+                  eventUtilities.publishEvent(
+                    "PlanningCalendar",
+                    "MergeEvent",
+                    _.clone(oEventObject)
+                  );
+                },
+              }).addStyleClass("spp-orange")
             );
           }
 

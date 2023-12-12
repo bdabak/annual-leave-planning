@@ -14,25 +14,35 @@ sap.ui.define([], function () {
         sap.ui.core.format.NumberFormat.getFloatInstance(oFormatOptions);
       var r = oFloatFormat.format(f);
 
-      r = r.replaceAll(",00","");
+      r = r.replaceAll(",00", "");
       return r;
     },
 
     decidePlanApproveStatus: function (e, p, t, c) {
-      if (!e || p === null || p === undefined || t === null || t === undefined) {
+      // parts: ['planModel>Header/PlanningEnabled'
+      //  'planModel>Header/QuotaPlanned'
+      //  'planModel>Header/QuotaToBePlanned'
+      // 'planModel>Header/CouncilApprovalStatus'
+      // ],
+      if (
+        !e ||
+        p === null ||
+        p === undefined ||
+        t === null ||
+        t === undefined
+      ) {
         return false;
       }
 
-      if(c !== "" && c !== null && c !== undefined){
-      
-         return false;
+      if (c !== "" && c !== null && c !== undefined) {
+        return false;
       }
 
       try {
-        if(parseFloat(p) <= 0){
+        if (parseFloat(p) <= 0) {
           return false;
         }
-        
+
         if (parseFloat(p) < parseFloat(t)) {
           return false;
         } else {
@@ -42,8 +52,68 @@ sap.ui.define([], function () {
         return false;
       }
     },
+    decidePlanApproveControlsEnabled: function (e, p, t, c) {
+       // parts: ['planModel>Header/PlanningEnabled'
+      //  'planModel>Header/QuotaPlanned'
+      //  'planModel>Header/QuotaToBePlanned'
+      // 'planModel>Header/CouncilApprovalStatus'
+      // ],
+      if (
+        !e ||
+        p === null ||
+        p === undefined ||
+        t === null ||
+        t === undefined
+      ) {
+        return false;
+      }
 
-   
+      if (c !== "" && c !== null && c !== undefined) {
+        return false;
+      }
+
+      try {
+        if (parseFloat(p) <= 0) {
+          return false;
+        }
+
+        if (parseFloat(p) < parseFloat(t)) {
+          return false;
+        } else {
+          return true;
+        }
+      } catch (e) {
+        return false;
+      }
+    },
+    decidePlanApproveControlsVisible: function (e, p, t, c) {
+      // parts: ['planModel>Header/PlanningEnabled'
+      //  'planModel>Header/QuotaPlanned'
+      //  'planModel>Header/QuotaToBePlanned'
+      // 'planModel>Header/CouncilApprovalStatus'
+      // ],
+      if (
+        !e ||
+        p === null ||
+        p === undefined ||
+        t === null ||
+        t === undefined
+      ) {
+        return false;
+      }
+
+      try {
+        if (parseFloat(p) <= 0) {
+          return false;
+        }
+
+        return true;
+      } catch (e) {
+        return false;
+      }
+    },
+
+
     checkAddSplitVisible: function (s = [], r) {
       var v = _.filter(s, ["Visible", true]);
       return v.length < 5;
@@ -52,18 +122,18 @@ sap.ui.define([], function () {
       var v = _.filter(s, ["Visible", true]);
       return v.length > 2;
     },
-    convertGuidToChar: function(g){
+    convertGuidToChar: function (g) {
       var c = g;
 
-      c = c.replaceAll("-","").toUpperCase();
+      c = c.replaceAll("-", "").toUpperCase();
 
       return c;
     },
-    getNextYear: function(d){
-      
+    getNextYear: function (d) {
       var m = moment(d).add(1, "y");
-      return m.format( moment.locale() === "tr" ? "D MMMM YYYY" : "MMMM Do, YYYY");
-
-    }
+      return m.format(
+        moment.locale() === "tr" ? "D MMMM YYYY" : "MMMM Do, YYYY"
+      );
+    },
   };
 });

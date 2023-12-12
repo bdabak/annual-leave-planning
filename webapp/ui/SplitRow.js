@@ -8,6 +8,11 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
           type: "string",
           bindable: true,
         },
+        watermark:{
+          type: "boolean",
+          bindable: true,
+          defaultValue: false
+        }
       },
       aggregations: {
         content: {
@@ -27,6 +32,17 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
         oRM.renderControl(c);
       });
       oRM.close("div");
+      if(oControl.getWatermark()){
+        oRM.openStart("div")
+           .class("spp-split-row-watermark")
+           .openEnd()
+           .openStart("i")
+           .class("spp-icon")
+           .class("spp-fa-trash-can")
+           .openEnd()
+           .close("i")
+           .close("div");
+      }
       oRM.close("div");
     },
   });

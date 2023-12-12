@@ -1,20 +1,21 @@
 <core:FragmentDefinition
-    xmlns="com.thy.ux.annualleaveplanning.ui"
-    xmlns:core="sap.ui.core"
+	xmlns="com.thy.ux.annualleaveplanning.ui"
+	xmlns:core="sap.ui.core"
+	xmlns:m="sap.m"
 >
-    <PageSidebar
-        id="LeaveManagementPageSidebar"
-        hidden="{= !${device>/system/desktop} }"
-    >
-        <items>
-            <StatisticCard
-                id="LeaveManagementPageStats0"
-                title="{i18n>planStatus}"
-                theme="emphasize"
-                value="{= ${
+	<PageSidebar
+		id="LeaveManagementPageSidebar"
+		hidden="{= !${device>/system/desktop} }"
+	>
+		<items>
+			<StatisticCard
+				id="LeaveManagementPageStats0"
+				title="{i18n>planStatus}"
+				theme="emphasize"
+				value="{= ${
 						path: 'planModel>Header/PlanningEnabled'
 					} ? ${i18n>planningActive} : ${i18n>planningInactive} }"
-                subvalue="{= ${
+				subvalue="{= ${
 						path: 'planModel>Header/PlanningEnabled'
 					} ? ${
 						path: 'planModel>Header/PlanningBeginDate',
@@ -31,12 +32,12 @@
 							}
 						}) : null
 				}"
-            />
-            <StatisticCard
-                id="LeaveManagementPageStats1"
-                title="{i18n>quotaAccrualDate}"
-                valueFontSize="small"
-                value="{= 
+			/>
+			<StatisticCard
+				id="LeaveManagementPageStats1"
+				title="{i18n>quotaAccrualDate}"
+				valueFontSize="small"
+				value="{= 
 					${
 						path: 'planModel>Header/QuotaAccrualBeginDate',
 						type: 'sap.ui.model.type.Date',
@@ -52,24 +53,25 @@
 							}
 						})
 				}"
-            />
+			/>
 			<StatisticCard
-                id="LeaveManagementPageStats5"
-                title="{i18n>nextQuotaAccrualDate}"
-                valueFontSize="small"
-                value="{ 
-					path: 'planModel>Header/QuotaAccrualBeginDate',
-					formatter: '.formatter.getNextYear'
-					
+				id="LeaveManagementPageStats5"
+				title="{i18n>nextQuotaAccrualDate}"
+				valueFontSize="small"
+				value="{
+					path: 'planModel>Header/NextQuotaAccrualBeginDate',
+					type: 'sap.ui.model.type.Date',
+					formatOptions: {
+						pattern: 'dd MMM YYYY'
+					}
 				}"
-            />
-            <StatisticCard
-                id="LeaveManagementPageStats2"
-                title="{i18n>quotaAccrualAmount}"
-                tooltip="{i18n>quotaAccrualAmountTooltip}"
-				
-                theme="success"
-                value="{
+			/>
+			<StatisticCard
+				id="LeaveManagementPageStats2"
+				title="{i18n>quotaAccrualAmount}"
+				tooltip="{i18n>quotaAccrualAmountTooltip}"
+				theme="success"
+				value="{
 					path: 'planModel>Header/QuotaAvailable',
 					type: 'sap.ui.model.odata.type.Decimal',
 					formatOptions: {
@@ -79,8 +81,8 @@
 						decimalSeparator: ','
 					}
 				}"
-            />
-            <!-- <StatisticCard
+			/>
+			<!-- <StatisticCard
 				id="LeaveManagementPageStats3"
 				title="{i18n>plannedVsToBePlanned}"
 				theme="secondary"
@@ -104,11 +106,11 @@
 					}
 				}"
 			/> -->
-            <StatisticCard
-                id="LeaveManagementPageStats4"
-                theme="secondary"
-                title="{i18n>toBePlannedLeave}"
-                value="{
+			<StatisticCard
+				id="LeaveManagementPageStats4"
+				theme="secondary"
+				title="{i18n>toBePlannedLeave}"
+				value="{
 					path: 'planModel>Header/QuotaToBePlanned',
 					type: 'sap.ui.model.odata.type.Decimal',
 					formatOptions: {
@@ -118,8 +120,8 @@
 						decimalSeparator: ','
 					}
 				}"
-                title2="{i18n>plannedLeave}"
-                value2="{
+				title2="{i18n>plannedLeave}"
+				value2="{
 					path: 'planModel>Header/QuotaPlanned',
 					type: 'sap.ui.model.odata.type.Decimal',
 					formatOptions: {
@@ -129,18 +131,59 @@
 						decimalSeparator: ','
 					}
 				}"
-            />
-            <Button
-                icon="spp-fa-filter"
-                class="spp-red"
-                label="{i18n>filterView}"
-                press=".onFilterLegend"
-                solid="false"
-            />
-
-			 <Button id="TeamCalendarButton" 
-			 	icon="spp-fa-calendar" label="{i18n>teamCalendarApp}" class="spp-blue" solid="true"   press=".onNavigateTeamCalendar" />
-            <!-- <StatisticCard id="LeaveManagementPageStats5"  title="Kullanılan İzin" theme="emphasize" value="{path:'planModel>Header/leaveUsed', type: 'sap.ui.model.odata.type.Decimal', formatOptions:{minFractionDigits:0,maxFractionDigits:2, groupingEnabled: false, decimalSeparator:','}}"  /> -->
-        </items>
-    </PageSidebar>
+				visible="{= ${planModel>Header/PlanningEnabled} === true }"
+			/>
+			<StatisticCard
+				id="LeaveManagementPageStats94"
+				theme="secondary"
+				title="{i18n>plannedLeave}"
+				value="{
+					path: 'planModel>Header/QuotaPlanned',
+					type: 'sap.ui.model.odata.type.Decimal',
+					formatOptions: {
+						minFractionDigits: 0,
+						maxFractionDigits: 2,
+						groupingEnabled: false,
+						decimalSeparator: ','
+					}
+				}"
+				visible="{= ${planModel>Header/PlanningEnabled} !== true }"
+			/>
+			<Button
+				icon="spp-fa-filter"
+				class="spp-red"
+				label="{i18n>filterView}"
+				press=".onFilterLegend"
+				visible="false"
+				solid="false"
+			/>
+			<!-- <m:VBox
+				id="idDesktopLegendContainer"
+				class="smod-legend-container"
+			> -->
+			<SideBarWidget
+				title="{i18n>filterEvents}"
+				icon="spp-fa-filter"
+				class="spp-red"
+			>
+				<content>
+					<core:Fragment
+					fragmentName="com.thy.ux.annualleaveplanning.view.fragment.EventLegend"
+					type="XML"
+				/>
+				</content>
+			</SideBarWidget>
+				
+			<!-- </m:VBox> -->
+			<Button
+				id="TeamCalendarButton"
+				icon="spp-fa-calendar"
+				label="{i18n>teamCalendarApp}"
+				class="spp-blue"
+				solid="true"
+				press=".onNavigateTeamCalendar"
+			/>
+			<!-- <StatisticCard id="LeaveManagementPageStats5"  title="Kullanılan İzin" theme="emphasize" value="{path:'planModel>Header/leaveUsed', type: 'sap.ui.model.odata.type.Decimal', formatOptions:{minFractionDigits:0,maxFractionDigits:2, groupingEnabled: false, decimalSeparator:','}}"  /> -->
+		</items>
+	</PageSidebar>
 </core:FragmentDefinition>

@@ -1,3 +1,4 @@
+/*global tippy */
 sap.ui.define(["sap/ui/core/Control"], function (Control) {
   "use strict";
 
@@ -78,11 +79,21 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
             bindable: true,
             defaultValue: false
           },
+          enabled: {
+            type: "boolean",
+            bindable: true,
+            defaultValue: true
+          },
           floating:{
             type: "boolean",
             bindable: true,
             defaultValue: false
-          }
+          },
+          tooltip:{
+            type: "string",
+            bindable: true,
+            defaultValue: null
+          },
         },
         aggregations: {},
         events: {
@@ -111,15 +122,28 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
         var aClassList = oControl.getClassList() || [];
         var aAttributes = oControl.getAttributes() || [];
         var bInvisible = oControl.getInvisible();
+        var bEnabled = oControl.getEnabled();
         var bFloating = oControl.getFloating();
         
         
+       bEnabled ?   oRM.openStart("button", oControl) : 
+       oRM.openStart("div", oControl)
+          .style("display", "inline-block")
+          .style("flex", "1")
+          .openEnd()
+          .openStart("button")
+          .style("width", "100%"); //Control
 
-        oRM.openStart("button", oControl); //Control
+
         oRM.class("spp-widget");
         
         if(bInvisible){
           oRM.class("spp-invisible");
+        }
+
+        if(!bEnabled){
+          oRM.attr("disabled");
+          oRM.class("spp-disabled");
         }
         
         //--Conditional classes
@@ -203,13 +227,45 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
           oRM.close("div");
         }
         
-        oRM.close("button"); //Button
+        bEnabled ? oRM.close("button") : oRM.close("button").close("div"); //Button
       },
       ontap: function (oEvent) {
-        oEvent.preventDefault();
-
-        this.firePress();
+        if(this.getEnabled()){
+          oEvent.preventDefault();
+          this.firePress();
+        }
+        return;
       },
+      onmouseover: function(){
+        var bTooltip = this.getTooltip() || null;
+        var that = this;
+        var oRef = this.getDomRef();
+        
+        if(bTooltip && !this.tooltipShown){
+          tippy(oRef,{
+            content: "<span style='font-size:15px;'>" + bTooltip + "</span>", 
+            delay: [0,50],
+            // maxWidth: oRef?.offsetWidth-25,
+            placement: 'left',
+            allowHTML: true,
+            animation:"scale",
+            inertia: true,
+            theme: "material-light",
+            onShow: function(){
+              that.tooltipShown = true; 
+            },
+            onDestroy: function() {
+              that.tooltipShown = false; 
+            },
+            onClickOutside: function() {
+              that.tooltipShown = false; 
+            }
+          });
+        };
+      },
+      onmouseout: function(){
+        //this._tooltipPopover?.close();
+      }
     }
   );
 });

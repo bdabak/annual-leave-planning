@@ -1,0 +1,25 @@
+.spp-side-bar-widget {
+  width: 97%;
+  padding: 10px 10px;
+  background: #ffffff;
+    box-shadow: 2px 10px 20px rgba(0, 0, 0, 0.1);
+    border-radius: 7px;
+}
+
+.spp-side-bar-widget * {
+    font-family: "Roboto", sans-serif;
+    font-size: 11px;
+  }
+  
+.spp-side-bar-widget-title{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap:0.3rem;
+    color: rgb(var(--widget-primary-color-rgb));
+}
+
+.spp-side-bar-widget-title, .spp-side-bar-widget-title *{
+    font-size: 13px;
+} 
+

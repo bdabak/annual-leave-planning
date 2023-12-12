@@ -29,9 +29,9 @@
                 "uri": "/sap/opu/odata/sap/ZHCM_LEAVE_REQ_CREATE_SRV",
                 "type": "OData",
                 "settings": {
-                    "odataVersion": "2.0",
                     "annotations": [],
-                    "localUri": "localService/leaveRequestService/metadata.xml"
+                    "localUri": "localService/leaveRequestService/metadata.xml",
+                    "odataVersion": "2.0"
                 }
             }
         }
@@ -105,6 +105,14 @@
                 {
                     "uri": "css/style.css"
                 }
+            ],
+            "js": [
+                {
+                    "uri": "utils/tippy/popper.js"
+                },
+                {
+                    "uri": "utils/tippy/tippy.js"
+                }
             ]
         },
         "routing": {
@@ -148,7 +156,6 @@
                     "viewId": "NotAuthorized",
                     "viewName": "NotAuthorized"
                 }
-
             }
         },
         "rootView": {
