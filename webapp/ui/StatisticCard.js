@@ -15,10 +15,10 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
           type: "string",
           bindable: true,
         },
-        tooltip:{
+        tooltip: {
           type: "string",
           bindable: true,
-          defaultValue: null
+          defaultValue: null,
         },
         value: {
           type: "string",
@@ -42,11 +42,11 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
           bindable: true,
           defaultValue: null,
         },
-        valueFontSize:{
-          type:"string",
+        valueFontSize: {
+          type: "string",
           bindable: true,
-          defaultValue: "normal"
-        }
+          defaultValue: "normal",
+        },
       },
       aggregations: {
         eventContainer: {
@@ -70,7 +70,6 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
       );
     },
     renderer: function (oRM, oControl) {
-      
       oRM
         .openStart("div", oControl) //--Main
         .class("spp-stat-card")
@@ -107,7 +106,7 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
         .text(t1)
         .close("h4");
 
-      // Separator 
+      // Separator
       oRM
         .openStart("div")
         .class("spp-stat-card-grid-sep-col")
@@ -116,7 +115,7 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
         .class("spp-stat-card-grid-sep")
         .openEnd()
         .close("div")
-        .close("div");  
+        .close("div");
 
       //Grid 1.2
       oRM
@@ -151,18 +150,17 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
 
       //--Content header--//
       oRM.openStart("h4").class("spp-stat-card-title");
-      if(bTooltip){
+      if (bTooltip) {
         oRM.class("spp-stat-card-title-has-tooltip");
       }
-      oRM.openEnd()
-      .text(t1)
-      .close("h4");
+      oRM.openEnd().text(t1).close("h4");
       //--Content header--//
       //--Statistic value--//
-      oRM.openStart("div")
-         .class("spp-stat-card-value")
-         .class(`spp-stat-card-value-${this.getValueFontSize()}`)
-         .openEnd();
+      oRM
+        .openStart("div")
+        .class("spp-stat-card-value")
+        .class(`spp-stat-card-value-${this.getValueFontSize()}`)
+        .openEnd();
       oRM.text(v1);
       oRM.close("div");
       if (s1 !== null) {
@@ -172,35 +170,50 @@ sap.ui.define(["sap/ui/core/Control"], function (Control) {
       }
       //--Statistic value--//
     },
-    onmouseover: function(){
-      var bTooltip = this.getTooltip() || null;
-      var that = this;
+    onmouseover: function () {
+      var sTooltip = this.getTooltip() || null;
       var oRef = this.getDomRef();
-      
-      if(bTooltip && !this.tooltipShown){
-        tippy(oRef,{
-          content: "<span style='font-size:11px;'>" + bTooltip + "</span>", 
-          delay: [0,50],
-          maxWidth: oRef?.offsetWidth+25,
-          placement: 'bottom',
+
+      if (sTooltip && !this.tooltipShown) {
+        this._callTippy(oRef, sTooltip);
+      }
+    },
+    _callTippy: function (oRef, sTooltip) {
+      var that = this;
+
+      var createTippy = () => {
+        return tippy(oRef, {
+          content: "<span style='font-size:11px;'>" + sTooltip + "</span>",
+          delay: [0, 50],
+          maxWidth: oRef?.offsetWidth + 25,
+          placement: "bottom",
           allowHTML: true,
-          animation:"scale",
+          animation: "scale",
           inertia: true,
           theme: "material",
-          onShow: function(){
-            that.tooltipShown = true; 
+          onShow: function () {
+            that.tooltipShown = true;
           },
-          onDestroy: function() {
-            that.tooltipShown = false; 
+          onDestroy: function () {
+            that.tooltipShown = false;
           },
-          onClickOutside: function() {
-            that.tooltipShown = false; 
-          }
+          onClickOutside: function () {
+            that.tooltipShown = false;
+          },
+          onHide: function () {
+            that.tooltipShown = false;
+          },
+          onUntrigger: function () {
+            that.tooltipShown = false;
+          },
         });
       };
+
+      if (this.oTippyInstance) {
+        this.oTippyInstance.destroy();
+        this.oTippyInstance = null;
+      }
+      this.oTippyInstance = createTippy();
     },
-    onmouseout: function(){
-      //this._tooltipPopover?.close();
-    }
   });
 });

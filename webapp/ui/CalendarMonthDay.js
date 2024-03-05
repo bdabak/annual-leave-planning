@@ -111,6 +111,7 @@ sap.ui.define(
               rowSpan: e.rowSpan,
               editable: e.editable,
               splittable: e.splittable,
+              mergable: e.mergable,
               deletable: e.deletable,
             });
             c.addAggregation("events", n);
@@ -123,7 +124,8 @@ sap.ui.define(
           var l = a.length;
           if (this.getEventDuration() !== l) {
             var i = a.indexOf(d);
-            var m = moment(d, "DD.MM.YYYY");
+            var m = dateUtilities.momentFromText(d)
+            // var m = moment(d, "DD.MM.YYYY");
             var o = parseInt(m.format("E"), 10);
 
             var calcOverflow = function (i, s) {
@@ -157,8 +159,10 @@ sap.ui.define(
 
             var calcFuture = function(i,s,a){
               
-              var mB = moment(a[i], "DD.MM.YYYY");
-              var mE = moment(a[a.length - 1], "DD.MM.YYYY");
+              var mB = dateUtilities.momentFromText(a[i]);
+              // var mB = moment(a[i], "DD.MM.YYYY");
+              var mE = dateUtilities.momentFromText(a[a.length - 1]);
+              // var mE = moment(a[a.length - 1], "DD.MM.YYYY");
 
               if(i===0 || s === 1){
                 return mB.week() !== mE.week()

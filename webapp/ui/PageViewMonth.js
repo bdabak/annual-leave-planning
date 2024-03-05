@@ -148,42 +148,7 @@ sap.ui.define(
           var wR = this.getAggregation("_weekdaysRow");
           oRM.renderControl(wR);
         },  
-        // renderWeekDays_: function (oRM) {
-        //   oRM.openStart("div"); //Row
-        //   oRM.class("spp-calendar-row").class("spp-calendar-weekdays");
-        //   oRM.openEnd();
-
-        //   //--Week number cell
-        //   oRM.openStart("div"); //Row
-        //   oRM.class("spp-week-number-cell");
-        //   oRM.openEnd();
-        //   oRM.close("div"); // Row
-        //   //--Week number cell
-
-        //   for (var i = 1; i < 8; i++) {
-        //     oRM.openStart("div");
-        //     oRM.class("spp-calendar-day-header");
-        //     if (i > 5) {
-        //       oRM.class("spp-weekend");
-        //       oRM.class("spp-nonworking-day");
-        //     }
-        //     oRM.openEnd();
-        //     oRM.text(moment().day(i).format("ddd"));
-        //     oRM.close("div");
-        //   }
-
-        //   //--Scroll sizer
-        //   oRM.openStart("div").class("spp-yscroll-pad").openEnd(); //Scroll sizer
-        //   oRM
-        //     .openStart("div")
-        //     .class("spp-yscroll-pad-sizer")
-        //     .openEnd()
-        //     .close("div"); // Scroll pad sizer
-        //   oRM.close("div"); // Scroll sizer
-        //   //--Scroll sizer
-
-        //   oRM.close("div"); // Row
-        // },
+        
         
         renderWeeks: function (oRM) {
           var oControl = this;
@@ -196,34 +161,7 @@ sap.ui.define(
           wL.setMonth(_.cloneDeep(m));
           oRM.renderControl(wL);
         },
-        // renderWeeks_: function (oRM) {
-        //   var oControl = this;
-        //   var m = dateUtilities.getMonthData(
-        //     oControl.getYear(),
-        //     oControl.getMonth()
-        //   );
-
-        //   oRM
-        //     .openStart("div")
-        //     .class("spp-weeks-container")
-        //     .class("notranslate")
-        //     .class("spp-draggable")
-        //     .class("spp-droppable");
-        //   oRM.openEnd();
-        //   $.each(m.weeks, function (i, w) {
-        //     var d = _.filter(m.days, { week: w });
-
-        //     var y = new MonthWeek({
-        //       week: w,
-        //       year: oControl.getYear(),
-        //       days: d,
-        //     });
-
-        //     oControl.addAggregation("weeks", y);
-        //     oRM.renderControl(y);
-        //   });
-        //   oRM.close("div");
-        // },
+        
         ontouchstart: function (e) {
           if (e.which == 2 || e.which == 3) {
             this._refreshCellStates();

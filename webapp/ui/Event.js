@@ -98,6 +98,11 @@ sap.ui.define(
             bindable: true,
             defaultValue: false,
           },
+          mergable: {
+            type: "boolean",
+            bindable: true,
+            defaultValue: false,
+          },
           deletable: {
             type: "boolean",
             bindable: true,
@@ -113,14 +118,13 @@ sap.ui.define(
             bindable: true,
             defaultValue: null,
           },
-          errorMessage:{
+          errorMessage: {
             type: "string",
             bindable: true,
             defaultValue: null,
-          }
+          },
         },
-        aggregations: {
-        },
+        aggregations: {},
         events: {},
       },
 
@@ -235,11 +239,8 @@ sap.ui.define(
             .close("span");
         }
 
-      
-
         oRM.close("div");
         //--Render event description--//
-
 
         oRM.close("div");
         //--Render event body--//
@@ -249,21 +250,22 @@ sap.ui.define(
 
         oRM.close("div");
       },
-      oncontextmenu: function(e){
+      oncontextmenu: function (e) {
         e.preventDefault();
         e.stopPropagation();
         this._callMenu();
       },
-      
+
       ontap: function (e) {
         e.preventDefault();
         e.stopPropagation();
         this._callMenu();
       },
 
-      _callMenu: function(){
+      _callMenu: function () {
         var bEditable = this.getEditable();
         var bSplittable = this.getSplittable();
+        var bMergable = this.getMergable();
         var bDeletable = this.getDeletable();
 
         if (!bEditable && !bDeletable && !bSplittable) {
@@ -339,23 +341,6 @@ sap.ui.define(
                 },
               })
             );
-            
-            b.push(
-              new sap.m.Button({
-                text: that
-                  .getModel("i18n")
-                  .getResourceBundle()
-                  .getText("mergeAction"),
-                icon: "sap-icon://combine",
-                press: function () {
-                  eventUtilities.publishEvent(
-                    "PlanningCalendar",
-                    "MergeEvent",
-                    _.clone(oEventObject)
-                  );
-                },
-              })
-            );
 
             c.push(
               new Button({
@@ -375,7 +360,25 @@ sap.ui.define(
                 },
               }).addStyleClass("spp-indigo")
             );
+          }
 
+          if (bMergable) {
+            b.push(
+              new sap.m.Button({
+                text: that
+                  .getModel("i18n")
+                  .getResourceBundle()
+                  .getText("mergeAction"),
+                icon: "sap-icon://combine",
+                press: function () {
+                  eventUtilities.publishEvent(
+                    "PlanningCalendar",
+                    "MergeEvent",
+                    _.clone(oEventObject)
+                  );
+                },
+              })
+            );
             c.push(
               new Button({
                 icon: "spp-fa-code-merge",
@@ -451,7 +454,7 @@ sap.ui.define(
 
           this._actionSheet.openBy(this);
         }
-      }
+      },
     });
   }
 );

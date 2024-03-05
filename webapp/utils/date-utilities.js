@@ -18,6 +18,7 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
           dow: 1,
         },
       });
+      // moment.tz.setDefault("Europe/London"); //Set to Greenwi
     },
     setProxyModel: function (m) {
       this._planModel = m;
@@ -43,37 +44,11 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
       return this.getProxyModelProperty("/AnnualLeaves");
     },
 
-    formatDate: function (d) {
-      var m = moment(d, "DD.MM.YYYY").hours(this.getTZO().hour).minutes(this.getTZO().minute);
-
-      return m.format("DD.MM.YYYY");
-    },
-    formatDateObject: function (d) {
-      var m = moment(d).hours(this.getTZO().hour).minutes(this.getTZO().minute);
-
-      return m.format("DD.MM.YYYY");
-    },
-    convertDateToPeriod: function (d) {
-      var m;
-      if (d === null || d === undefined) {
-        m = moment(new Date());
-      } else {
-        m = moment(d, "DD.MM.YYYY");
-      }
-
-      return this.getPeriod(m);
-    },
-    convertPeriodToDate: function (p) {
-      var m = moment(p.day + "." + p.month + "." + p.year, "DD.MM.YYYY");
-
-      return m.format("DD.MM.YYYY");
-    },
-
-    getTZO: function(){
-      var d = new Date();
+    getTZO: function(e = null){
+      var d = e?.getTimezoneOffset ? e : new Date();
       var o = d.getTimezoneOffset() / 60 * -1;
       if(isNaN(o)){
-        return 3; // GMT+3 by default
+        return 0; // GMT+3 by default
       }
 
       if(o < 0){
@@ -86,15 +61,72 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
       return {hour:h, minute: m};
     },
 
+    
+    momentFromDate: function(d){
+      if (d === null || d === undefined) {
+        return moment(d).hours(this.getTZO().hour).minutes(this.getTZO().minute);
+      }
+      return moment(d.setHours(this.getTZO().hour,this.getTZO().minute, 0));
+    },
+
+    momentFromText: function(t){
+      if (t === null || t === undefined) {
+        return moment().hours(this.getTZO().hour).minutes(this.getTZO().minute);
+      }
+      return moment(t,"DD.MM.YYYY").hours(this.getTZO().hour).minutes(this.getTZO().minute);
+    },
+
+    formatDate: function (d) {
+      if (d === null || d === undefined) {
+        return null;
+      }
+
+      var m = this.momentFromText(d);
+      // var m = moment(d, "DD.MM.YYYY").hours(this.getTZO().hour).minutes(this.getTZO().minute);
+
+      return m.format("DD.MM.YYYY");
+    },
+    formatDateObject: function (d) {
+      if (d === null || d === undefined) {
+        return null;
+      }
+
+      var m = this.momentFromDate(d);
+      // var m = moment(d).hours(this.getTZO().hour).minutes(this.getTZO().minute);
+
+      return m.format("DD.MM.YYYY");
+    },
+    convertDateToPeriod: function (d) {
+      var m;
+      if (d === null || d === undefined) {
+        m = this.momentFromDate(new Date());
+        // m = moment(new Date());
+      } else {
+        m = this.momentFromText(d);
+        // m = moment(d, "DD.MM.YYYY");
+      }
+
+      return this.getPeriod(m);
+    },
+    convertPeriodToDate: function (p) {
+      var m = this.momentFromText(p.day + "." + p.month + "." + p.year);
+      // var m = moment(p.day + "." + p.month + "." + p.year, "DD.MM.YYYY").hours(this.getTZO().hour).minutes(this.getTZO().minute);
+
+      return m.format("DD.MM.YYYY");
+    },
+
     convertPeriodToDateObject: function (p) {
-      var m = moment(p.day + "." + p.month + "." + p.year, "DD.MM.YYYY").hours(this.getTZO().hour).minutes(this.getTZO().minute);
+
+      var m = this.momentFromText(p.day + "." + p.month + "." + p.year);
+      // var m = moment(p.day + "." + p.month + "." + p.year, "DD.MM.YYYY:00:00.000Z").hours(this.getTZO().hour).minutes(this.getTZO().minute);
       var d = m.toDate();
 
       return d;
     },
 
     calculateOffsetDate: function (d, o, y, w) {
-      var m = moment(d);
+      var m = this.momentFromDate(d);
+      // var m = moment(d);
 
       if(w === "y"){
         o === "+" ? m.add(y, "years").subtract(1, "days") : m.subtract(y, "years");
@@ -138,19 +170,19 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
     },
 
     getToday: function () {
-      return this.getPeriod(moment());
+      return this.getPeriod(this.momentFromDate(new Date()));
     },
 
     getCurrentYear: function () {
-      return this.getPeriod(moment(new Date()).startOf("year"));
+      return this.getPeriod(this.momentFromDate(new Date()).startOf("year"));
     },
 
     getCurrentMonth: function () {
-      return this.getPeriod(moment(new Date()).startOf("month"));
+      return this.getPeriod(this.momentFromDate(new Date()).startOf("month"));
     },
 
     getNextPeriod: function (p, a) {
-      var m = moment(p.day + "." + p.month + "." + p.year, "DD.MM.YYYY");
+      var m = this.momentFromText(p.day + "." + p.month + "." + p.year);
 
       switch (a) {
         case "Y":
@@ -165,7 +197,7 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
     },
 
     getPrevPeriod: function (p, a) {
-      var m = moment(p.day + "." + p.month + "." + p.year, "DD.MM.YYYY");
+      var m = this.momentFromText(p.day + "." + p.month + "." + p.year);
 
       switch (a) {
         case "Y":
@@ -187,7 +219,7 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
       };
     },
     formatPeriodText: function (p, a) {
-      var m = moment(p.day + "." + p.month + "." + p.year, "DD.MM.YYYY");
+      var m = this.momentFromText(p.day + "." + p.month + "." + p.year);
       switch (a) {
         case "Y":
           return m.format("YYYY");
@@ -215,9 +247,20 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
         }       
       }
       
-      var oP = moment(o.day + "." + o.month + "." + o.year, "DD.MM.YYYY");
-      var nP = moment(n.day + "." + n.month + "." + n.year, "DD.MM.YYYY");
+      var oP =  this.momentFromText(o.day + "." + o.month + "." + o.year);
+      // moment(o.day + "." + o.month + "." + o.year, "DD.MM.YYYY");
+      var nP = this.momentFromText(n.day + "." + n.month + "." + n.year);
+      // var nP = moment(n.day + "." + n.month + "." + n.year, "DD.MM.YYYY");
       return oP.isAfter(nP) ? "L" : oP.isBefore(nP) ? "R" : null;
+    },
+
+    differenceBetweenDatesInMotnhs: function(o,n){
+      var oP = this.momentFromText(o.day + "." + o.month + "." + o.year);
+      var nP = this.momentFromText(n.day + "." + n.month + "." + n.year);
+      // var oP = moment(o.day + "." + o.month + "." + o.year, "DD.MM.YYYY");
+      // var nP = moment(n.day + "." + n.month + "." + n.year, "DD.MM.YYYY");
+
+      return nP.diff(oP, "months");
     },
 
     convertToDate: function (d) {
@@ -225,10 +268,56 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
         return null;
       }
 
-      var m = moment(d, "DD.MM.YYYY").hours(this.getTZO().hour).minutes(this.getTZO().minute);
-      var d = m.toDate();
+      var m = this.momentFromText(d);
+      // var m = moment(d, "DD.MM.YYYY:00:00.000Z").hours(this.getTZO().hour).minutes(this.getTZO().minute);
+      var e = m.toDate();
 
-      return d;
+      return e;
+    },
+
+    convertToDatePattern: function (d) {
+      if (!d) {
+        return null;
+      }
+
+      // var m = moment(d, "DD.MM.YYYY").hours(this.getTZO().hour).minutes(this.getTZO().minute);
+      var m = this.momentFromText(d);
+
+
+      var oTZO = this.getTZO(m.toDate());
+      var hh = oTZO.hour.toString().padStart(2, "0");
+      var mm = oTZO.minute.toString().padStart(2, "0");
+
+
+      return m.format(`YYYY-MM-DDT00:00:00`);
+    },
+    convertDatePattern: function (d) {
+      if (!d) {
+        return null;
+      }
+
+      // var m = moment(d, "DD.MM.YYYY").hours(this.getTZO().hour).minutes(this.getTZO().minute);
+      var m = this.momentFromDate(d);
+      var oTZO = this.getTZO(d);
+      var hh = oTZO.hour.toString().padStart(2, "0");
+      var mm = oTZO.minute.toString().padStart(2, "0");
+
+      return m.format(`YYYY-MM-DDT00:00:00`);
+    },
+
+    convertUTCDate: function(d){
+      // var DD = d.getUTCDate().toString().padStart(2, "0");
+      // var MM = (d.getUTCMonth()+1).toString().padStart(2, "0");
+      // var YYYY = d.getUTCMFullYear();
+
+      // var n = moment(`${DD}.${MM}.${YYYY}`, "DD.MM.YYYY")
+
+      var oDF = sap.ui.core.format.DateFormat.getDateInstance({
+        UTC: true,
+        pattern: "dd.MM.YYYY"
+      });
+
+      return moment(oDF.format(d),"DD.MM.YYYY").toDate();
     },
 
     isValidDate: function(d){
@@ -236,15 +325,15 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
         return false;
       }
 
-      var m = moment(d, "DD.MM.YYYY").hours(this.getTZO().hour).minutes(this.getTZO().minute);
+      var m = this.momentFromText(d);
      
       return m.isValid();
     },
 
     findDatesBetweenTwoDates: function (b, e) {
-      var startDate = moment(b, "DD.MM.YYYY").clone(),
+      var startDate =this.momentFromText(b).clone(),
         dates = [],
-        endDate = moment(e, "DD.MM.YYYY").clone();
+        endDate =this.momentFromText(e).clone();
 
       while (startDate.isSameOrBefore(endDate)) {
         dates.push(startDate.format("DD.MM.YYYY"));
@@ -268,16 +357,6 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
     },
 
     checkPlannedVisible: function () {
-      // var s = _.find(this.getProxyModelProperty("/Page/LegendGroup"), [
-      //   "DataSource",
-      //   "PL",
-      // ]);
-
-      // if (s && s?.Selected) {
-      //   return true;
-      // } else {
-      //   return false;
-      // }
 
       var s = _.filter(this.getProxyModelProperty("/Page/LegendGroup"), [
         "DataSource",
@@ -318,7 +397,8 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
         return;
       }
 
-      var m = moment(d, "DD.MM.YYYY");
+      var m = this.momentFromText(d);
+      // var m = moment(d, "DD.MM.YYYY");
       var y = m.format("YYYY");
 
       //--Search in variable holidays
@@ -339,18 +419,35 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
 
       // return v;
     },
+    checkIsPeriodBetweenDates: function(p,s,e){
+      var rD = this.convertPeriodToDateObject(p);
+      var bD = this.convertPeriodToDateObject(p);
+      var eD = this.calculateOffsetDate(rD, "+", 1, "y");
+
+      var oBD  = moment(bD).startOf("month");
+      var oED  = moment(eD).endOf("month");
+
+
+      var sM = moment(s);
+      var eM = moment(e);
+
+      return oBD.isBetween(sM, eM, undefined, "[]") && oED.isBetween(sM, eM, undefined, "[]");
+    },
     checkDatePlanned: function (d) {
+      var that = this;
       if (!this.checkPlannedVisible()) {
         return;
       }
 
-      var m = moment(d, "DD.MM.YYYY");
-      m.hours(this.getTZO().hour).minutes(this.getTZO().minute);
+      var m = this.momentFromText(d);
+      // var m = moment(d, "DD.MM.YYYY");
+      // m.hours(this.getTZO().hour).minutes(this.getTZO().minute);
 
       //--Search in planned leaves
       var pL = _.find(this.getPlannedLeaves(), function (l, i) {
         if (
-          m.isBetween(moment(l.StartDate), moment(l.EndDate), undefined, "[]")
+          m.isBetween(that.momentFromDate(l.StartDate), that.momentFromDate(l.EndDate), undefined, "[]")
+          // m.isBetween(moment(l.StartDate), moment(l.EndDate), undefined, "[]")
         ) {
           return true;
         }
@@ -362,71 +459,19 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
       return pL;
     },
 
-    // getLegendAttributes: function (s, e) {
-    //   var g = this.getProxyModelProperty("/Page/LegendGroup") || [];
-
-    //   if (g.length === 0) {
-    //     return null;
-    //   }
-
-    //   var r = _.filter(g, ["DataSource", s]) || [];
-
-    //   if (r.length === 0) {
-    //     return null;
-    //   }
-
-    //   var f;
-
-    //   switch (s) {
-    //     case "HL":
-    //       return r[0].LegendItemSet[0];
-    //     case "PL":
-    //       $.each(r, function (i, l) {
-    //         f =
-    //           _.find(l.LegendItemSet, {
-    //             EventType: e.LeaveType,
-    //             EventStatus: e.LeaveStatus,
-    //           }) || null;
-    //         if (f !== null) {
-    //           return false;
-    //         }
-    //       });
-
-    //       return f;
-    //     case "AL":
-    //       $.each(r, function (i, l) {
-    //         f =
-    //           _.find(l.LegendItemSet, function(y){
-    //             if(y.EventStatus.includes(";")){
-    //               var z = y.EventStatus.split(";") ;
-    //               return z.includes(e.StatusCode);
-    //             }else{
-    //               return y.EventStatus === e.StatusCode;
-    //             }
-    //           }) || null;
-    //         if (f !== null) {
-    //           return false;
-    //         }
-    //       });
-
-    //       return f;
-
-    //     default:
-    //       return null;
-    //   }
-    // },
-
     checkDateAnnual: function (d) {
+      const that = this;
       if (!this.checkAnnualVisible()) {
         return;
       }
 
-      var m = moment(d, "DD.MM.YYYY").hours(this.getTZO().hour).minutes(this.getTZO().minute);
+      var m = this.momentFromText(d);
+      // var m = moment(d, "DD.MM.YYYY").hours(this.getTZO().hour).minutes(this.getTZO().minute);
 
       //--Search in annual leaves
       var pL = _.find(this.getAnnualLeaves(), function (l, i) {
         if (
-          m.isBetween(moment(l.StartDate), moment(l.EndDate), undefined, "[]")
+          m.isBetween(that.momentFromDate(l.StartDate), that.momentFromDate(l.EndDate), undefined, "[]")
         ) {
           return true;
         }
@@ -443,12 +488,14 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
         this.getProxyModelProperty("/Page/Header/QuotaAccrualBeginDate") ||
         null;
       if (eSD) {
-        var s = moment(eSD);
+        var s = this.momentFromDate(eSD);
         var e = s.clone().add(1, "y");
       }
-      var m = moment(d, "DD.MM.YYYY").hours(this.getTZO().hour).minutes(this.getTZO().minute);
-      var t = moment(new Date()).hours(this.getTZO().hour).minutes(this.getTZO().minute);
-      var l = moment(moment(new Date()).clone().subtract(1,"months").startOf("month").hours(this.getTZO().hour).minutes(this.getTZO().minute).toDate());
+      var m = this.momentFromText(d);
+      // var m = moment(d, "DD.MM.YYYY").hours(this.getTZO().hour).minutes(this.getTZO().minute);
+      var t = this.momentFromDate(new Date());
+      var l = moment(this.momentFromDate(new Date()).clone().subtract(1,"months").startOf("month").toDate());
+      // var l = moment(moment(new Date()).clone().subtract(1,"months").startOf("month").hours(this.getTZO().hour).minutes(this.getTZO().minute).toDate());
 
 
       return m.isSameOrAfter(l, "day");
@@ -456,7 +503,8 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
     },
 
     getDayAttributesWithinPeriod: function (p, o) {
-      var m = moment(p.day + "." + p.month + "." + p.year, "DD.MM.YYYY");
+      var m = this.momentFromText(p.day + "." + p.month + "." + p.year);
+      // var m = moment(p.day + "." + p.month + "." + p.year, "DD.MM.YYYY").hours(this.getTZO().hour).minutes(this.getTZO().minute);
       var s, e;
       if (o === "Y") {
         s = m.clone().startOf("year");
@@ -490,20 +538,18 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
     getEventsWithinPeriod: function () {
       var that = this;
       var p = this.getProxyModelProperty("/Page/Period") || null;
-      var eSD =
-        this.getProxyModelProperty("/Page/Header/QuotaAccrualBeginDate") ||
-        moment(new Date()).hours(this.getTZO().hour).minutes(this.getTZO().minute).startOf("month").toDate();
-      if (eSD) {
-        var sP = moment(eSD);
-        sP.year(p.year);
-        var eP = sP.clone().add(1, "y");
-      }
+      var l = this.getProxyModelProperty("/Page/LastPeriod") || null;
+     
+
+      var sP = this.momentFromDate(l.StartDate);
+      var eP = this.momentFromDate(l.EndDate);
+    
 
       var eL = [];
 
       var _checkEventLiesWithinPeriod = function (s, e) {
-        var sM = moment(s);
-        var eM = moment(e);
+        var sM = that.momentFromDate(s);
+        var eM = that.momentFromDate(e);
         var lwp = false;
 
         if (eM.isBefore(sP) || sM.isAfter(eP)) {
@@ -527,8 +573,8 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
         $.each(this.getAnnualLeaves(), function (i, c) {
           var l = _checkEventLiesWithinPeriod(c.StartDate, c.EndDate);
           if (l) {
-            var sD = moment(c.StartDate);
-            var eD = moment(c.EndDate);
+            var sD = that.momentFromDate(c.StartDate);
+            var eD = that.momentFromDate(c.EndDate);
             var v = that.getEventTypeVisible(c.LegendAttributes.LegendGroupKey, c.LegendAttributes.LegendItemKey );
 
             if(!v){
@@ -561,6 +607,7 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
               duration: c.Abrtg,     
               editable: c.LegendAttributes.Editable,
               splittable: c.LegendAttributes.Splittable,
+              mergable: false,
               deletable: c.LegendAttributes.Deletable,
               rejected: false
             };
@@ -575,13 +622,14 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
         $.each(this.getPlannedLeaves(), function (i, c) {
           var l = _checkEventLiesWithinPeriod(c.StartDate, c.EndDate);
           if (l) {
-            var sD = moment(c.StartDate);
-            var eD = moment(c.EndDate);
+            var sD = that.momentFromDate(c.StartDate);
+            var eD = that.momentFromDate(c.EndDate);
             var v = that.getEventTypeVisible(c.LegendAttributes.LegendGroupKey, c.LegendAttributes.LegendItemKey );
 
             if(!v){
               return true;
             }
+
             var e = {
               eventId: c.EventId,
               eventType: c.LegendAttributes.LegendGroupKey + "_" + c.LegendAttributes.LegendItemKey,
@@ -609,6 +657,7 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
               duration: c.UsedQuota,
               editable: c.LegendAttributes.Editable,
               splittable: c.LegendAttributes.Splittable,
+              mergable: c.LegendAttributes.Splittable,
               deletable: c.LegendAttributes.Deletable,
               rejected: c.LeaveStatus === "LRJ" || c.LeaveStatus === "LRD",
               errorMessage: c.ErrorMessage
@@ -655,7 +704,8 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
     getDayAttributes: function (d, a = false) {
       var m = moment.isMoment(d)
         ? d.clone().hours(this.getTZO().hour).minutes(this.getTZO().minute)
-        : moment(d, "DD.MM.YYYY").hours(this.getTZO().hour).minutes(this.getTZO().minute);
+        : this.momentFromText(d);
+        // : moment(d, "DD.MM.YYYY").hours(this.getTZO().hour).minutes(this.getTZO().minute);
       var y = m.clone().format("YYYY");
       var l = [];
       var e = {};
@@ -708,11 +758,15 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
             return false;
           }
 
-          var e = moment(
-            sT[sT.length - 1].Day + "." + sT[sT.length - 1].Month + "." + y,
-            "DD.MM.YYYY"
-          );
-          var b = moment(sT[0].Day + "." + sT[0].Month + "." + y, "DD.MM.YYYY");
+          var e = that.momentFromText(sT[sT.length - 1].Day + "." + sT[sT.length - 1].Month + "." + y);
+          var b = that.momentFromText(sT[0].Day + "." + sT[0].Month + "." + y);
+          // var e = moment(
+          //   sT[sT.length - 1].Day + "." + sT[sT.length - 1].Month + "." + y,
+          //   "DD.MM.YYYY"
+          // ).hours(this.getTZO().hour).minutes(this.getTZO().minute);
+          // var b = moment(sT[0].Day + "." + sT[0].Month + "." + y, "DD.MM.YYYY").hours(this.getTZO().hour).minutes(this.getTZO().minute);
+
+          
           var bW = b.week();
           var eW = e.week();
           if (bW === eW) {
@@ -731,9 +785,9 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
 
       var findDatesBetweenPeriod = function (s, e) {
         var d = [];
-        var b = moment(s);
+        var b = that.momentFromDate(s);
         var c = b.clone();
-        var l = moment(e);
+        var l = that.momentFromDate(e);
         var i = 0;
 
         while (c.isSameOrBefore(l)) {
@@ -756,7 +810,7 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
       if (this.checkAnnualVisible()) {
         $.each(this.getAnnualLeaves(), function (i, c) {
           if (
-            m.isBetween(moment(c.StartDate), moment(c.EndDate), undefined, "[]")
+            m.isBetween(that.momentFromDate(c.StartDate), that.momentFromDate(c.EndDate), undefined, "[]")
           ) {
             var pL = findDatesBetweenPeriod(c.StartDate, c.EndDate);
 
@@ -809,11 +863,12 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
                 : pL.length - p.index + p.day - 1 > 7
                 ? 7
                 : pL.length - p.index,
-              startDate: moment(c.startDate).format("DD MMM"),
-              endDate: moment(c.endDate).format("DD MMM"),
+              startDate: that.momentFromDate(c.startDate).format("DD MMM"),
+              endDate: that.momentFromDate(c.endDate).format("DD MMM"),
               duration: c.Abrtg,
               editable: c.LegendAttributes.Editable,
               splittable: c.LegendAttributes.Splittable,
+              mergable: false,
               deletable: c.LegendAttributes.Deletable,
             };
             l.push(e);
@@ -827,7 +882,7 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
       if (this.checkPlannedVisible()) {
         $.each(this.getPlannedLeaves(), function (i, c) {
           if (
-            m.isBetween(moment(c.StartDate), moment(c.EndDate), undefined, "[]")
+            m.isBetween(that.momentFromDate(c.StartDate), that.momentFromDate(c.EndDate), undefined, "[]")
           ) {
             var pL = findDatesBetweenPeriod(c.StartDate, c.EndDate);
 
@@ -879,11 +934,12 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
                 : pL.length - p.index + p.day - 1 > 7
                 ? 7
                 : pL.length - p.index,
-              startDate: moment(c.StartDate).format("DD MMM"),
-              endDate: moment(c.EndDate).format("DD MMM"),
+              startDate: that.momentFromDate(c.StartDate).format("DD MMM"),
+              endDate: that.momentFromDate(c.EndDate).format("DD MMM"),
               duration: c.UsedQuota,
               editable: c.LegendAttributes.Editable,
               splittable: c.LegendAttributes.Splittable,
+              mergable: c.LegendAttributes.Splittable,
               deletable: c.LegendAttributes.Deletable,
             };
             l.push(e);
@@ -939,21 +995,32 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
                 hasOverflow: calcOverflow(sI, o, sT),
                 rowIndex: a ? 0 : aI,
                 rowSpan: calcSpan(sI, o, sT),
-                startDate: moment(
-                  sT[0].day + "." + sT[0].month + "." + y,
-                  "DD.MM.YYYY"
+                startDate: that.momentFromText(
+                  sT[0].day + "." + sT[0].month + "." + y
                 ).format("DD MMM"),
-                endDate: moment(
+                endDate: that.momentFromText(
                   sT[sT.length - 1].day +
                     "." +
                     sT[sT.length - 1].month +
                     "." +
-                    y,
-                  "DD.MM.YYYY"
+                    y
                 ).format("DD MMM"),
+                // startDate: moment(
+                //   sT[0].day + "." + sT[0].month + "." + y,
+                //   "DD.MM.YYYY"
+                // ).format("DD MMM"),
+                // endDate: moment(
+                //   sT[sT.length - 1].day +
+                //     "." +
+                //     sT[sT.length - 1].month +
+                //     "." +
+                //     y,
+                //   "DD.MM.YYYY"
+                // ).format("DD MMM"),
                 duration: null,
                 editable: false,
                 splittable: false,
+                mergable: false,
                 deletable: false
               };
               l.push(e);

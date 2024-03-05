@@ -194,17 +194,18 @@ sap.ui.define(
         var d = this.getDay().date;
         var a = dateUtilities.getDayAttributes(d, false) || [];
 
-        // console.log(a);
+      //  console.log(a);
         if ( a.length > 0 && eventUtilities.getMergeEventStatus()) {
-
-          var oEventObject = {
-            EventId: a[0].eventId,
-            EventType: a[0].eventType,
-            LeaveType: a[0].leaveType,
-            Deletable: false
-          };
-
-          eventUtilities.publishEvent("PlanningCalendar", "MergeEvent", _.clone(oEventObject));
+          var z = _.find(a, ["mergable", true]);
+          if(z){
+            var oEventObject = {
+              EventId: z.eventId,
+              EventType: z.eventType,
+              LeaveType: z.leaveType,
+              Deletable: false
+            };
+            eventUtilities.publishEvent("PlanningCalendar", "MergeEvent", _.clone(oEventObject));
+          }
           return;
         }
 

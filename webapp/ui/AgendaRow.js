@@ -95,6 +95,7 @@ sap.ui.define(
           forAgenda: true,
           editable: r.editable,
           splittable: r.splittable,
+          mergable: r.mergable,
           deletable: r.deletable,
           rejected: r.rejected,
           duration: formatter.suppressZeroDecimal(r.duration) + " " + this.getModel("i18n").getResourceBundle().getText("days"),

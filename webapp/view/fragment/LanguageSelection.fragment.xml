@@ -4,8 +4,8 @@
 >
    	<Menu itemSelected=".onLanguageSelection">
         <items>
-            <MenuItem icon="{planModel>/LanguageIconTR}" text="Türkçe" key="tr" />
-            <MenuItem icon="{planModel>/LanguageIconEN}" text="English" key ="en"/>
+            <MenuItem icon="{planModel>/LanguageIconTR}" text="Türkçe" key="TR" />
+            <MenuItem icon="{planModel>/LanguageIconEN}" text="English" key ="EN"/>
         </items>
 	</Menu>
 </core:FragmentDefinition>

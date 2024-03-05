@@ -18382,8 +18382,8 @@ div.spp-sch-event-wrap > .spp-sch-event.spp-cut-item {
 }
 
 .spp-eventeditor.spp-popup {
-  width: calc(15em + var(--date-time-length));
-  min-width: calc(15em + var(--date-time-length));
+  width: calc(20em + var(--date-time-length));
+  min-width: calc(18em + var(--date-time-length));
   flex: unset;
 }
 
@@ -24431,8 +24431,8 @@ button.spp-button.spp-recurrencelegendbutton {
 }
 
 .spp-flex-column-half-with-button {
-  flex: 1 0 calc(50% - var(--date-width-difference) - 1rem ) !important;
-  --textfield-width: 11em;
+  flex: 1 0 calc(50% - var(--date-width-difference) - 2rem ) !important;
+  --textfield-width: 13.5em;
 }
 
 

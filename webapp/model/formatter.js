@@ -92,6 +92,8 @@ sap.ui.define([], function () {
       //  'planModel>Header/QuotaToBePlanned'
       // 'planModel>Header/CouncilApprovalStatus'
       // ],
+
+
       if (
         !e ||
         p === null ||
@@ -103,7 +105,7 @@ sap.ui.define([], function () {
       }
 
       try {
-        if (parseFloat(p) <= 0) {
+        if (parseFloat(p) < 0) {
           return false;
         }
 

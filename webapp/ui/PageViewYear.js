@@ -45,7 +45,7 @@ sap.ui.define(
 
       renderer: function (oRM, oControl) {
         var eD = oControl.getEntitlementDate();
-        var m = moment(eD);
+        var m = dateUtilities.momentFromDate(eD);
         var l = m.clone();
         oRM.openStart("div", oControl); //Main
         oRM

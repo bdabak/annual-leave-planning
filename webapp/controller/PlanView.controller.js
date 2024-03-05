@@ -270,7 +270,7 @@ sap.ui.define(
           }
           oEvent.UsedQuota = null;
 
-          if (moment(sD).isAfter(moment(eD))) {
+          if (dateUtilities.momentFromDate(sD).isAfter(dateUtilities.momentFromDate(eD))) {
             Swal.fire({
               position: "bottom",
               icon: "error",
@@ -319,12 +319,29 @@ sap.ui.define(
 
           if (!sKey) return;
 
-          var sLibraryPath = jQuery.sap.getModulePath(
-            "com.thy.ux.annualleaveplanning"
-          ); //get the server location of the ui library
+          // var sLibraryPath = jQuery.sap.getModulePath(
+          //   "com.thy.ux.annualleaveplanning"
+          // ); //get the server location of the ui library
 
-          var sFile = sLibraryPath + `/assets/manual_${sKey}.pdf`;
+          // var sFile = sLibraryPath + `/assets/manual_${sKey}.pdf`;
 
+          // var oDevice = this.getModel("device").getData();
+
+          // if (oDevice.browser.name === "cr" && oDevice.system.desktop) {
+          //   this._pdfViewer.setSource(sFile);
+          //   this._pdfViewer.setTitle(this.getText("userManual", []));
+          //   this._pdfViewer.open();
+          // } else {
+          //   sap.m.URLHelper.redirect(sFile, true);
+          // }
+
+          //--Rewrite for company codes
+          const oModel = this.getModel();
+          const sEntityPath = oModel.createKey("/ManualSet",{
+            Language: sKey
+          });
+
+          let sFile = oModel.sServiceUrl + sEntityPath + "/$value"; 
           var oDevice = this.getModel("device").getData();
 
           if (oDevice.browser.name === "cr" && oDevice.system.desktop) {
@@ -334,6 +351,9 @@ sap.ui.define(
           } else {
             sap.m.URLHelper.redirect(sFile, true);
           }
+
+          //--Rewrite for company codes
+
         },
         onEventDateChanged: function (e) {
           var sId = e.getSource().getId();
@@ -517,10 +537,10 @@ sap.ui.define(
             if (
               !moment(
                 dateUtilities.convertToDate(oEvent.StartDate)
-              ).isSameOrAfter(oHeader.QuotaAccrualBeginDate) ||
+              ).isSameOrAfter(dateUtilities.convertToDate(oHeader.QuotaAccrualBeginDate)) ||
               !moment(
                 dateUtilities.convertToDate(oEvent.EndDate)
-              ).isSameOrBefore(oHeader.QuotaAccrualEndDate)
+              ).isSameOrBefore(dateUtilities.convertToDate(oHeader.QuotaAccrualEndDate))
             ) {
               Swal.fire({
                 position: "bottom",
@@ -651,8 +671,8 @@ sap.ui.define(
           var h = this._getPageProperty("Header");
 
           if (
-            !moment(sD).isSameOrAfter(h.QuotaAccrualBeginDate) ||
-            !moment(eD).isSameOrBefore(h.QuotaAccrualEndDate)
+            !dateUtilities.momentFromDate(sD).isSameOrAfter(dateUtilities.momentFromDate(h.QuotaAccrualBeginDate)) ||
+            !dateUtilities.momentFromDate(eD).isSameOrBefore(dateUtilities.momentFromDate(h.QuotaAccrualEndDate))
           ) {
             return [];
           }
@@ -661,17 +681,17 @@ sap.ui.define(
             _.filter(aPL, function (l, i) {
               if (l.LeaveStatus === "PLN" && l.LeaveType === "PL") {
                 if (
-                  moment(l.StartDate).isAfter(moment(eD)) ||
-                  moment(l.EndDate).isAfter(moment(sD)) ||
-                  moment(l.StartDate).isBetween(
-                    moment(sD),
-                    moment(eD),
+                  dateUtilities.momentFromDate(l.StartDate).isAfter(dateUtilities.momentFromDate(eD)) ||
+                  dateUtilities.momentFromDate(l.EndDate).isAfter(dateUtilities.momentFromDate(sD)) ||
+                  dateUtilities.momentFromDate(l.StartDate).isBetween(
+                    dateUtilities.momentFromDate(sD),
+                    dateUtilities.momentFromDate(eD),
                     undefined,
                     "[]"
                   ) ||
-                  moment(l.EndDate).isBetween(
-                    moment(sD),
-                    moment(eD),
+                  dateUtilities.momentFromDate(l.EndDate).isBetween(
+                    dateUtilities.momentFromDate(sD),
+                    dateUtilities.momentFromDate(eD),
                     undefined,
                     "[]"
                   )
@@ -917,11 +937,11 @@ sap.ui.define(
         _countUsedQuota: function (b, e) {
           var oModel = this.getModel();
           var p = $.Deferred();
-          if (moment(b).isSameOrBefore(e)) {
+          if (dateUtilities.momentFromDate(b).isSameOrBefore(dateUtilities.momentFromDate(e))) {
             oModel.callFunction("/CalculateQuota", {
               urlParameters: {
-                StartDate: b,
-                EndDate: e,
+                StartDate: dateUtilities.convertDatePattern(b),
+                EndDate: dateUtilities.convertDatePattern(e),
               },
               success: function (d, r) {
                 p.resolve(d);
@@ -956,8 +976,10 @@ sap.ui.define(
               []
             )}</span>`;
             m = `<p>${this.getText("planningProcedure", [
-              moment(h.PlanningBeginDate).format("D MMMM YYYY"),
-              moment(h.PlanningEndDate).format("D MMMM YYYY"),
+              dateUtilities.momentFromDate(h.PlanningBeginDate).format("D MMMM YYYY"),
+              // moment(h.PlanningBeginDate).format("D MMMM YYYY"),
+              dateUtilities.momentFromDate(h.PlanningEndDate).format("D MMMM YYYY"),
+              // moment(h.PlanningEndDate).format("D MMMM YYYY"),
               formatter.suppressZeroDecimal(h.QuotaToBePlanned),
             ])}</p>`;
 
@@ -1109,6 +1131,7 @@ sap.ui.define(
           return p;
         },
 
+
         _refreshCalendar: function (period) {
           var p = $.Deferred();
           var that = this;
@@ -1116,20 +1139,21 @@ sap.ui.define(
           var oHeader = this._getPageProperty("Header");
           var oDefaultPeriod;
 
+           //--Adjust period filters
+           var t = _.clone(period) || _.clone(this._getPageProperty("Period"));
+
           if (oHeader.PlanningEnabled) {
             oDefaultPeriod = dateUtilities.convertDateToPeriod(
               oHeader.QuotaAccrualBeginDate
             );
+            if(parseInt(oDefaultPeriod.month,10) < parseInt(t.month,10)){
+              //--Make sure data is fetched for a year
+              t.month = oDefaultPeriod.month;
+              t.day = oDefaultPeriod.day;
+            }
           } else {
             oDefaultPeriod = dateUtilities.convertDateToPeriod(null);
           }
-
-          //--Adjust period filters
-          var t = _.clone(period) || _.clone(this._getPageProperty("Period"));
-
-          //--Make sure data is fetched for a year
-          t.month = oDefaultPeriod.month;
-          t.day = oDefaultPeriod.day;
 
           var rD = dateUtilities.convertPeriodToDateObject(t);
           var bD = dateUtilities.convertPeriodToDateObject(t);
@@ -1137,10 +1161,16 @@ sap.ui.define(
 
           var eD = dateUtilities.calculateOffsetDate(rD, "+", 1, "y");
 
+          var oBD  = dateUtilities.momentFromDate(bD).startOf("month").toDate();
+          // var oBD  = moment(bD).startOf("month").toDate();
+          var oED  = dateUtilities.momentFromDate(eY).endOf("month").toDate();
+          // var oED  = moment(eY).endOf("month").toDate();
+
           var sPath = oModel.createKey("/CalendarQuerySet", {
-            BeginDate: moment(bD).startOf("month").toDate().setHours(9),
-            EndDate: moment(eY).endOf("month").toDate().setHours(9),
+            BeginDate: dateUtilities.convertDatePattern(oBD),
+            EndDate: dateUtilities.convertDatePattern(oED)
           });
+
 
           oModel.read(sPath, {
             urlParameters: {
@@ -1149,6 +1179,13 @@ sap.ui.define(
             },
             // filters:aFilters,
             success: function (o, r) {
+              that._setPageProperty("LastPeriod", {
+                StartDate: oBD,
+                EndDate: oED
+              });
+              //--UTC Conversion
+              that._convertUTC(o);
+
               that._setCalendarData(o).done(function () {
                 p.resolve(true);
               });
@@ -1160,6 +1197,29 @@ sap.ui.define(
           return p;
         },
 
+        _convertUTC: function(oData){
+          for (const [key, _] of Object.entries(oData)) {
+            switch(key){
+              case "BeginDate":
+              case "EndDate":
+                oData[key] = dateUtilities.convertUTCDate(oData[key]);
+                break;
+              case "PlannedLeaveSet":
+              case "LeaveRequestSet":
+                $.each(oData[key].results, (i,oEl)=>{
+                  oEl.StartDate =  dateUtilities.convertUTCDate(oEl.StartDate);
+                  oEl.EndDate =  dateUtilities.convertUTCDate(oEl.EndDate);
+                });
+                break;
+              case "HolidayCalendarSet":
+                $.each(oData[key].results, (i,oEl)=>{
+                  oEl.BeginDate =  dateUtilities.convertUTCDate(oEl.BeginDate);
+                  oEl.EndDate =  dateUtilities.convertUTCDate(oEl.EndDate);
+                });
+                break;
+            }          
+          }
+        },
         _setCalendarData: function (o) {
           var p = $.Deferred();
           var that = this;
@@ -1266,8 +1326,8 @@ sap.ui.define(
               {
                 PlannedLeaveId: oPlan.PlannedLeaveId,
                 EmployeeNumber: oHeader.EmployeeNumber,
-                StartDate: dateUtilities.convertToDate(oEvent.StartDate),
-                EndDate: dateUtilities.convertToDate(oEvent.EndDate),
+                StartDate: dateUtilities.convertToDatePattern(oEvent.StartDate),
+                EndDate: dateUtilities.convertToDatePattern(oEvent.EndDate),
                 LeaveType: "PL",
                 PlanId: oHeader.PlanId,
               },
@@ -1306,10 +1366,10 @@ sap.ui.define(
           );
           aFilters.push(new Filter("InfoType", FilterOperator.EQ, "2001"));
 
-          oLeaveModel.read("/AbsenceTypeSet", {
+          oLeaveModel.read("/AbsenceTypeCollection", {
             urlParameters: {
-              // $expand: "MultipleApprovers,AdditionalFields",
-              $expand: "toApprover,toAdditionalFieldsDefinition",
+              $expand: "MultipleApprovers,AdditionalFields",
+              //$expand: "toApprover,toAdditionalFieldsDefinition",
             },
             filters: aFilters,
             success: function (o, r) {
@@ -1370,8 +1430,8 @@ sap.ui.define(
               EmployeeID: oHeader.EmployeeNumber,
               AbsenceTypeCode: "0010",
               InfoType: "2001",
-              StartDate: dateUtilities.convertToDate(oAnnual.StartDate),
-              EndDate: dateUtilities.convertToDate(oAnnual.EndDate),
+              StartDate: dateUtilities.convertToDatePattern(oAnnual.StartDate),
+              EndDate: dateUtilities.convertToDatePattern(oAnnual.EndDate),
               Attachments: [],
               ActionCode: 1,
               ProcessCheckOnlyInd: true,
@@ -1423,8 +1483,8 @@ sap.ui.define(
               {
                 PlannedLeaveId: eventUtilities.createEventId(),
                 EmployeeNumber: oHeader.EmployeeNumber,
-                StartDate: dateUtilities.convertToDate(oPlan.StartDate),
-                EndDate: dateUtilities.convertToDate(oPlan.EndDate),
+                StartDate: dateUtilities.convertToDatePattern(oPlan.StartDate),
+                EndDate: dateUtilities.convertToDatePattern(oPlan.EndDate),
                 LeaveType: "PL",
                 PlanId: oHeader.PlanId,
               },
@@ -1465,8 +1525,8 @@ sap.ui.define(
               {
                 PlannedLeaveId: oPlan.PlannedLeaveId,
                 EmployeeNumber: oHeader.EmployeeNumber,
-                StartDate: dateUtilities.convertToDate(oPlan.StartDate),
-                EndDate: dateUtilities.convertToDate(oPlan.EndDate),
+                StartDate: dateUtilities.convertToDatePattern(oPlan.StartDate),
+                EndDate: dateUtilities.convertToDatePattern(oPlan.EndDate),
                 LeaveType: "PL",
                 PlanId: oHeader.PlanId,
               },
@@ -1514,8 +1574,8 @@ sap.ui.define(
             oOperation.PlannedLeaveSet.push({
               PlannedLeaveId: eventUtilities.createEventId(),
               EmployeeNumber: oHeader.EmployeeNumber,
-              StartDate: dateUtilities.convertToDate(s.StartDate),
-              EndDate: dateUtilities.convertToDate(s.EndDate),
+              StartDate: dateUtilities.convertToDatePattern(s.StartDate),
+              EndDate: dateUtilities.convertToDatePattern(s.EndDate),
               LeaveType: "PL",
               PlanId: oHeader.PlanId,
             });
@@ -1548,24 +1608,31 @@ sap.ui.define(
           var oHeader = this._getPageProperty("Header");
           var aPL = this._getProperty("PlannedLeaves");
           var aParts = _.filter(oEvent.Parts, ["Cancelled", false]) || [];
+          var aCanc = _.filter(oEvent.Parts, ["Cancelled", true]) || [];
+          var aPL = this._getProperty("PlannedLeaves");
+          var oPlan = _.find(aPL, ["EventId", aCanc[0] ? aCanc[0].EventId : aParts[0].EventId]);
+
 
           var oOperation = {
             Actio: "MRG",
             PlanId: oHeader.PlanId,
-            PlannedLeaveId: aParts[0].EventId,
+            PlannedLeaveId: oPlan.PlannedLeaveId,
             PlannedLeaveSet: [],
             ReturnSet: [],
           };
 
           $.each(aParts, function (i, s) {
-            oOperation.PlannedLeaveSet.push({
-              PlannedLeaveId: s.EventId,
-              EmployeeNumber: oHeader.EmployeeNumber,
-              StartDate: dateUtilities.convertToDate(s.StartDate),
-              EndDate: dateUtilities.convertToDate(s.EndDate),
-              LeaveType: "PL",
-              PlanId: oHeader.PlanId,
-            });
+            var p = _.find(aPL,  ["EventId",s.EventId]);
+            if(p){
+              oOperation.PlannedLeaveSet.push({
+                PlannedLeaveId: p.PlannedLeaveId ,
+                EmployeeNumber: oHeader.EmployeeNumber,
+                StartDate: dateUtilities.convertToDate(s.StartDate),
+                EndDate: dateUtilities.convertToDate(s.EndDate),
+                LeaveType: "PL",
+                PlanId: oHeader.PlanId,
+              });
+            }
           });
 
           var fnCallback = function () {
@@ -1709,6 +1776,8 @@ sap.ui.define(
           var x = { ...p };
           var m = this._getMode();
           var that = this;
+          var oLastPeriod = this._getPageProperty("LastPeriod");
+          var bChange = false;
 
           switch (b) {
             case "T": //Today
@@ -1736,6 +1805,13 @@ sap.ui.define(
             );
             that.closeBusyFragment();
           };
+
+
+          // if(oLastPeriod.StartDate){
+          //    bChange = !dateUtilities.checkIsPeriodBetweenDates(p, oLastPeriod.StartDate, oLastPeriod.EndDate);
+          // }else{
+          //    bChange = true;
+          // }
 
           if (x.year !== p.year) {
             this.openBusyFragment("pleaseWait", []);
@@ -1922,7 +1998,7 @@ sap.ui.define(
           }
 
           var b = _.find(a, ["EventId", o.EventId]) || null;
-
+          console.log(b);
           if (!b) {
             return;
           }
@@ -1933,6 +2009,7 @@ sap.ui.define(
             ...b,
             LeaveType: {
               ...t,
+              SubType: b.LeaveType
             },
           };
 
@@ -1988,6 +2065,7 @@ sap.ui.define(
             z = {
               LeaveType: {
                 ...t,
+                SubType: b.LeaveType
               },
               Originals: [],
             };
@@ -2299,6 +2377,7 @@ sap.ui.define(
                 rowSpan: 7,
                 editable: e.editable,
                 splittable: e.splittable,
+                mergable: e.mergable,
                 deletable: e.deletable,
                 duration: e?.duration
                   ? formatter.suppressZeroDecimal(e.duration) +
@@ -2323,7 +2402,7 @@ sap.ui.define(
           var aStyles = new Map([
             ["--date-time-length", bPhone ? "10em" : "14em"],
             ["--date-width-difference", bPhone ? "0.5em" : "1em"],
-            ["--textfield-width", bPhone ? "10.5em" : "12.5em"],
+            ["--textfield-width", bPhone ? "10.5em" : "15em"],
           ]);
 
           return aStyles;
@@ -2387,6 +2466,7 @@ sap.ui.define(
               Key: p.LeaveType.Type,
               Value: p.LeaveType.Description,
               Icon: p.LeaveType.Color,
+              Type: p.LeaveType.SubType
             },
             EventId: p.EventId,
             StartDate: sD,
@@ -2655,6 +2735,10 @@ sap.ui.define(
               Header: {},
               LeaveTypes: [],
               HomeButtonVisible: sap?.ushell?.Container ? true : false,
+              LastPeriod: {
+                StartDate: null,
+                EndDate: null
+              }
             },
             HolidayCalendar: null,
             PlannedLeaves: [],
