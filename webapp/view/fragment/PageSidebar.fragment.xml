@@ -21,14 +21,14 @@
 						path: 'planModel>Header/PlanningBeginDate',
 						type: 'sap.ui.model.type.Date',
 						formatOptions: {
-							pattern: 'dd MMM YYYY'
+							pattern: 'dd MMM yyyy'
 						}
 					}.concat(' - ')
 					.concat(${
 							path: 'planModel>Header/PlanningEndDate',
 							type: 'sap.ui.model.type.Date',
 							formatOptions: {
-								pattern: 'dd MMM YYYY'
+								pattern: 'dd MMM yyyy'
 							}
 						}) : null
 				}"
@@ -42,14 +42,14 @@
 						path: 'planModel>Header/QuotaAccrualBeginDate',
 						type: 'sap.ui.model.type.Date',
 						formatOptions: {
-							pattern: 'dd MMM YYYY'
+							pattern: 'dd MMM yyyy'
 						}
 					}.concat(' - ')
 					.concat(${
 							path: 'planModel>Header/QuotaAccrualEndDate',
 							type: 'sap.ui.model.type.Date',
 							formatOptions: {
-								pattern: 'dd MMM YYYY'
+								pattern: 'dd MMM yyyy'
 							}
 						})
 				}"
@@ -62,7 +62,7 @@
 					path: 'planModel>Header/NextQuotaAccrualBeginDate',
 					type: 'sap.ui.model.type.Date',
 					formatOptions: {
-						pattern: 'dd MMM YYYY'
+						pattern: 'dd MMM yyyy'
 					}
 				}"
 			/>

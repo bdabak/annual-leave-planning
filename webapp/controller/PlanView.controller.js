@@ -940,8 +940,8 @@ sap.ui.define(
           if (dateUtilities.momentFromDate(b).isSameOrBefore(dateUtilities.momentFromDate(e))) {
             oModel.callFunction("/CalculateQuota", {
               urlParameters: {
-                StartDate: dateUtilities.convertDatePattern(b),
-                EndDate: dateUtilities.convertDatePattern(e),
+                StartDate: dateUtilities.convertDatePatternTZO(b),
+                EndDate: dateUtilities.convertDatePatternTZO(e),
               },
               success: function (d, r) {
                 p.resolve(d);

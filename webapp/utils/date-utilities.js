@@ -304,6 +304,19 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
 
       return m.format(`YYYY-MM-DDT00:00:00`);
     },
+    convertDatePatternTZO: function (d) {
+      if (!d) {
+        return null;
+      }
+
+      // var m = moment(d, "DD.MM.YYYY").hours(this.getTZO().hour).minutes(this.getTZO().minute);
+      var m = this.momentFromDate(d);
+      var oTZO = this.getTZO(d);
+      var hh = oTZO.hour.toString().padStart(2, "0");
+      var mm = oTZO.minute.toString().padStart(2, "0");
+
+      return m.format(`YYYY-MM-DDT${hh}:${mm}:00`);
+    },
 
     convertUTCDate: function(d){
       // var DD = d.getUTCDate().toString().padStart(2, "0");
@@ -314,7 +327,7 @@ sap.ui.define(["./moment", "./lodash"], function (momentJS, lodashJS) {
 
       var oDF = sap.ui.core.format.DateFormat.getDateInstance({
         UTC: true,
-        pattern: "dd.MM.YYYY"
+        pattern: "dd.MM.yyyy"
       });
 
       return moment(oDF.format(d),"DD.MM.YYYY").toDate();
